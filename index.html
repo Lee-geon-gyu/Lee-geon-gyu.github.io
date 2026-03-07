@@ -10,31 +10,31 @@
     <link rel="stylesheet" href="css/style.css" />
   </head>
   <body>
-    <header>
+    <header class="header">
       <div class="hd-container">
         <div class="left-box">
-          <a href="#" class="portfolio-text"> PORTFOLIO </a>
+          <a data-target="0" class="portfolio-text"> PORTFOLIO </a>
         </div>
         <div class="right-box">
           <div class="short-btn-wrapper">
             <div class="short-btn btn-1">
               <div class="left-box"></div>
-              <a href="#" class="right-box">ABOUT</a>
+              <a data-target="1" class="right-box">ABOUT</a>
             </div>
             <div class="short-btn btn-2">
               <div class="left-box"></div>
-              <a href="#" class="right-box">PROJECT</a>
+              <a data-target="2" class="right-box">PROJECT</a>
             </div>
             <div class="short-btn btn-3">
               <div class="left-box"></div>
-              <a href="#" class="right-box">CONTACT</a>
+              <a data-target="3" class="right-box">CONTACT</a>
             </div>
           </div>
         </div>
       </div>
     </header>
-    <main>
-      <section class="sec-cover">
+    <main class="main">
+      <section class="sec-cover section">
         <div class="bg-line-wrapper">
           <svg
             class="bg-line"
@@ -129,36 +129,14 @@
           </svg>
         </div>
         <div class="cover-title">
-          <div
-            class="top-box"
-            data-aos="fade-right"
-            data-aos-duration="1000"
-            data-aos-delay="1"
-            data-aos-offset="-1000"
-          >
+          <div class="top-box">
             경험을 바탕으로 가치의 흐름을 설계하는 웹디자이너
           </div>
-          <div
-            class="bottom-box"
-            data-aos="fade-right"
-            data-aos-duration="1000"
-            data-aos-delay="200"
-            data-aos-offset="-1000"
-          >
-            PORTFOLIO
-          </div>
+          <div class="bottom-box">PORTFOLIO</div>
         </div>
-        <div
-          class="copy-wrapper"
-          data-aos="fade-in"
-          data-aos-duration="1000"
-          data-aos-delay="300"
-          data-aos-offset="-1000"
-        >
-          ⓒ 2026 Portfolio
-        </div>
+        <div class="copy-wrapper">ⓒ 2026 Portfolio</div>
       </section>
-      <section class="sec-about">
+      <section class="sec-about section" id="about">
         <div class="bg-line-wrapper">
           <svg
             class="bg-line"
@@ -204,19 +182,8 @@
           </svg>
         </div>
         <div class="section-container">
-          <div
-            class="category-wrapper"
-            data-aos="fade-right"
-            data-aos-duration="1000"
-          >
-            ABOUT
-          </div>
-          <div
-            class="content-wrapper"
-            data-aos="fade-right"
-            data-aos-duration="1000"
-            data-aos-delay="200"
-          >
+          <div class="category-wrapper">ABOUT</div>
+          <div class="content-wrapper">
             <div class="about-left-box">
               <div class="profile-img-box">
                 <div class="img-container">
@@ -249,21 +216,11 @@
             <div class="about-right-box">
               <div class="top-box ability-wrapper">
                 <div class="left-box ability-contents">
-                  <div
-                    class="sub-category-box"
-                    data-aos="fade-right"
-                    data-aos-duration="1000"
-                    data-aos-delay="300"
-                  >
+                  <div class="sub-category-box">
                     <div class="circle-wrapper"></div>
                     <div class="sub-categories">EDUCATION</div>
                   </div>
-                  <div
-                    class="ability-item-box"
-                    data-aos="fade-right"
-                    data-aos-duration="1000"
-                    data-aos-delay="300"
-                  >
+                  <div class="ability-item-box">
                     <div class="item-1 items">
                       <div class="top-box">
                         SBS아카데미컴퓨터학원 UI/UX 웹퍼블리셔 양성과정 수료
@@ -281,22 +238,11 @@
                   </div>
                 </div>
                 <div class="right-box ability-contents">
-                  <div
-                    class="sub-category-box"
-                    data-aos="fade-right"
-                    data-aos-duration="1000"
-                    data-aos-delay="400"
-                  >
+                  <div class="sub-category-box">
                     <div class="circle-wrapper"></div>
                     <div class="sub-categories">AWARD</div>
                   </div>
-                  <div
-                    class="ability-item-box"
-                    class="sub-category-box"
-                    data-aos="fade-right"
-                    data-aos-duration="1000"
-                    data-aos-delay="400"
-                  >
+                  <div class="ability-item-box" class="sub-category-box">
                     <div class="item-1 items">
                       <div class="top-box">경제학부 수석장학금</div>
                       <div class="bottom-box">2024. 12</div>
@@ -314,21 +260,11 @@
               </div>
               <div class="bottom-box ability-wrapper">
                 <div class="left-box ability-contents">
-                  <div
-                    class="sub-category-box"
-                    data-aos="fade-right"
-                    data-aos-duration="1000"
-                    data-aos-delay="500"
-                  >
+                  <div class="sub-category-box">
                     <div class="circle-wrapper"></div>
                     <div class="sub-categories">LICENSE</div>
                   </div>
-                  <div
-                    class="ability-item-box ability-item-box-2"
-                    data-aos="fade-right"
-                    data-aos-duration="1000"
-                    data-aos-delay="500"
-                  >
+                  <div class="ability-item-box ability-item-box-2">
                     <div class="left-box boxes">
                       <div class="item-1 items">
                         <div class="top-box">웹디자인개발기능사</div>
@@ -350,21 +286,11 @@
                   </div>
                 </div>
                 <div class="right-box ability-contents">
-                  <div
-                    class="sub-category-box"
-                    data-aos="fade-right"
-                    data-aos-duration="1000"
-                    data-aos-delay="600"
-                  >
+                  <div class="sub-category-box">
                     <div class="circle-wrapper"></div>
                     <div class="sub-categories">TOOLS</div>
                   </div>
-                  <div
-                    class="ability-item-box ability-item-box-2"
-                    data-aos="fade-right"
-                    data-aos-duration="1000"
-                    data-aos-delay="600"
-                  >
+                  <div class="ability-item-box ability-item-box-2">
                     <div class="left-box boxes">
                       <div class="item-1 items">
                         <div class="top-box">Adobe Photoshop</div>
@@ -400,9 +326,31 @@
           </div>
         </div>
       </section>
-      <section class="sec-project"></section>
+      <section class="sec-project section"></section>
     </main>
     <footer></footer>
+    <!-- J-Query -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Leins -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis/dist/lenis.min.js"
+      defer
+    ></script>
+    <!-- GSAP -->
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"
+      defer
+    ></script>
+    <!-- Scroll Trigger -->
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"
+      defer
+    ></script>
+    <!-- Scroll To Plug In -->
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollToPlugin.min.js"
+      defer
+    ></script>
     <!-- AOS -->
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js" defer></script>
     <!-- JS -->

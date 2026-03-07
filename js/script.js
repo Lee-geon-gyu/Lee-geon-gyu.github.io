@@ -1,7 +1,70 @@
 console.clear();
 
 AOS.init();
+gsap.registerPlugin(ScrollTrigger);
 
+// GSAP scrollHorizon ------------------------------ //
+function scrollHorizon__init() {
+  const sections = gsap.utils.toArray(".section");
+
+  const scrollTween = gsap.to(sections, {
+    xPercent: -100 * (sections.length - 1),
+    ease: "none",
+    scrollTrigger: {
+      trigger: ".main",
+      pin: true,
+      scrub: 0.2,
+      snap: 1 / (sections.length - 1),
+      end: () => "+=" + document.querySelector(".main").offsetWidth,
+    },
+  });
+
+  sections.forEach((section) => {
+    ScrollTrigger.create({
+      trigger: section,
+      containerAnimation: scrollTween,
+      start: "center 90%",
+      onEnter: () => {
+        section.classList.add("active");
+      },
+      onLeaveBack: () => {
+        section.classList.remove("active");
+      },
+    });
+  });
+}
+// GSAP scrollLeins ------------------------------ //
+function scrollLeins__init() {
+  const lenis = new Lenis({
+    lerp: 0.055,
+    easing: (t) => t,
+    smooth: true,
+    smoothTouch: false,
+  });
+
+  function raf(time) {
+    lenis.raf(time);
+    requestAnimationFrame(raf);
+  }
+  requestAnimationFrame(raf);
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  lenis.on("scroll", ScrollTrigger.update);
+
+  gsap.utils.toArray("[data-speed]").forEach((el) => {
+    gsap.to(el, {
+      y: () => -((el.dataset.speed * window.innerHeight) / 5),
+      ease: "none",
+      scrollTrigger: {
+        trigger: el,
+        start: "top bottom",
+        scrub: true,
+      },
+    });
+  });
+}
+// backSvgMoveTool ------------------------------ //
 function backSvgMoveTool__init() {
   document.addEventListener("DOMContentLoaded", () => {
     const sections = document.querySelectorAll("section");
@@ -10,25 +73,29 @@ function backSvgMoveTool__init() {
     checkTrigger();
 
     function checkTrigger() {
-      const triggerPoint = window.innerHeight * 0.8;
-
       sections.forEach((section) => {
         const rect = section.getBoundingClientRect();
         const paths = section.querySelectorAll(".draw-line");
 
         if (!paths.length) return;
 
-        const sectionMiddle = rect.top + rect.height / 2;
+        const sectionMiddle = rect.left + rect.width / 2;
 
-        if (sectionMiddle <= window.innerHeight && !section.dataset.playing) {
+        if (
+          sectionMiddle <= window.innerWidth &&
+          sectionMiddle >= 0 &&
+          !section.dataset.playing
+        ) {
           section.dataset.playing = "true";
+
           setTimeout(() => {
             runAnimation(section);
           }, 500);
         }
 
-        if (sectionMiddle > window.innerHeight) {
+        if (sectionMiddle < 0 || sectionMiddle > window.innerWidth) {
           section.dataset.playing = "";
+          resetPaths(section);
         }
       });
     }
@@ -77,6 +144,48 @@ function backSvgMoveTool__init() {
       setTimeout(resolve, 0);
     });
   }
-}
 
+  function resetPaths(section) {
+    const paths = section.querySelectorAll(".draw-line");
+
+    paths.forEach((path) => {
+      const hasStroke = path.hasAttribute("stroke");
+
+      path.getAnimations().forEach((anim) => anim.cancel());
+
+      if (hasStroke) {
+        const length = path.getTotalLength();
+
+        path.style.strokeDasharray = length;
+        path.style.strokeDashoffset = length;
+      }
+
+      path.style.opacity = 0;
+    });
+  }
+}
+// GSAP scrollToMenu ------------------------------ //
+function scrollToMenu__init() {
+  const sections = gsap.utils.toArray(".section");
+
+  document.querySelectorAll(".header a").forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      e.preventDefault();
+
+      const index = btn.dataset.target;
+
+      const scrollLength = ScrollTrigger.getAll()[0].end;
+      const sectionScroll = scrollLength / (sections.length - 1);
+
+      gsap.to(window, {
+        scrollTo: sectionScroll * index,
+        duration: 1,
+      });
+    });
+  });
+}
+// Functions Operate Key ------------------------------ //
+scrollHorizon__init();
+scrollLeins__init();
 backSvgMoveTool__init();
+scrollToMenu__init();

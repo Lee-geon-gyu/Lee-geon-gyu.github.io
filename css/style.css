@@ -141,6 +141,7 @@ header > .hd-container > .left-box > .portfolio-text {
 }
 
 header > .hd-container > .left-box > .portfolio-text:hover {
+  cursor: pointer;
   transform: scale(1.1);
   transition: transform 0.3s ease;
 }
@@ -198,16 +199,19 @@ header
   > .short-btn-wrapper
   > .short-btn
   > .right-box:hover {
+  cursor: pointer;
   transform: scale(1.1);
   transition: transform 0.3s ease;
 }
 /* main ========================================= */
 main {
   font-family: "Pretendard";
+  display: flex;
 }
 /* main > sec-cover ========================================= */
 .sec-cover {
-  width: 100%;
+  flex-shrink: 0;
+  width: 100dvw;
   height: 100dvh;
   position: relative;
   display: flex;
@@ -274,7 +278,8 @@ main {
 }
 /* main > sec-about ========================================= */
 .sec-about {
-  width: 100%;
+  flex-shrink: 0;
+  width: 100dvw;
   padding: var(--margin-grid-system);
   height: 100dvh;
   position: relative;
