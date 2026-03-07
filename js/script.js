@@ -3,8 +3,39 @@ console.clear();
 AOS.init();
 
 function backSvgMoveTool__init() {
-  document.addEventListener("DOMContentLoaded", async () => {
-    const paths = document.querySelectorAll(".draw-line");
+  document.addEventListener("DOMContentLoaded", () => {
+    const sections = document.querySelectorAll("section");
+
+    window.addEventListener("scroll", checkTrigger);
+    checkTrigger();
+
+    function checkTrigger() {
+      const triggerPoint = window.innerHeight * 0.8;
+
+      sections.forEach((section) => {
+        const rect = section.getBoundingClientRect();
+        const paths = section.querySelectorAll(".draw-line");
+
+        if (!paths.length) return;
+
+        const sectionMiddle = rect.top + rect.height / 2;
+
+        if (sectionMiddle <= window.innerHeight && !section.dataset.playing) {
+          section.dataset.playing = "true";
+          setTimeout(() => {
+            runAnimation(section);
+          }, 500);
+        }
+
+        if (sectionMiddle > window.innerHeight) {
+          section.dataset.playing = "";
+        }
+      });
+    }
+  });
+
+  async function runAnimation(section) {
+    const paths = section.querySelectorAll(".draw-line");
 
     for (const path of paths) {
       const hasStroke = path.hasAttribute("stroke");
@@ -15,7 +46,7 @@ function backSvgMoveTool__init() {
         await fadeFill(path);
       }
     }
-  });
+  }
 
   function drawStroke(path) {
     return new Promise((resolve) => {
