@@ -4,18 +4,19 @@ AOS.init();
 gsap.registerPlugin(ScrollTrigger);
 
 // GSAP scrollHorizon ------------------------------ //
-function scrollHorizon__init() {
-  const sections = gsap.utils.toArray(".section");
+let scrollTween;
 
-  const scrollTween = gsap.to(sections, {
+function scrollHorizon__init() {
+  const sections = gsap.utils.toArray(".horizontal-section");
+
+  scrollTween = gsap.to(sections, {
     xPercent: -100 * (sections.length - 1),
     ease: "none",
     scrollTrigger: {
       trigger: ".main",
       pin: true,
-      scrub: 0.2,
-      snap: 1 / (sections.length - 1),
-      end: () => "+=" + document.querySelector(".main").offsetWidth,
+      scrub: 1,
+      end: () => "+=" + window.innerWidth * (sections.length - 1),
     },
   });
 
@@ -23,12 +24,39 @@ function scrollHorizon__init() {
     ScrollTrigger.create({
       trigger: section,
       containerAnimation: scrollTween,
-      start: "center 90%",
-      onEnter: () => {
-        section.classList.add("active");
+      start: "left center",
+      end: "right center",
+      onEnter: () => section.classList.add("active"),
+      onLeaveBack: () => section.classList.remove("active"),
+    });
+  });
+
+  gsap.utils.toArray("[data-ani]").forEach((el) => {
+    gsap.from(el, {
+      y: 80,
+      stagger: 0.2,
+      opacity: 0,
+      duration: 1,
+      scrollTrigger: {
+        trigger: el,
+        containerAnimation: scrollTween,
+        start: "left 90%",
+        toggleActions: "play none none reverse",
       },
-      onLeaveBack: () => {
-        section.classList.remove("active");
+    });
+  });
+
+  gsap.utils.toArray("[data-ani-2]").forEach((el) => {
+    gsap.from(el, {
+      x: -320,
+      stagger: 0.2,
+      opacity: 0,
+      duration: 1,
+      scrollTrigger: {
+        trigger: el,
+        containerAnimation: scrollTween,
+        start: "left 90%",
+        toggleActions: "play none none reverse",
       },
     });
   });
@@ -166,7 +194,7 @@ function backSvgMoveTool__init() {
 }
 // GSAP scrollToMenu ------------------------------ //
 function scrollToMenu__init() {
-  const sections = gsap.utils.toArray(".section");
+  const sections = gsap.utils.toArray(".horizontal-section");
 
   document.querySelectorAll(".header a").forEach((btn) => {
     btn.addEventListener("click", (e) => {
