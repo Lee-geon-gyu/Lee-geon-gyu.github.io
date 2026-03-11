@@ -7,57 +7,72 @@ gsap.registerPlugin(ScrollTrigger);
 let scrollTween;
 
 function scrollHorizon__init() {
-  const sections = gsap.utils.toArray(".horizontal-section");
+  const mm = gsap.matchMedia();
 
-  scrollTween = gsap.to(sections, {
-    xPercent: -100 * (sections.length - 1),
-    ease: "none",
-    scrollTrigger: {
-      trigger: ".main",
-      pin: true,
-      scrub: 1,
-      end: () => "+=" + window.innerWidth * (sections.length - 1),
-    },
-  });
+  mm.add("(min-width:1281px)", () => {
+    const sections = gsap.utils.toArray(".horizontal-section");
 
-  sections.forEach((section) => {
-    ScrollTrigger.create({
-      trigger: section,
-      containerAnimation: scrollTween,
-      start: "left center",
-      end: "right center",
-      onEnter: () => section.classList.add("active"),
-      onLeaveBack: () => section.classList.remove("active"),
-    });
-  });
-
-  gsap.utils.toArray("[data-ani]").forEach((el) => {
-    gsap.from(el, {
-      y: 80,
-      stagger: 0.2,
-      opacity: 0,
-      duration: 1,
+    scrollTween = gsap.to(sections, {
+      xPercent: -100 * (sections.length - 1),
+      ease: "none",
       scrollTrigger: {
-        trigger: el,
-        containerAnimation: scrollTween,
-        start: "left 90%",
-        toggleActions: "play none none reverse",
+        trigger: ".main",
+        pin: true,
+        scrub: 1,
+        end: () => "+=" + window.innerWidth * (sections.length - 1),
       },
     });
+
+    sections.forEach((section) => {
+      ScrollTrigger.create({
+        trigger: section,
+        containerAnimation: scrollTween,
+        start: "left center",
+        end: "right center",
+        onEnter: () => section.classList.add("active"),
+        onLeaveBack: () => section.classList.remove("active"),
+      });
+    });
+
+    gsap.utils.toArray("[data-ani]").forEach((el) => {
+      gsap.from(el, {
+        y: 80,
+        stagger: 0.2,
+        opacity: 0,
+        duration: 1,
+        scrollTrigger: {
+          trigger: el,
+          containerAnimation: scrollTween,
+          start: "left 90%",
+          toggleActions: "play none none reverse",
+        },
+      });
+    });
+
+    gsap.utils.toArray("[data-ani-2]").forEach((el) => {
+      gsap.from(el, {
+        x: -320,
+        stagger: 0.2,
+        opacity: 0,
+        duration: 1,
+        scrollTrigger: {
+          trigger: el,
+          containerAnimation: scrollTween,
+          start: "left 90%",
+          toggleActions: "play none none reverse",
+        },
+      });
+    });
+
+    return () => {
+      ScrollTrigger.getAll().forEach((st) => st.kill());
+      if (scrollTween) scrollTween.kill();
+    };
   });
 
-  gsap.utils.toArray("[data-ani-2]").forEach((el) => {
-    gsap.from(el, {
-      x: -320,
-      stagger: 0.2,
-      opacity: 0,
-      duration: 1,
-      scrollTrigger: {
-        trigger: el,
-        containerAnimation: scrollTween,
-        start: "left 90%",
-        toggleActions: "play none none reverse",
-      },
+  mm.add("(max-width:1280px)", () => {
+    gsap.set(".horizontal-section", {
+      clearProps: "all",
     });
   });
 }
