@@ -229,8 +229,8 @@ function scrollToMenu__init() {
     });
   });
 }
-// setupProjectPinAccordion ------------------------------ //
-function setupProjectPinAccordion() {
+// setupPinAccordion ------------------------------ //
+function setupPinAccordion() {
   const section = document.querySelector("#sec-project-list");
   const allItems = gsap.utils.toArray("#sec-project-list .sec-project-item");
 
@@ -271,7 +271,15 @@ function setupProjectPinAccordion() {
     height: 0,
     stagger: 0.5,
     ease: "none",
-  });
+  }).to(
+    items,
+    {
+      opacity: 0,
+      stagger: 0.5,
+      ease: "none",
+    },
+    "<",
+  );
 
   ScrollTrigger.refresh();
 }
@@ -280,7 +288,7 @@ scrollHorizon__init();
 scrollLeins__init();
 backSvgMoveTool__init();
 scrollToMenu__init();
-setupProjectPinAccordion();
+setupPinAccordion();
 // Resize Loaded ------------------------------ //
 history.scrollRestoration = "manual";
 
