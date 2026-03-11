@@ -231,66 +231,46 @@ function scrollToMenu__init() {
 }
 // setupProjectPinAccordion ------------------------------ //
 function setupProjectPinAccordion() {
-  const mm = gsap.matchMedia();
+  const section = document.querySelector("#sec-project-list");
+  const allItems = gsap.utils.toArray("#sec-project-list .sec-project-item");
 
-  mm.add("(min-width:1281px)", () => {
-    const section = document.querySelector("#sec-project-list");
-    const allItems = gsap.utils.toArray("#sec-project-list .sec-project-item");
+  if (!section || !allItems.length) return;
 
-    if (!section || !allItems.length) return;
+  ScrollTrigger.getById("proj-pin")?.kill(true);
+  gsap.killTweensOf(allItems);
 
-    ScrollTrigger.getById("proj-pin")?.kill(true);
-    gsap.killTweensOf(allItems);
-
-    allItems.forEach((el) => {
-      el.style.height = "";
-      el.style.overflow = "";
-    });
-
-    const items = gsap.utils.toArray("#sec-project-list .sec-project-item");
-
-    items.splice(items.length - 1, 1);
-
-    items.forEach((li) => (li.style.overflow = "hidden"));
-
-    const tl = gsap.timeline({
-      scrollTrigger: {
-        id: "proj-pin",
-        trigger: section,
-        start: "top top",
-        end: () =>
-          "+=" +
-          ((items.length - 1) * items[0].offsetHeight + window.innerHeight),
-        pin: true,
-        pinSpacing: false,
-        scrub: 1,
-        invalidateOnRefresh: true,
-      },
-    });
-
-    tl.to(items, {
-      height: 0,
-      stagger: 0.5,
-      ease: "none",
-    });
-
-    return () => {
-      ScrollTrigger.getById("proj-pin")?.kill();
-      gsap.set(allItems, { clearProps: "all" });
-    };
+  allItems.forEach((el) => {
+    el.style.height = "";
+    el.style.overflow = "";
   });
 
-  mm.add("(max-width:1280px)", () => {
-    const allItems = document.querySelectorAll(
-      "#sec-project-list .sec-project-item",
-    );
+  const items = gsap.utils.toArray("#sec-project-list .sec-project-item");
 
-    ScrollTrigger.getById("proj-pin")?.kill();
+  items.splice(items.length - 1, 1);
 
-    allItems.forEach((el) => {
-      el.style.height = "";
-      el.style.overflow = "";
-    });
+  items.forEach((li) => (li.style.overflow = "hidden"));
+
+  const tl = gsap.timeline({
+    scrollTrigger: {
+      id: "proj-pin",
+      trigger: section,
+      start: "top top",
+      end: () =>
+        "+=" +
+        ((items.length - 1) * items[0].offsetHeight +
+          window.innerHeight +
+          -120),
+      pin: true,
+      pinSpacing: false,
+      scrub: 1,
+      invalidateOnRefresh: true,
+    },
+  });
+
+  tl.to(items, {
+    height: 0,
+    stagger: 0.5,
+    ease: "none",
   });
 
   ScrollTrigger.refresh();
