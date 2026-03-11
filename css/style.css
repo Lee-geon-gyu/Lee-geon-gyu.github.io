@@ -72,7 +72,7 @@ html {
 html body {
   font-family: "Pretendard", sans-serif;
   max-width: 100%;
-  overflow-x: hidden;
+  overflow: hidden;
   position: relative;
   min-width: 1150px;
 }
@@ -217,11 +217,13 @@ header
 /* main ========================================= */
 main {
   font-family: "Pretendard";
+  position: relative;
+  overflow: hidden;
 }
 
 main > .horizontal-wrap {
   display: flex;
-  overflow: hidden;
+  height: 100dvh;
 }
 
 .bg-line-wrapper {
@@ -695,17 +697,28 @@ main > .horizontal-wrap {
   color: var(--primary-color);
 }
 /* main > sec-project-item ========================================= */
-.sec-project-item {
+#sec-project-list {
+  position: relative;
+  width: 100%;
+  background-color: var(--color-white);
+}
+
+#sec-project-list > .project-list-wrapper {
+  margin: 0;
+  padding: 0;
+}
+
+#sec-project-list > .project-list-wrapper > .sec-project-item {
   flex-shrink: 0;
   width: 100dvw;
   padding: var(--margin-grid-system);
   height: 100dvh;
-  position: relative;
-  padding-top: 6rem;
-  padding-bottom: 6rem;
 }
 
-.sec-project-item > .section-container {
+#sec-project-list
+  > .project-list-wrapper
+  > .sec-project-item
+  > .section-container {
   width: 100%;
   height: 100%;
   display: flex;
@@ -715,7 +728,11 @@ main > .horizontal-wrap {
   gap: 12rem;
 }
 
-.sec-project-item > .section-container > .top-box {
+#sec-project-list
+  > .project-list-wrapper
+  > .sec-project-item
+  > .section-container
+  > .top-box {
   width: 100%;
   display: flex;
   align-items: flex-end;
@@ -723,20 +740,34 @@ main > .horizontal-wrap {
   gap: 3.6rem;
 }
 
-.sec-project-item > .section-container > .top-box > .box-item-1 {
+#sec-project-list
+  > .project-list-wrapper
+  > .sec-project-item
+  > .section-container
+  > .top-box
+  > .box-item-1 {
   color: var(--primary-color);
   font-weight: 700;
   font-size: 10rem;
 }
 
-.sec-project-item > .section-container > .top-box > .box-item-2 {
+#sec-project-list
+  > .project-list-wrapper
+  > .sec-project-item
+  > .section-container
+  > .top-box
+  > .box-item-2 {
   color: var(--primary-color);
   font-weight: 700;
   font-size: 4rem;
   line-height: 2;
 }
 
-.sec-project-item > .section-container > .bottom-box {
+#sec-project-list
+  > .project-list-wrapper
+  > .sec-project-item
+  > .section-container
+  > .bottom-box {
   width: 100%;
   display: flex;
   align-items: center;
@@ -744,7 +775,12 @@ main > .horizontal-wrap {
   gap: 8.6rem;
 }
 
-.sec-project-item > .section-container > .bottom-box > .left-box {
+#sec-project-list
+  > .project-list-wrapper
+  > .sec-project-item
+  > .section-container
+  > .bottom-box
+  > .left-box {
   flex-grow: 1;
   flex-basis: 0;
   width: 100%;
@@ -754,17 +790,33 @@ main > .horizontal-wrap {
   border-radius: 1.6rem;
 }
 
-.sec-project-item > .section-container > .bottom-box > .left-box > img {
+#sec-project-list
+  > .project-list-wrapper
+  > .sec-project-item
+  > .section-container
+  > .bottom-box
+  > .left-box
+  > img {
   width: 100%;
   height: auto;
   object-fit: cover;
 }
 
-.sec-project-item > .section-container > .bottom-box > .left-box:hover {
+#sec-project-list
+  > .project-list-wrapper
+  > .sec-project-item
+  > .section-container
+  > .bottom-box
+  > .left-box:hover {
   animation: ImgMove 0.5s ease infinite alternate;
 }
 
-.sec-project-item > .section-container > .bottom-box > .right-box {
+#sec-project-list
+  > .project-list-wrapper
+  > .sec-project-item
+  > .section-container
+  > .bottom-box
+  > .right-box {
   flex-grow: 1;
   flex-basis: 0;
   width: 100%;
@@ -776,7 +828,13 @@ main > .horizontal-wrap {
   gap: 8.6rem;
 }
 
-.sec-project-item > .section-container > .bottom-box > .right-box > .top-box {
+#sec-project-list
+  > .project-list-wrapper
+  > .sec-project-item
+  > .section-container
+  > .bottom-box
+  > .right-box
+  > .top-box {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -784,7 +842,9 @@ main > .horizontal-wrap {
   gap: 2rem;
 }
 
-.sec-project-item
+#sec-project-list
+  > .project-list-wrapper
+  > .sec-project-item
   > .section-container
   > .bottom-box
   > .right-box
@@ -796,7 +856,9 @@ main > .horizontal-wrap {
   gap: 3.2em;
 }
 
-.sec-project-item
+#sec-project-list
+  > .project-list-wrapper
+  > .sec-project-item
   > .section-container
   > .bottom-box
   > .right-box
@@ -807,7 +869,9 @@ main > .horizontal-wrap {
   font-size: 3.2rem;
 }
 
-.sec-project-item
+#sec-project-list
+  > .project-list-wrapper
+  > .sec-project-item
   > .section-container
   > .bottom-box
   > .right-box
@@ -820,7 +884,9 @@ main > .horizontal-wrap {
   gap: 1.2rem;
 }
 
-.sec-project-item
+#sec-project-list
+  > .project-list-wrapper
+  > .sec-project-item
   > .section-container
   > .bottom-box
   > .right-box
@@ -834,7 +900,9 @@ main > .horizontal-wrap {
   line-height: 1.6;
 }
 
-.sec-project-item
+#sec-project-list
+  > .project-list-wrapper
+  > .sec-project-item
   > .section-container
   > .bottom-box
   > .right-box
@@ -846,7 +914,9 @@ main > .horizontal-wrap {
   justify-content: center;
 }
 
-.sec-project-item
+#sec-project-list
+  > .project-list-wrapper
+  > .sec-project-item
   > .section-container
   > .bottom-box
   > .right-box
@@ -857,7 +927,9 @@ main > .horizontal-wrap {
   font-size: 10rem;
 }
 
-.sec-project-item
+#sec-project-list
+  > .project-list-wrapper
+  > .sec-project-item
   > .section-container
   > .bottom-box
   > .right-box
@@ -868,7 +940,9 @@ main > .horizontal-wrap {
   font-size: 2rem;
 }
 
-.sec-project-item
+#sec-project-list
+  > .project-list-wrapper
+  > .sec-project-item
   > .section-container
   > .bottom-box
   > .right-box
@@ -878,7 +952,9 @@ main > .horizontal-wrap {
   line-height: 1.5;
 }
 
-.sec-project-item
+#sec-project-list
+  > .project-list-wrapper
+  > .sec-project-item
   > .section-container
   > .bottom-box
   > .right-box
@@ -889,7 +965,9 @@ main > .horizontal-wrap {
   gap: 1.6rem;
 }
 
-.sec-project-item
+#sec-project-list
+  > .project-list-wrapper
+  > .sec-project-item
   > .section-container
   > .bottom-box
   > .right-box
@@ -909,7 +987,9 @@ main > .horizontal-wrap {
   transition: all 0.1s ease-in-out;
 }
 
-.sec-project-item
+#sec-project-list
+  > .project-list-wrapper
+  > .sec-project-item
   > .section-container
   > .bottom-box
   > .right-box
@@ -919,7 +999,9 @@ main > .horizontal-wrap {
   transition: all 0.1s ease-in-out;
 }
 
-.sec-project-item
+#sec-project-list
+  > .project-list-wrapper
+  > .sec-project-item
   > .section-container
   > .bottom-box
   > .right-box
@@ -935,7 +1017,9 @@ main > .horizontal-wrap {
   z-index: -1;
 }
 
-.sec-project-item
+#sec-project-list
+  > .project-list-wrapper
+  > .sec-project-item
   > .section-container
   > .bottom-box
   > .right-box
@@ -944,7 +1028,9 @@ main > .horizontal-wrap {
   transform: scaleX(1);
 }
 
-.sec-project-item
+#sec-project-list
+  > .project-list-wrapper
+  > .sec-project-item
   > .section-container
   > .bottom-box
   > .right-box
@@ -957,7 +1043,9 @@ main > .horizontal-wrap {
   cursor: pointer;
 }
 
-.sec-project-item
+#sec-project-list
+  > .project-list-wrapper
+  > .sec-project-item
   > .section-container
   > .bottom-box
   > .right-box
@@ -970,7 +1058,9 @@ main > .horizontal-wrap {
   box-sizing: border-box;
 }
 
-.sec-project-item
+#sec-project-list
+  > .project-list-wrapper
+  > .sec-project-item
   > .section-container
   > .bottom-box
   > .right-box
@@ -980,7 +1070,9 @@ main > .horizontal-wrap {
   animation: ArrowMove 0.3s ease infinite alternate;
 }
 
-.sec-project-item
+#sec-project-list
+  > .project-list-wrapper
+  > .sec-project-item
   > .section-container
   > .bottom-box
   > .right-box
@@ -1019,6 +1111,11 @@ main > .horizontal-wrap {
     transform: translate(20%, -20%);
   }
 }
+
+.between-section {
+  width: 100dvw;
+  height: 100dvh;
+}
 /* footer ========================================= */
 footer {
   flex-shrink: 0;
@@ -1031,6 +1128,7 @@ footer {
   display: flex;
   align-items: center;
   justify-content: center;
+  background-color: var(--color-white);
 }
 
 footer > .top-box {
@@ -1136,6 +1234,7 @@ footer > .bottom-box > span {
 @media screen and (max-width: 1280px) {
   main > .horizontal-wrap {
     display: block;
+    height: 100%;
   }
 
   main > .horizontal-wrap > .horizontal-section {
@@ -1158,7 +1257,7 @@ footer > .bottom-box > span {
     height: 60dvh;
   }
 
-  main > .sec-project-item {
+  #sec-project-list > .project-list-wrapper > .sec-project-item {
     width: 100%;
     height: 80dvh;
   }

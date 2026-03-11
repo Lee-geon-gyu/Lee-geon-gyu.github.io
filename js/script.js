@@ -2,6 +2,7 @@ console.clear();
 
 AOS.init();
 gsap.registerPlugin(ScrollTrigger);
+gsap.registerPlugin(SplitText);
 
 // GSAP scrollHorizon ------------------------------ //
 let scrollTween;
@@ -65,8 +66,7 @@ function scrollHorizon__init() {
     });
 
     return () => {
-      ScrollTrigger.getAll().forEach((st) => st.kill());
-      if (scrollTween) scrollTween.kill();
+      scrollTween?.kill();
     };
   });
 
@@ -106,6 +106,8 @@ function scrollLeins__init() {
       },
     });
   });
+
+  ScrollTrigger.addEventListener("refresh", () => lenis.resize());
 }
 // backSvgMoveTool ------------------------------ //
 function backSvgMoveTool__init() {
@@ -227,8 +229,139 @@ function scrollToMenu__init() {
     });
   });
 }
+// setupProjectPinAccordion ------------------------------ //
+function setupProjectPinAccordion() {
+  const mm = gsap.matchMedia();
+
+  mm.add("(min-width:1281px)", () => {
+    const section = document.querySelector("#sec-project-list");
+    const allItems = gsap.utils.toArray("#sec-project-list .sec-project-item");
+
+    if (!section || !allItems.length) return;
+
+    ScrollTrigger.getById("proj-pin")?.kill(true);
+    gsap.killTweensOf(allItems);
+
+    allItems.forEach((el) => {
+      el.style.height = "";
+      el.style.overflow = "";
+    });
+
+    const items = gsap.utils.toArray("#sec-project-list .sec-project-item");
+
+    items.splice(items.length - 1, 1);
+
+    items.forEach((li) => (li.style.overflow = "hidden"));
+
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        id: "proj-pin",
+        trigger: section,
+        start: "top top",
+        end: () =>
+          "+=" +
+          ((items.length - 1) * items[0].offsetHeight + window.innerHeight),
+        pin: true,
+        pinSpacing: false,
+        scrub: 1,
+        invalidateOnRefresh: true,
+      },
+    });
+
+    tl.to(items, {
+      height: 0,
+      stagger: 0.5,
+      ease: "none",
+    });
+
+    return () => {
+      ScrollTrigger.getById("proj-pin")?.kill();
+      gsap.set(allItems, { clearProps: "all" });
+    };
+  });
+
+  mm.add("(max-width:1280px)", () => {
+    const allItems = document.querySelectorAll(
+      "#sec-project-list .sec-project-item",
+    );
+
+    ScrollTrigger.getById("proj-pin")?.kill();
+
+    allItems.forEach((el) => {
+      el.style.height = "";
+      el.style.overflow = "";
+    });
+  });
+
+  ScrollTrigger.refresh();
+}
 // Functions Operate Key ------------------------------ //
 scrollHorizon__init();
 scrollLeins__init();
 backSvgMoveTool__init();
 scrollToMenu__init();
+setupProjectPinAccordion();
+// Resize Loaded ------------------------------ //
+history.scrollRestoration = "manual";
+
+ScrollTrigger.config({
+  autoRefreshEvents: "visibilitychange,DOMContentLoaded,load,resize",
+});
+
+let resizeTimer;
+
+window.addEventListener("resize", () => {
+  clearTimeout(resizeTimer);
+
+  resizeTimer = setTimeout(() => {
+    window.scrollTo(0, 0);
+    location.reload();
+  }, 300);
+});
+
+window.onbeforeunload = function () {
+  window.scrollTo(0, 0);
+};
+
+window.addEventListener("load", () => {
+  window.scrollTo(0, 0);
+  ScrollTrigger.refresh();
+});
+// Resize Lock ------------------------------ //
+let isContactScroll = false;
+
+document.addEventListener("DOMContentLoaded", () => {
+  const contactBtn = document.querySelector(".btn-3 > a");
+  const footer = document.querySelector("footer");
+
+  if (!contactBtn || !footer) return;
+
+  contactBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+
+    isContactScroll = true;
+
+    gsap.to(window, {
+      scrollTo: footer,
+      duration: 1,
+      ease: "power2.out",
+      onComplete: () => {
+        setTimeout(() => {
+          isContactScroll = false;
+        }, 1000);
+      },
+    });
+  });
+});
+
+ScrollTrigger.addEventListener("refreshInit", () => {
+  if (isContactScroll) {
+    ScrollTrigger.getAll().forEach((st) => st.disable());
+  }
+});
+
+ScrollTrigger.addEventListener("refresh", () => {
+  if (isContactScroll) {
+    ScrollTrigger.getAll().forEach((st) => st.enable());
+  }
+});
