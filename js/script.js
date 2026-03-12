@@ -1,7 +1,7 @@
 console.clear();
 
 AOS.init();
-gsap.registerPlugin(ScrollTrigger);
+gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
 gsap.registerPlugin(SplitText);
 
 // GSAP scrollHorizon ------------------------------ //
@@ -231,57 +231,49 @@ function scrollToMenu__init() {
 }
 // setupPinAccordion ------------------------------ //
 function setupPinAccordion() {
-  const section = document.querySelector("#sec-project-list");
-  const allItems = gsap.utils.toArray("#sec-project-list .sec-project-item");
+  const mm = gsap.matchMedia();
 
-  if (!section || !allItems.length) return;
+  mm.add("(min-width: 1280px)", () => {
+    const section = document.querySelector("#sec-project-list");
+    const items = gsap.utils.toArray("#sec-project-list .sec-project-item");
 
-  ScrollTrigger.getById("proj-pin")?.kill(true);
-  gsap.killTweensOf(allItems);
+    if (!section || !items.length) return;
 
-  allItems.forEach((el) => {
-    el.style.height = "";
-    el.style.overflow = "";
-  });
+    const accordionItems = items.slice(0, -1);
 
-  const items = gsap.utils.toArray("#sec-project-list .sec-project-item");
+    accordionItems.forEach((li) => (li.style.overflow = "hidden"));
 
-  items.splice(items.length - 1, 1);
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        id: "proj-pin",
+        trigger: section,
+        start: "top top",
+        end: () =>
+          "+=" +
+          ((accordionItems.length - 1) * accordionItems[0].offsetHeight +
+            window.innerHeight -
+            120),
+        pin: true,
+        pinSpacing: false,
+        scrub: 1,
+        invalidateOnRefresh: true,
+      },
+    });
 
-  items.forEach((li) => (li.style.overflow = "hidden"));
-
-  const tl = gsap.timeline({
-    scrollTrigger: {
-      id: "proj-pin",
-      trigger: section,
-      start: "top top",
-      end: () =>
-        "+=" +
-        ((items.length - 1) * items[0].offsetHeight +
-          window.innerHeight +
-          -120),
-      pin: true,
-      pinSpacing: false,
-      scrub: 1,
-      invalidateOnRefresh: true,
-    },
-  });
-
-  tl.to(items, {
-    height: 0,
-    stagger: 0.5,
-    ease: "none",
-  }).to(
-    items,
-    {
-      opacity: 0,
+    tl.to(accordionItems, {
+      height: 0,
       stagger: 0.5,
       ease: "none",
-    },
-    "<",
-  );
-
-  ScrollTrigger.refresh();
+    }).to(
+      accordionItems,
+      {
+        opacity: 0,
+        stagger: 0.5,
+        ease: "none",
+      },
+      "<",
+    );
+  });
 }
 // Functions Operate Key ------------------------------ //
 scrollHorizon__init();
@@ -338,6 +330,99 @@ document.addEventListener("DOMContentLoaded", () => {
           isContactScroll = false;
         }, 1000);
       },
+    });
+  });
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+  const contactBtn = document.querySelector(".btn-2 > a");
+  const project = document.querySelector(".sec-project");
+
+  if (!contactBtn || !project) return;
+
+  const mm = gsap.matchMedia();
+
+  mm.add("(max-width: 1280px)", () => {
+    contactBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+
+      isContactScroll = true;
+
+      gsap.to(window, {
+        scrollTo: {
+          y: project,
+          autoKill: false,
+        },
+        duration: 1,
+        ease: "power2.out",
+        onComplete: () => {
+          setTimeout(() => {
+            isContactScroll = false;
+          }, 300);
+        },
+      });
+    });
+  });
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+  const contactBtn = document.querySelector(".btn-1 > a");
+  const about = document.querySelector(".sec-about");
+
+  if (!contactBtn || !about) return;
+
+  const mm = gsap.matchMedia();
+
+  mm.add("(max-width: 1280px)", () => {
+    contactBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+
+      isContactScroll = true;
+
+      gsap.to(window, {
+        scrollTo: {
+          y: about,
+          autoKill: false,
+        },
+        duration: 1,
+        ease: "power2.out",
+        onComplete: () => {
+          setTimeout(() => {
+            isContactScroll = false;
+          }, 300);
+        },
+      });
+    });
+  });
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+  const contactBtn = document.querySelector(".btn-home > a");
+  const cover = document.querySelector(".sec-cover");
+
+  if (!contactBtn || !cover) return;
+
+  const mm = gsap.matchMedia();
+
+  mm.add("(max-width: 1280px)", () => {
+    contactBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+
+      isContactScroll = true;
+
+      gsap.to(window, {
+        scrollTo: {
+          y: cover,
+          autoKill: false,
+        },
+        duration: 1,
+        ease: "power2.out",
+        onComplete: () => {
+          setTimeout(() => {
+            isContactScroll = false;
+          }, 300);
+        },
+      });
     });
   });
 });

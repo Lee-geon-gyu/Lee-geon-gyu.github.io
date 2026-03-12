@@ -691,10 +691,58 @@ main > .horizontal-wrap {
   right: 0;
 }
 
-.sec-project > .category-box {
+.sec-project > .category-box > span {
   font-weight: 700;
   font-size: 12rem;
   color: var(--primary-color);
+}
+
+.sec-project > .category-box {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 1.2rem;
+  margin-top: 4.8rem;
+}
+
+.sec-project > .category-box > .img-box {
+  width: 9.6rem;
+  height: auto;
+  box-sizing: border-box;
+}
+
+.sec-project > .category-box > .img-box > img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
+.sec-project:hover > .category-box > .img-box > img {
+  animation: ArrowDown 1s linear infinite;
+}
+
+@keyframes ArrowDown {
+  0% {
+    transform: translate(0%, 0%);
+    opacity: 1;
+  }
+  25% {
+    transform: translate(0%, 5%);
+    opacity: 0.75;
+  }
+  50% {
+    transform: translate(0%, 10%);
+    opacity: 0.5;
+  }
+  75% {
+    transform: translate(0%, 15%);
+    opacity: 0.25;
+  }
+  100% {
+    transform: translate(0%, 20%);
+    opacity: 0;
+  }
 }
 /* main > sec-project-item ========================================= */
 #sec-project-list {
