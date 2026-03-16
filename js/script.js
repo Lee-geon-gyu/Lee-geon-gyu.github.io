@@ -4,6 +4,114 @@ AOS.init();
 gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
 gsap.registerPlugin(SplitText);
 
+// GSAP loading ------------------------------ //
+let preventScroll;
+let preventKey;
+
+function disableUserInput() {
+  $("html, body").css({
+    overflow: "hidden",
+    height: "100%",
+  });
+
+  preventScroll = function (e) {
+    e.preventDefault();
+  };
+
+  window.addEventListener("wheel", preventScroll, { passive: false });
+  window.addEventListener("touchmove", preventScroll, { passive: false });
+
+  preventKey = function (e) {
+    const keys = [32, 37, 38, 39, 40];
+    if (keys.includes(e.keyCode)) {
+      e.preventDefault();
+    }
+  };
+
+  document.addEventListener("keydown", preventKey);
+}
+
+function enableUserInput() {
+  $("html, body").css({
+    overflow: "",
+    height: "",
+  });
+
+  window.removeEventListener("wheel", preventScroll);
+  window.removeEventListener("touchmove", preventScroll);
+  document.removeEventListener("keydown", preventKey);
+}
+
+function loading__init() {
+  window.addEventListener("load", () => {
+    disableUserInput();
+
+    const tl = gsap.timeline();
+
+    tl.to(".loading-text", {
+      duration: 1,
+      opacity: 1,
+    });
+
+    tl.to(".loading-text", {
+      y: "-100%",
+      duration: 0.8,
+      ease: "power2.inOut",
+    })
+
+      .to(
+        ".loading-name",
+        {
+          y: "0%",
+          duration: 0.8,
+          ease: "power2.inOut",
+        },
+        "<",
+      )
+
+      .to(".loading-name", {
+        scaleY: 0,
+        duration: 0.6,
+        delay: 1.2,
+      })
+
+      .to(
+        ".door-left",
+        {
+          x: "-100%",
+          duration: 0.6,
+          onStart: () => {
+            initAfterLoading();
+          },
+        },
+        "open",
+      )
+
+      .to(
+        ".door-right",
+        {
+          x: "100%",
+          duration: 0.6,
+        },
+        "open",
+      )
+
+      .to(".loading", {
+        opacity: 0,
+        duration: 0.5,
+
+        onComplete: () => {
+          document.querySelector(".loading").remove();
+
+          enableUserInput();
+
+          setTimeout(() => {
+            ScrollTrigger.refresh();
+          }, 100);
+        },
+      });
+  });
+}
 // GSAP scrollHorizon ------------------------------ //
 let scrollTween;
 
@@ -111,40 +219,38 @@ function scrollLeins__init() {
 }
 // backSvgMoveTool ------------------------------ //
 function backSvgMoveTool__init() {
-  document.addEventListener("DOMContentLoaded", () => {
-    const sections = document.querySelectorAll("section");
+  const sections = document.querySelectorAll("section");
 
-    window.addEventListener("scroll", checkTrigger);
-    checkTrigger();
+  window.addEventListener("scroll", checkTrigger);
+  checkTrigger();
 
-    function checkTrigger() {
-      sections.forEach((section) => {
-        const rect = section.getBoundingClientRect();
-        const paths = section.querySelectorAll(".draw-line");
+  function checkTrigger() {
+    sections.forEach((section) => {
+      const rect = section.getBoundingClientRect();
+      const paths = section.querySelectorAll(".draw-line");
 
-        if (!paths.length) return;
+      if (!paths.length) return;
 
-        const sectionMiddle = rect.left + rect.width / 2;
+      const sectionMiddle = rect.left + rect.width / 2;
 
-        if (
-          sectionMiddle <= window.innerWidth &&
-          sectionMiddle >= 0 &&
-          !section.dataset.playing
-        ) {
-          section.dataset.playing = "true";
+      if (
+        sectionMiddle <= window.innerWidth &&
+        sectionMiddle >= 0 &&
+        !section.dataset.playing
+      ) {
+        section.dataset.playing = "true";
 
-          setTimeout(() => {
-            runAnimation(section);
-          }, 500);
-        }
+        setTimeout(() => {
+          runAnimation(section);
+        }, 500);
+      }
 
-        if (sectionMiddle < 0 || sectionMiddle > window.innerWidth) {
-          section.dataset.playing = "";
-          resetPaths(section);
-        }
-      });
-    }
-  });
+      if (sectionMiddle < 0 || sectionMiddle > window.innerWidth) {
+        section.dataset.playing = "";
+        resetPaths(section);
+      }
+    });
+  }
 
   async function runAnimation(section) {
     const paths = section.querySelectorAll(".draw-line");
@@ -276,11 +382,14 @@ function setupPinAccordion() {
   });
 }
 // Functions Operate Key ------------------------------ //
-scrollHorizon__init();
-scrollLeins__init();
-backSvgMoveTool__init();
-scrollToMenu__init();
-setupPinAccordion();
+loading__init();
+function initAfterLoading() {
+  scrollHorizon__init();
+  scrollLeins__init();
+  backSvgMoveTool__init();
+  scrollToMenu__init();
+  setupPinAccordion();
+}
 // Resize Loaded ------------------------------ //
 history.scrollRestoration = "manual";
 

@@ -101,6 +101,62 @@ span {
   --primary-color: rgba(46, 102, 246, 1);
   --main-color-yellow: rgba(255, 174, 0, 1);
   --color-white: #fff;
+  --color-black: #000;
+}
+/* loading ------------------------------------------------------------ */
+.loading {
+  width: 100%;
+  height: 100dvh;
+  position: fixed;
+  inset: 0;
+  z-index: 150;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.loading > .loading-text-wrapper {
+  color: var(--color-white);
+  width: 100%;
+  height: 6.4rem;
+  font-weight: 600;
+  position: relative;
+  z-index: 300;
+  text-align: center;
+  overflow: hidden;
+}
+
+.loading > .loading-text-wrapper > .loading-text,
+.loading > .loading-text-wrapper > .loading-name {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  color: var(--color-white);
+  font-size: 5.6rem;
+  font-weight: 600;
+}
+
+.loading > .loading-text-wrapper > .loading-name {
+  transform: translateY(100%);
+}
+
+.loading > .door {
+  position: absolute;
+  top: 0;
+  width: 50%;
+  height: 100%;
+  background: var(--color-black);
+  z-index: 250;
+}
+
+.loading > .door-left {
+  left: 0;
+}
+
+.loading > .door-right {
+  right: 0;
 }
 /* header ------------------------------------------------------------ */
 header {
