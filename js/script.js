@@ -378,18 +378,26 @@ function setupPinAccordion() {
   items.forEach((item, i) => {
     if (i === 0) return;
 
-    tl.to(item, {
-      clipPath: "inset(0% 0% 0% 0%)",
-      ease: "power2.out",
-      duration: 1.2,
-    }, i);
+    tl.to(
+      item,
+      {
+        clipPath: "inset(0% 0% 0% 0%)",
+        ease: "power2.out",
+        duration: 1.2,
+      },
+      i,
+    );
 
     if (i !== items.length - 1) {
-      tl.to(items[i - 1], {
-        opacity: 0,
-        ease: "power1.out",
-        duration: 0.6,
-      }, i);
+      tl.to(
+        items[i - 1],
+        {
+          opacity: 0,
+          ease: "power1.out",
+          duration: 0.6,
+        },
+        i,
+      );
     }
   });
 }
