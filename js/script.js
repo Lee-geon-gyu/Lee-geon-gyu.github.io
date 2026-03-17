@@ -185,8 +185,10 @@ function scrollHorizon__init() {
   });
 }
 // GSAP scrollLeins ------------------------------ //
+let lenis;
+
 function scrollLeins__init() {
-  const lenis = new Lenis({
+  lenis = new Lenis({
     lerp: 0.055,
     easing: (t) => t,
     smooth: true,
@@ -336,49 +338,59 @@ function scrollToMenu__init() {
   });
 }
 // setupPinAccordion ------------------------------ //
+let resizeTimer;
+
 function setupPinAccordion() {
-  const mm = gsap.matchMedia();
+  const section = document.querySelector("#sec-project-list");
+  const items = gsap.utils.toArray(".sec-project-item");
 
-  mm.add("(min-width: 1280px)", () => {
-    const section = document.querySelector("#sec-project-list");
-    const items = gsap.utils.toArray("#sec-project-list .sec-project-item");
+  if (!section || items.length === 0) return;
 
-    if (!section || !items.length) return;
+  const isMobile = window.innerWidth <= 768;
 
-    const accordionItems = items.slice(0, -1);
+  ScrollTrigger.getById("proj-pin")?.kill();
+  gsap.killTweensOf(items);
+  gsap.set(items, { clearProps: "all" });
 
-    accordionItems.forEach((li) => (li.style.overflow = "hidden"));
+  if (isMobile) return;
 
-    const tl = gsap.timeline({
-      scrollTrigger: {
-        id: "proj-pin",
-        trigger: section,
-        start: "top top",
-        end: () =>
-          "+=" +
-          ((accordionItems.length - 1) * accordionItems[0].offsetHeight +
-            window.innerHeight -
-            120),
-        pin: true,
-        pinSpacing: false,
-        scrub: 1,
-        invalidateOnRefresh: true,
-      },
-    });
+  gsap.set(items, {
+    clipPath: "inset(100% 0% 0% 0%)",
+    opacity: 1,
+  });
 
-    tl.to(accordionItems, {
-      height: 0,
-      stagger: 0.5,
-      ease: "none",
-    }).to(
-      accordionItems,
-      {
+  gsap.set(items[0], {
+    clipPath: "inset(0% 0% 0% 0%)",
+  });
+
+  const tl = gsap.timeline({
+    scrollTrigger: {
+      id: "proj-pin",
+      trigger: section,
+      start: "top top",
+      end: () => "+=" + window.innerHeight * (items.length - 1),
+      pin: true,
+      scrub: 2.4,
+      invalidateOnRefresh: true,
+    },
+  });
+
+  items.forEach((item, i) => {
+    if (i === 0) return;
+
+    tl.to(item, {
+      clipPath: "inset(0% 0% 0% 0%)",
+      ease: "power2.out",
+      duration: 1.2,
+    }, i);
+
+    if (i !== items.length - 1) {
+      tl.to(items[i - 1], {
         opacity: 0,
-        stagger: 0.5,
-        ease: "none",
-      },
-      "<",
-    );
+        ease: "power1.out",
+        duration: 0.6,
+      }, i);
+    }
   });
 }
 // Functions Operate Key ------------------------------ //
@@ -397,27 +409,24 @@ ScrollTrigger.config({
   autoRefreshEvents: "visibilitychange,DOMContentLoaded,load,resize",
 });
 
-let resizeTimer;
-
 window.addEventListener("resize", () => {
   clearTimeout(resizeTimer);
 
   resizeTimer = setTimeout(() => {
-    window.scrollTo(0, 0);
-    location.reload();
+    setupPinAccordion();
+    ScrollTrigger.refresh();
   }, 300);
 });
 
-window.onbeforeunload = function () {
-  window.scrollTo(0, 0);
-};
-
 window.addEventListener("load", () => {
-  window.scrollTo(0, 0);
   ScrollTrigger.refresh();
 });
 // Resize Lock ------------------------------ //
 let isContactScroll = false;
+
+document.addEventListener("DOMContentLoaded", () => {
+  setupPinAccordion();
+});
 
 document.addEventListener("DOMContentLoaded", () => {
   const contactBtn = document.querySelector(".btn-3 > a");
@@ -430,11 +439,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
     isContactScroll = true;
 
-    gsap.to(window, {
-      scrollTo: footer,
-      duration: 1,
-      ease: "power2.out",
+    lenis.scrollTo(footer, {
+      duration: 1.2,
+      onStart: () => {
+        ScrollTrigger.getAll().forEach((st) => st.disable());
+      },
       onComplete: () => {
+        ScrollTrigger.getAll().forEach((st) => st.enable());
+
         setTimeout(() => {
           isContactScroll = false;
         }, 1000);
@@ -467,7 +479,7 @@ document.addEventListener("DOMContentLoaded", () => {
         onComplete: () => {
           setTimeout(() => {
             isContactScroll = false;
-          }, 300);
+          }, 1000);
         },
       });
     });
@@ -498,7 +510,7 @@ document.addEventListener("DOMContentLoaded", () => {
         onComplete: () => {
           setTimeout(() => {
             isContactScroll = false;
-          }, 300);
+          }, 1000);
         },
       });
     });
@@ -529,7 +541,7 @@ document.addEventListener("DOMContentLoaded", () => {
         onComplete: () => {
           setTimeout(() => {
             isContactScroll = false;
-          }, 300);
+          }, 1000);
         },
       });
     });
