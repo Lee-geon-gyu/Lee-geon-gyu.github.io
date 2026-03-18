@@ -57,6 +57,7 @@ function loading__init() {
       y: "-100%",
       duration: 0.8,
       ease: "power2.inOut",
+      delay: 1.2,
     })
 
       .to(
