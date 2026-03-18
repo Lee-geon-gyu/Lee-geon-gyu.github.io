@@ -806,6 +806,10 @@ main > .horizontal-wrap {
   z-index: 5;
 }
 
+#sec-project-list > .project-list-wrapper > .sec-project-item:nth-child(5) {
+  z-index: 6;
+}
+
 #sec-project-list
   > .project-list-wrapper
   > .sec-project-item
@@ -872,7 +876,7 @@ main > .horizontal-wrap {
   > .section-container
   > .bottom-box
   > .left-box {
-  flex-grow: 1;
+  flex-grow: 1.3;
   flex-basis: 0;
   width: 100%;
   height: auto;

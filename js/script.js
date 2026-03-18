@@ -392,6 +392,7 @@ function setupPinAccordion() {
       tl.to(
         items[i - 1],
         {
+          backgroundColor: "#f0f0f0",
           opacity: 0,
           ease: "power1.out",
           duration: 0.6,
