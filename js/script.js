@@ -557,7 +557,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 });
-
+// Refresh tools ------------------------------ //
 ScrollTrigger.addEventListener("refreshInit", () => {
   if (isContactScroll) {
     ScrollTrigger.getAll().forEach((st) => st.disable());

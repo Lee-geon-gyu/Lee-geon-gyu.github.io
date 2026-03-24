@@ -1356,7 +1356,7 @@ footer > .bottom-box > span {
 
 @media screen and (max-width: 768px) {
   main > .horizontal-wrap > .sec-project {
-    height: 40dvh;
+    height: 42.5dvh;
   }
 
   #sec-project-list {
