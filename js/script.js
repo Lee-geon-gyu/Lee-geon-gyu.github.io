@@ -351,13 +351,25 @@ function setupPinAccordion() {
 
   ScrollTrigger.getById("proj-pin")?.kill();
   gsap.killTweensOf(items);
+
   gsap.set(items, { clearProps: "all" });
 
-  if (isMobile) return;
+  gsap.set(section, {
+    position: "relative",
+    height: window.innerHeight,
+    overflow: "hidden",
+  });
 
   gsap.set(items, {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    xPercent: -50,
+    yPercent: -50,
+    width: "100%",
     clipPath: "inset(100% 0% 0% 0%)",
     opacity: 1,
+    willChange: "clip-path, opacity",
   });
 
   gsap.set(items[0], {
@@ -369,9 +381,11 @@ function setupPinAccordion() {
       id: "proj-pin",
       trigger: section,
       start: "top top",
-      end: () => "+=" + window.innerHeight * (items.length - 1),
+      end: () => "+=" + window.innerHeight * items.length,
       pin: true,
-      scrub: 2.4,
+      pinSpacing: true,
+      scrub: isMobile ? 1.2 : 2.4,
+      anticipatePin: 1,
       invalidateOnRefresh: true,
     },
   });
@@ -383,24 +397,21 @@ function setupPinAccordion() {
       item,
       {
         clipPath: "inset(0% 0% 0% 0%)",
+        duration: 1,
         ease: "power2.out",
-        duration: 1.2,
       },
       i,
     );
 
-    if (i !== items.length - 1) {
-      tl.to(
-        items[i - 1],
-        {
-          backgroundColor: "#f0f0f0",
-          opacity: 0,
-          ease: "power1.out",
-          duration: 0.6,
-        },
-        i,
-      );
-    }
+    tl.to(
+      items[i - 1],
+      {
+        opacity: 0,
+        duration: 0.6,
+        ease: "power1.out",
+      },
+      i,
+    );
   });
 }
 // Functions Operate Key ------------------------------ //

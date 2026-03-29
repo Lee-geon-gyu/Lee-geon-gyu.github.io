@@ -74,6 +74,7 @@ html body {
   max-width: 100%;
   overflow: hidden;
   position: relative;
+  min-width: 746px;
 }
 
 header,
@@ -377,6 +378,7 @@ main > .horizontal-wrap {
   justify-content: center;
   align-items: center;
   gap: 2rem;
+  margin-top: 2.4rem;
 }
 
 .sec-about > .section-container > .category-wrapper {
@@ -865,6 +867,7 @@ main > .horizontal-wrap {
   > .bottom-box {
   width: 100%;
   display: flex;
+
   align-items: center;
   justify-content: center;
   gap: 8.6rem;
@@ -1328,6 +1331,10 @@ footer > .bottom-box > span {
 }
 /* media screen ========================================= */
 @media screen and (max-width: 1280px) {
+  html {
+    font-size: 0.62083333vw;
+  }
+
   main > .horizontal-wrap {
     display: block;
     height: 100%;
@@ -1355,8 +1362,58 @@ footer > .bottom-box > span {
 }
 
 @media screen and (max-width: 768px) {
+  html {
+    font-size: 4.8px;
+  }
+
+  main > .horizontal-wrap > .sec-cover {
+    height: 80dvh;
+  }
+
   main > .horizontal-wrap > .sec-project {
-    height: 42.5dvh;
+    height: 40dvh;
+  }
+
+  main
+    > .horizontal-wrap
+    > .sec-about
+    > .section-container
+    > .category-wrapper {
+    display: flex;
+    justify-content: center;
+  }
+
+  main > .horizontal-wrap > .sec-about > .section-container > .content-wrapper {
+    flex-direction: column;
+    gap: 8rem;
+  }
+
+  main
+    > .horizontal-wrap
+    > .sec-about
+    > .section-container
+    > .content-wrapper
+    > .about-left-box {
+    align-items: center;
+  }
+
+  main
+    > .horizontal-wrap
+    > .sec-about
+    > .section-container
+    > .content-wrapper
+    > .about-left-box
+    > .profile-img-box {
+    align-items: center;
+  }
+
+  main
+    > .horizontal-wrap
+    > .sec-about
+    > .section-container
+    > .content-wrapper
+    > .about-right-box {
+    margin-left: 12rem;
   }
 
   #sec-project-list {
@@ -1383,7 +1440,16 @@ footer > .bottom-box > span {
     clip-path: none;
   }
 
+  #sec-project-list
+    > .project-list-wrapper
+    > .sec-project-item
+    > .section-container
+    > .bottom-box
+    > .right-box {
+    flex-direction: default;
+  }
+
   footer {
-    height: 50dvh;
+    height: 60dvh;
   }
 }
