@@ -1290,6 +1290,7 @@ footer > .top-box > .right-box > .right-box-items-btn {
   align-items: center;
   justify-content: center;
   gap: 1.4rem;
+  margin-top: 1.6rem;
 }
 
 footer > .top-box > .right-box > .right-box-items-btn > a {
