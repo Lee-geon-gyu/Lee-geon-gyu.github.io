@@ -74,7 +74,6 @@ html body {
   max-width: 100%;
   overflow: hidden;
   position: relative;
-  min-width: 746px;
 }
 
 header,
@@ -1371,6 +1370,10 @@ footer > .bottom-box > span {
     height: 80dvh;
   }
 
+  main > .horizontal-wrap > .sec-cover > .bg-line-wrapper {
+    display: none;
+  }
+
   main > .horizontal-wrap > .sec-project {
     height: 40dvh;
   }
@@ -1445,12 +1448,46 @@ footer > .bottom-box > span {
     > .project-list-wrapper
     > .sec-project-item
     > .section-container
+    > .bottom-box {
+    flex-direction: column;
+    height: 80dvh;
+  }
+
+  #sec-project-list
+    > .project-list-wrapper
+    > .sec-project-item
+    > .section-container
     > .bottom-box
     > .right-box {
     flex-direction: default;
   }
 
+  #sec-project-list
+    > .project-list-wrapper
+    > .sec-project-item
+    > .section-container
+    > .bottom-box
+    > .right-box
+    > .bottom-box {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+  }
+
   footer {
-    height: 60dvh;
+    height: 50dvh;
+  }
+
+  footer > .top-box {
+    flex-direction: column;
+    gap: 5.4rem;
+  }
+
+  footer > .top-box > .left-box {
+    justify-content: center;
+  }
+
+  footer > .top-box > .right-box {
+    align-items: center;
   }
 }
