@@ -112,6 +112,7 @@ span {
   display: flex;
   align-items: center;
   justify-content: center;
+  min-width: 375px;
 }
 
 .loading > .loading-text-wrapper {
@@ -125,7 +126,7 @@ span {
   overflow: hidden;
 }
 
-.loading > .loading-text-wrapper > .loading-text,
+.loading > .loading-text-wrapper > .loading-text-1,
 .loading > .loading-text-wrapper > .loading-name {
   position: absolute;
   top: 0;
@@ -134,6 +135,18 @@ span {
   text-align: center;
   color: var(--color-white);
   font-size: 5.6rem;
+  font-weight: 600;
+}
+
+.loading > .loading-text-wrapper > .loading-text-2 {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  color: var(--color-white);
+  font-size: 5.2rem;
   font-weight: 600;
 }
 
@@ -170,6 +183,7 @@ header {
   font-family: "Pretendard";
   background-color: rgba(240, 240, 240, 0.2);
   backdrop-filter: blur(10px);
+  min-width: 375px;
 }
 
 header > .hd-container {
@@ -319,6 +333,7 @@ main > .horizontal-wrap {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  min-width: 375px;
 }
 
 .sec-cover > .cover-title {
@@ -361,6 +376,7 @@ main > .horizontal-wrap {
   padding-top: 6rem;
   padding-bottom: 6rem;
   overflow: hidden;
+  min-width: 375px;
 }
 
 .sec-about > .bg-line-wrapper > .bg-line {
@@ -702,6 +718,7 @@ main > .horizontal-wrap {
   display: flex;
   justify-content: center;
   align-items: center;
+  min-width: 375px;
 }
 
 .sec-project > .bg-line-wrapper > .bg-line {
@@ -770,6 +787,7 @@ main > .horizontal-wrap {
   height: 100dvh;
   background-color: var(--color-white);
   overflow: hidden;
+  min-width: 375px;
 }
 
 #sec-project-list > .project-list-wrapper {
@@ -1226,6 +1244,7 @@ footer {
   align-items: center;
   justify-content: center;
   background-color: var(--color-white);
+  min-width: 375px;
 }
 
 footer > .top-box {
@@ -1335,6 +1354,23 @@ footer > .bottom-box > span {
     font-size: 0.62083333vw;
   }
 
+  header {
+    padding: 5.6rem 5.6rem;
+  }
+
+  header > .hd-container > .left-box > .portfolio-text {
+    font-size: 16px;
+  }
+
+  header
+    > .hd-container
+    > .right-box
+    > .short-btn-wrapper
+    > .short-btn
+    > .right-box {
+    font-size: 12px;
+  }
+
   main > .horizontal-wrap {
     display: block;
     height: 100%;
@@ -1353,7 +1389,7 @@ footer > .bottom-box > span {
   }
 
   main > .horizontal-wrap > .sec-project {
-    height: 40dvh;
+    height: 60dvh;
   }
 
   footer {
@@ -1509,6 +1545,18 @@ footer > .bottom-box > span {
 }
 
 @media screen and (max-width: 560px) {
+  header > .hd-container > .right-box > .short-btn-wrapper {
+    gap: 3.6rem;
+  }
+
+  .loading > .loading-text-wrapper > .loading-text-1 {
+    display: none;
+  }
+
+  .loading > .loading-text-wrapper > .loading-text-2 {
+    display: block;
+  }
+
   .sec-cover > .cover-title > .bottom-box {
     font-size: 12rem;
   }
@@ -1556,5 +1604,16 @@ footer > .bottom-box > span {
     > .top-box {
     flex-direction: column;
     align-items: flex-start;
+  }
+}
+
+@media screen and (max-width: 458px) {
+  header
+    > .hd-container
+    > .right-box
+    > .short-btn-wrapper
+    > .short-btn
+    > .right-box {
+    font-size: 10px;
   }
 }
