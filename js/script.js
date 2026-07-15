@@ -7,6 +7,7 @@ gsap.registerPlugin(SplitText);
 // GSAP loading ------------------------------ //
 let preventScroll;
 let preventKey;
+let cancelLoadingTyping;
 
 function disableUserInput() {
   $("html, body").css({
@@ -42,75 +43,109 @@ function enableUserInput() {
   document.removeEventListener("keydown", preventKey);
 }
 
+function typeLoadingText(element, cursorElement = element, interval = 200) {
+  const text = element.textContent.trim();
+  element.textContent = "";
+  element.style.opacity = 1;
+  cursorElement.classList.add("is-typing");
+
+  return new Promise((resolve) => {
+    let index = 0;
+    let completed = false;
+    const finish = () => {
+      if (completed) return;
+      completed = true;
+      clearInterval(timer);
+      cancelLoadingTyping = undefined;
+      cursorElement.classList.remove("is-typing");
+      resolve();
+    };
+    const timer = setInterval(() => {
+      element.textContent += text[index] || "";
+      index += 1;
+      if (index >= text.length) {
+        setTimeout(finish, interval);
+      }
+    }, interval);
+    cancelLoadingTyping = finish;
+  });
+}
+
 function loading__init() {
-  window.addEventListener("load", () => {
+  window.addEventListener("load", async () => {
     disableUserInput();
 
-    const tl = gsap.timeline();
+    const loading = document.querySelector(".loading");
+    const loadingText = [...document.querySelectorAll(".loading-text")].find(
+      (element) => window.getComputedStyle(element).display !== "none",
+    );
+    const loadingName = document.querySelector(".loading-name");
+    const loadingNameText = loadingName?.querySelector("i");
+    const skipButton = document.querySelector(".loading-skip");
+    let finished = false;
 
-    tl.to(".loading-text", {
-      duration: 1,
-      opacity: 1,
-    });
+    const finishLoading = (skipped = false) => {
+      if (!loading || finished) return;
+      finished = true;
+      cancelLoadingTyping?.();
+      skipButton?.removeEventListener("click", skipLoading);
+      document.removeEventListener("keydown", handleSkipKeydown);
 
-    tl.to(".loading-text", {
-      y: "-100%",
-      duration: 0.8,
-      ease: "power2.inOut",
-      delay: 1.2,
-    })
+      if (skipped) {
+        gsap.set(".loading-text-wrapper", { opacity: 0 });
+      }
 
-      .to(
-        ".loading-name",
-        {
-          y: "0%",
-          duration: 0.8,
-          ease: "power2.inOut",
-        },
-        "<",
-      )
+      gsap
+        .timeline()
+        .to(".loading-reveal", {
+          scale: 80,
+          duration: 0.75,
+          ease: "power4.in",
+          onStart: initAfterLoading,
+        })
+        .to(loading, {
+          opacity: 0,
+          duration: 0.1,
+          onComplete: () => {
+            loading.remove();
+            enableUserInput();
+            setTimeout(() => ScrollTrigger.refresh(), 100);
+          },
+        });
+    };
 
-      .to(".loading-name", {
+    const skipLoading = () => finishLoading(true);
+    const handleSkipKeydown = (event) => {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        skipLoading();
+      }
+    };
+    skipButton?.addEventListener("click", skipLoading);
+    document.addEventListener("keydown", handleSkipKeydown);
+
+    if (loadingText) {
+      await typeLoadingText(loadingText);
+      if (finished) return;
+      await gsap.to(loadingText, {
+        y: "-100%",
+        duration: 0.8,
+        ease: "power2.inOut",
+      });
+    }
+
+    if (loadingName && loadingNameText) {
+      gsap.set(loadingName, { y: "0%", opacity: 1 });
+      await typeLoadingText(loadingNameText, loadingName);
+      if (finished) return;
+      await gsap.to(loadingName, {
         scaleY: 0,
         duration: 0.6,
-        delay: 1.2,
-      })
-
-      .to(
-        ".door-left",
-        {
-          x: "-100%",
-          duration: 0.6,
-          onStart: () => {
-            initAfterLoading();
-          },
-        },
-        "open",
-      )
-
-      .to(
-        ".door-right",
-        {
-          x: "100%",
-          duration: 0.6,
-        },
-        "open",
-      )
-
-      .to(".loading", {
-        opacity: 0,
-        duration: 0.5,
-
-        onComplete: () => {
-          document.querySelector(".loading").remove();
-
-          enableUserInput();
-
-          setTimeout(() => {
-            ScrollTrigger.refresh();
-          }, 100);
-        },
+        delay: 0.7,
       });
+    }
+
+    finishLoading();
   });
 }
 // GSAP scrollHorizon ------------------------------ //
@@ -122,15 +157,36 @@ function scrollHorizon__init() {
   mm.add("(min-width:1281px)", () => {
     const sections = gsap.utils.toArray(".horizontal-section");
 
-    scrollTween = gsap.to(sections, {
-      xPercent: -100 * (sections.length - 1),
-      ease: "none",
+    const holdDuration = 0.25;
+    scrollTween = gsap.timeline({
       scrollTrigger: {
         trigger: ".main",
         pin: true,
         scrub: 1,
-        end: () => "+=" + window.innerWidth * (sections.length - 1),
+        end: () =>
+          "+=" +
+          window.innerWidth *
+            (sections.length - 1 + sections.length * holdDuration),
+        snap: {
+          snapTo: "labelsDirectional",
+          duration: { min: 0.15, max: 0.5 },
+          delay: 0.05,
+          ease: "power1.inOut",
+        },
       },
+    });
+
+    scrollTween.addLabel("slide-0").to({}, { duration: holdDuration });
+    sections.slice(1).forEach((_, index) => {
+      const slide = index + 1;
+      scrollTween
+        .to(sections, {
+          xPercent: -100 * slide,
+          duration: 1,
+          ease: "none",
+        })
+        .addLabel(`slide-${slide}`)
+        .to({}, { duration: holdDuration });
     });
 
     sections.forEach((section) => {
@@ -159,20 +215,31 @@ function scrollHorizon__init() {
       });
     });
 
-    gsap.utils.toArray("[data-ani-2]").forEach((el) => {
-      gsap.from(el, {
-        x: -320,
-        stagger: 0.2,
-        opacity: 0,
-        duration: 1,
-        scrollTrigger: {
-          trigger: el,
-          containerAnimation: scrollTween,
-          start: "left 90%",
-          toggleActions: "play none none reverse",
-        },
-      });
+    gsap.from(".sec-cover [data-ani-2]", {
+      x: -320,
+      opacity: 0,
+      duration: 0.8,
+      stagger: 0.15,
+      ease: "power2.out",
     });
+
+    gsap.utils
+      .toArray("[data-ani-2]")
+      .filter((el) => !el.closest(".sec-cover"))
+      .forEach((el) => {
+        gsap.from(el, {
+          x: -320,
+          stagger: 0.2,
+          opacity: 0,
+          duration: 1,
+          scrollTrigger: {
+            trigger: el,
+            containerAnimation: scrollTween,
+            start: "left 90%",
+            toggleActions: "play none none reverse",
+          },
+        });
+      });
 
     return () => {
       scrollTween?.kill();
@@ -344,15 +411,18 @@ let resizeTimer;
 function setupPinAccordion() {
   const section = document.querySelector("#sec-project-list");
   const items = gsap.utils.toArray(".sec-project-item");
+  const footer = document.querySelector("footer");
 
-  if (!section || items.length === 0) return;
+  if (!section || items.length === 0 || !footer) return;
 
-  const isMobile = window.innerWidth <= 768;
+  const isMobile = window.matchMedia("(max-width: 768px)").matches;
 
   ScrollTrigger.getById("proj-pin")?.kill();
-  gsap.killTweensOf(items);
+  gsap.killTweensOf([...items, footer]);
 
-  gsap.set(items, { clearProps: "all" });
+  // 모바일과 태블릿에서는 CSS의 세로형 프로젝트 목록을 그대로 사용한다.
+  // 데스크톱 전용 핀/겹침 효과가 인라인 스타일로 반응형 CSS를 덮지 않도록 한다.
+  gsap.set([...items, footer], { clearProps: "all" });
 
   gsap.set(section, {
     position: "relative",
@@ -369,11 +439,22 @@ function setupPinAccordion() {
     width: "100%",
     clipPath: "inset(100% 0% 0% 0%)",
     opacity: 1,
-    willChange: "clip-path, opacity",
+    filter: "blur(0px)",
+    willChange: "clip-path, opacity, filter",
   });
 
   gsap.set(items[0], {
     clipPath: "inset(0% 0% 0% 0%)",
+  });
+
+  gsap.set(footer, {
+    position: "fixed",
+    left: 0,
+    bottom: 0,
+    width: "100%",
+    yPercent: 100,
+    zIndex: 20,
+    willChange: "transform",
   });
 
   const tl = gsap.timeline({
@@ -381,7 +462,7 @@ function setupPinAccordion() {
       id: "proj-pin",
       trigger: section,
       start: "top top",
-      end: () => "+=" + window.innerHeight * items.length,
+      end: () => "+=" + window.innerHeight * (items.length + 1),
       pin: true,
       pinSpacing: true,
       scrub: isMobile ? 1.2 : 2.4,
@@ -406,13 +487,34 @@ function setupPinAccordion() {
     tl.to(
       items[i - 1],
       {
-        opacity: 0,
-        duration: 0.6,
+        filter: "blur(16px)",
+        opacity: 0.45,
+        duration: 0.2,
         ease: "power1.out",
       },
       i,
     );
   });
+
+  const footerStart = items.length;
+  tl.to(
+    items[items.length - 1],
+    {
+      filter: "blur(16px)",
+      opacity: 0.45,
+      duration: 0.2,
+      ease: "power1.out",
+    },
+    footerStart,
+  ).to(
+    footer,
+    {
+      yPercent: 0,
+      duration: 1,
+      ease: "power3.out",
+    },
+    footerStart,
+  );
 }
 // Functions Operate Key ------------------------------ //
 loading__init();
