@@ -1065,6 +1065,7 @@ main > .horizontal-wrap {
   font-size: 2rem;
   font-weight: 400;
   line-height: 1.5;
+  height: 7rem;
 }
 
 #sec-project-list
