@@ -4,6 +4,28 @@ AOS.init();
 gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
 gsap.registerPlugin(SplitText);
 
+// Header Scroll slide ------------------------------ //
+function HeaderSlider__init() {
+  const header = document.querySelector("header");
+
+  let lastScroll = 0;
+
+  window.addEventListener("scroll", () => {
+    const currentScroll = window.pageYOffset;
+
+    if (currentScroll <= 0) {
+      header.classList.remove("hide");
+      return;
+    }
+    if (currentScroll > lastScroll) {
+      header.classList.add("hide");
+    } else {
+      header.classList.remove("hide");
+    }
+
+    lastScroll = currentScroll;
+  });
+}
 // GSAP loading ------------------------------ //
 let preventScroll;
 let preventKey;
@@ -167,12 +189,6 @@ function scrollHorizon__init() {
           "+=" +
           window.innerWidth *
             (sections.length - 1 + sections.length * holdDuration),
-        snap: {
-          snapTo: "labelsDirectional",
-          duration: { min: 0.15, max: 0.5 },
-          delay: 0.05,
-          ease: "power1.inOut",
-        },
       },
     });
 
@@ -250,6 +266,22 @@ function scrollHorizon__init() {
     gsap.set(".horizontal-section", {
       clearProps: "all",
     });
+  });
+}
+
+// Header color in project list ------------------------------ //
+function HeaderProjectColor__init() {
+  const header = document.querySelector("header");
+  const projectList = document.querySelector("#sec-project-list");
+
+  if (!header || !projectList) return;
+
+  ScrollTrigger.create({
+    id: "header-project-color",
+    trigger: projectList,
+    start: "top bottom",
+    onEnter: () => header.classList.add("is-project-list"),
+    onLeaveBack: () => header.classList.remove("is-project-list"),
   });
 }
 // GSAP scrollLeins ------------------------------ //
@@ -420,8 +452,6 @@ function setupPinAccordion() {
   ScrollTrigger.getById("proj-pin")?.kill();
   gsap.killTweensOf([...items, footer]);
 
-  // 모바일과 태블릿에서는 CSS의 세로형 프로젝트 목록을 그대로 사용한다.
-  // 데스크톱 전용 핀/겹침 효과가 인라인 스타일로 반응형 CSS를 덮지 않도록 한다.
   gsap.set([...items, footer], { clearProps: "all" });
 
   gsap.set(section, {
@@ -519,8 +549,10 @@ function setupPinAccordion() {
 // Functions Operate Key ------------------------------ //
 loading__init();
 function initAfterLoading() {
+  HeaderSlider__init();
   scrollHorizon__init();
   scrollLeins__init();
+  HeaderProjectColor__init();
   backSvgMoveTool__init();
   scrollToMenu__init();
   setupPinAccordion();
