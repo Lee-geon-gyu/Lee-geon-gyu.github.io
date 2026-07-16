@@ -284,6 +284,41 @@ function HeaderProjectColor__init() {
     onLeaveBack: () => header.classList.remove("is-project-list"),
   });
 }
+
+// Header color in about section ------------------------------ //
+function HeaderAboutColor__init() {
+  const header = document.querySelector("header");
+  const about = document.querySelector(".sec-about");
+
+  if (!header || !about) return;
+
+  const mm = gsap.matchMedia();
+
+  mm.add("(min-width: 1281px)", () => {
+    ScrollTrigger.create({
+      id: "header-about-color-desktop",
+      trigger: about,
+      containerAnimation: scrollTween,
+      start: "left center",
+      end: "right center",
+      onToggle: (self) => {
+        header.classList.toggle("is-about", self.isActive);
+      },
+    });
+  });
+
+  mm.add("(max-width: 1280px)", () => {
+    ScrollTrigger.create({
+      id: "header-about-color-mobile",
+      trigger: about,
+      start: "top top",
+      end: "bottom top",
+      onToggle: (self) => {
+        header.classList.toggle("is-about", self.isActive);
+      },
+    });
+  });
+}
 // GSAP scrollLeins ------------------------------ //
 let lenis;
 
@@ -552,6 +587,7 @@ function initAfterLoading() {
   HeaderSlider__init();
   scrollHorizon__init();
   scrollLeins__init();
+  HeaderAboutColor__init();
   HeaderProjectColor__init();
   backSvgMoveTool__init();
   scrollToMenu__init();

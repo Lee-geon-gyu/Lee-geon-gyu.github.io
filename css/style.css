@@ -895,7 +895,7 @@ main > .horizontal-wrap {
   z-index: -1;
   background-image: var(--project-bg);
   background-position: center;
-  background-size: cover;
+  background-size: var(--project-bg-size, cover);
   background-repeat: no-repeat;
   animation: ImgMove 6s ease-in-out infinite;
   will-change: transform;
@@ -903,13 +903,16 @@ main > .horizontal-wrap {
 
 #sec-project-list > .project-list-wrapper > .sec-project-item:nth-child(1) {
   --project-bg: url("../images/SWEATIE_Project-list_Mockup.png");
+  --project-bg-size: contain;
   align-items: center;
   justify-content: center;
+  background: linear-gradient(#121212, 40%, #93b800, 60%, #121212);
   z-index: 2;
 }
 
 #sec-project-list > .project-list-wrapper > .sec-project-item:nth-child(2) {
   --project-bg: url("../images/Eg_Project-list_Mockup.png");
+  --project-bg-size: contain;
   align-items: center;
   justify-content: center;
   background: linear-gradient(135deg, #ff3c38, 70%, #ffe7a6);
@@ -918,6 +921,7 @@ main > .horizontal-wrap {
 
 #sec-project-list > .project-list-wrapper > .sec-project-item:nth-child(3) {
   --project-bg: url("../images/Jw_Project-list_Mockup.png");
+  --project-bg-size: contain;
   align-items: center;
   justify-content: center;
   background: linear-gradient(#111111, 40%, #267fc3, 60%, #111111);
@@ -926,16 +930,19 @@ main > .horizontal-wrap {
 
 #sec-project-list > .project-list-wrapper > .sec-project-item:nth-child(4) {
   --project-bg: url("../images/Oy_Project-list_Mockup.png");
+  --project-bg-size: contain;
   align-items: center;
   justify-content: center;
+  background: linear-gradient(90deg, #d8d0c6, 3%, #10c210, 97%, #d8d0c6);
   z-index: 5;
 }
 
 #sec-project-list > .project-list-wrapper > .sec-project-item:nth-child(5) {
   --project-bg: url("../images/OC_Project-list_Mockup.png");
+  --project-bg-size: contain;
   align-items: center;
   justify-content: center;
-  background: radial-gradient(#e66300, 95%, #fff7e3);
+  background: radial-gradient(#e66300, 98%, #fff7e3);
   z-index: 6;
 }
 
@@ -994,7 +1001,6 @@ main > .horizontal-wrap {
   > .top-box
   > .box-item-2 {
   font-weight: 500;
-  color: #1e0905;
 }
 
 #sec-project-list
