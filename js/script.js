@@ -65,7 +65,7 @@ function enableUserInput() {
   document.removeEventListener("keydown", preventKey);
 }
 
-function typeLoadingText(element, cursorElement = element, interval = 200) {
+function typeLoadingText(element, cursorElement = element, interval = 100) {
   const text = element.textContent.trim();
   element.textContent = "";
   element.style.opacity = 1;
