@@ -852,13 +852,36 @@ main .horizontal-wrap {
   min-width: 375px;
   overflow: hidden;
   background: linear-gradient(
+    to bottom,
+    var(--color-black) 0%,
+    var(--color-black) 45%,
+    var(--primary-color) 50%,
+    var(--color-black) 55%,
+    var(--color-black) 100%
+  );
+  isolation: isolate;
+}
+
+.sec-project::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: linear-gradient(
     var(--color-black),
     40%,
     var(--primary-color),
     60%,
     var(--color-black)
   );
-  isolation: isolate;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.sec-project.is-gradient-pop::before,
+.sec-project.is-gradient-expanded::before {
+  opacity: 1;
 }
 
 .sec-project::after {

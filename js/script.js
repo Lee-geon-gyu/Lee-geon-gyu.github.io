@@ -451,6 +451,7 @@ function projectVerticalScroll__init() {
 function projectMarquee__init() {
   const marquee = document.querySelector(".sec-project .marquee");
   const marqueeControl = document.querySelector(".marquee-control");
+  const projectSection = document.querySelector(".sec-project");
   const stateText = document.querySelector(".marquee-control__state");
   const prevButton = document.querySelector(".marquee-control__prev");
   const toggleButton = document.querySelector(".marquee-control__toggle");
@@ -491,6 +492,7 @@ function projectMarquee__init() {
   let speedIndex = 0;
   let isPaused = false;
   let isMarqueeHovered = false;
+  let gradientPopTimer;
 
   const getMarqueeMetersPerSecond = (animation, rate) => {
     const loopDistancePx = group.getBoundingClientRect().width;
@@ -522,6 +524,10 @@ function projectMarquee__init() {
       : 0;
     const needleAngle = -90 + speedRatio * 180;
     stateText.textContent = `${metersPerSecond.toFixed(3)} m/s`;
+    projectSection?.classList.toggle(
+      "is-gradient-expanded",
+      metersPerSecond >= 0.085,
+    );
     marqueeControl?.style.setProperty(
       "--marquee-needle-angle",
       `${needleAngle}deg`,
@@ -534,16 +540,37 @@ function projectMarquee__init() {
     nextButton.disabled = speedIndex === speeds.length - 1;
   };
 
+  const triggerGradientPop = () => {
+    if (!projectSection) return;
+
+    window.clearTimeout(gradientPopTimer);
+    projectSection.classList.remove("is-gradient-pop");
+    void projectSection.offsetWidth;
+    projectSection.classList.add("is-gradient-pop");
+
+    gradientPopTimer = window.setTimeout(() => {
+      projectSection.classList.remove("is-gradient-pop");
+    }, 200);
+  };
+
   prevButton?.addEventListener("click", () => {
-    if (speedIndex > 0) speedIndex -= 1;
+    if (speedIndex > 0) {
+      speedIndex -= 1;
+      triggerGradientPop();
+    }
     updateMarqueeControl();
   });
   nextButton?.addEventListener("click", () => {
-    if (speedIndex < speeds.length - 1) speedIndex += 1;
+    if (speedIndex < speeds.length - 1) {
+      speedIndex += 1;
+      triggerGradientPop();
+    }
     updateMarqueeControl();
   });
   toggleButton?.addEventListener("click", () => {
+    const isStartingPlayback = isPaused;
     isPaused = !isPaused;
+    if (isStartingPlayback) triggerGradientPop();
     updateMarqueeControl();
   });
   marquee.addEventListener("pointerenter", () => {
