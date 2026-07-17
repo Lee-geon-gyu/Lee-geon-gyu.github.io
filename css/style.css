@@ -117,6 +117,53 @@ span {
   background-color: var(--color-black);
 }
 
+.loading::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  z-index: 150;
+  width: min(38rem, 40vw);
+  height: min(20rem, 24vh);
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse at right bottom,
+    rgba(0, 0, 0, 1) 0%,
+    rgba(0, 0, 0, 0.96) 30%,
+    rgba(0, 0, 0, 0.68) 52%,
+    rgba(0, 0, 0, 0) 78%
+  );
+}
+
+.loading > .loading-video {
+  --loading-video-scale: 1.18;
+  --loading-video-y: -2.5;
+  position: absolute;
+  inset: 0;
+  z-index: 100;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: translateY(-2.5%) scale(1.18);
+  will-change: transform;
+}
+
+@media (max-width: 1280px) {
+  .loading > .loading-video {
+    --loading-video-scale: 1.2;
+    --loading-video-y: -3;
+    transform: translateY(-3%) scale(1.2);
+  }
+}
+
+.loading > .loading-video-shade {
+  position: absolute;
+  inset: 0;
+  z-index: 200;
+  background: rgba(0, 0, 0, 0.28);
+  will-change: opacity;
+}
+
 .loading > .loading-text-wrapper {
   color: var(--color-white);
   width: 100%;
@@ -796,6 +843,7 @@ main > .horizontal-wrap {
   padding-top: 6rem;
   padding-bottom: 6rem;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   min-width: 375px;
@@ -809,7 +857,7 @@ main > .horizontal-wrap {
 
 .sec-project > .category-box > span {
   font-weight: 700;
-  font-size: 12rem;
+  font-size: 7.2rem;
   color: var(--primary-color);
 }
 
@@ -822,39 +870,75 @@ main > .horizontal-wrap {
   margin-top: 4.8rem;
 }
 
-.sec-project > .category-box > .img-box {
-  width: 9.6rem;
-  height: auto;
-  box-sizing: border-box;
+.sec-project > .scroll-box {
+  position: absolute;
+  right: clamp(2.4rem, 4vw, 7.2rem);
+  bottom: 6rem;
+  display: flex;
+  width: 8.8rem;
+  height: 25rem;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 1.2rem;
+  color: #111;
 }
 
-.sec-project > .category-box > .img-box > img {
-  width: 100%;
-  height: auto;
-  object-fit: cover;
-  animation: ArrowDown 1s linear infinite;
+.scroll-box__track {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 2px;
+  height: 100%;
+  overflow: hidden;
+  background: rgba(9, 78, 255, 0.18);
 }
 
-@keyframes ArrowDown {
-  0% {
-    transform: translate(0%, 0%);
-    opacity: 1;
-  }
-  25% {
-    transform: translate(0%, 5%);
-    opacity: 0.75;
+.scroll-box__progress {
+  position: absolute;
+  inset: 0;
+  background: var(--primary-color);
+  transform: scaleY(0);
+  transform-origin: top center;
+  will-change: transform;
+}
+
+.scroll-box__label {
+  font-size: 1.6rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.scroll-box__arrows {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.scroll-box__arrows > i {
+  width: 0;
+  height: 0;
+  border-top: 0.8rem solid currentColor;
+  border-right: 0.6rem solid transparent;
+  border-left: 0.6rem solid transparent;
+  opacity: 0.7;
+  animation: scrollBoxArrow 1.2s ease-in-out infinite;
+}
+
+.scroll-box__arrows > i:nth-child(2) {
+  animation-delay: 0.18s;
+}
+
+@keyframes scrollBoxArrow {
+  0%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.35;
   }
   50% {
-    transform: translate(0%, 10%);
-    opacity: 0.5;
-  }
-  75% {
-    transform: translate(0%, 15%);
-    opacity: 0.25;
-  }
-  100% {
-    transform: translate(0%, 20%);
-    opacity: 0;
+    transform: translateY(0.4rem);
+    opacity: 1;
   }
 }
 /* main > sec-project-item ========================================= */
@@ -942,7 +1026,7 @@ main > .horizontal-wrap {
   --project-bg-size: contain;
   align-items: center;
   justify-content: center;
-  background: radial-gradient(#e66300, 98%, #fff7e3);
+  background: linear-gradient(90deg, #fff7e3, 3%, #e66300, 97%, #fff7e3);
   z-index: 6;
 }
 

@@ -65,7 +65,12 @@ function enableUserInput() {
   document.removeEventListener("keydown", preventKey);
 }
 
-function typeLoadingText(element, cursorElement = element, interval = 150) {
+function typeLoadingText(
+  element,
+  cursorElement = element,
+  interval = 150,
+  onFirstCharacter,
+) {
   const text = element.textContent.trim();
   element.textContent = "";
   element.style.opacity = 1;
@@ -84,6 +89,7 @@ function typeLoadingText(element, cursorElement = element, interval = 150) {
     };
     const timer = setInterval(() => {
       element.textContent += text[index] || "";
+      if (index === 0) onFirstCharacter?.();
       index += 1;
       if (index >= text.length) {
         setTimeout(finish, interval);
@@ -104,7 +110,69 @@ function loading__init() {
     const loadingName = document.querySelector(".loading-name");
     const loadingNameText = loadingName?.querySelector("i");
     const skipButton = document.querySelector(".loading-skip");
+    const loadingVideo = document.querySelector("video.loading-video");
+    const loadingVideoShade = document.querySelector(".loading-video-shade");
     let finished = false;
+
+    if (loadingVideo) {
+      loadingVideo.pause();
+      loadingVideo.currentTime = 0;
+      loadingVideo.muted = true;
+      loadingVideo.volume = 0;
+      loadingVideo.playsInline = true;
+    }
+
+    const playLoadingVideoToReveal = () => {
+      if (!loadingVideo) return Promise.resolve();
+
+      const videoStyle = getComputedStyle(loadingVideo);
+      const croppedScale =
+        Number.parseFloat(
+          videoStyle.getPropertyValue("--loading-video-scale"),
+        ) || 1.18;
+      const croppedY =
+        Number.parseFloat(videoStyle.getPropertyValue("--loading-video-y")) ||
+        -2.5;
+
+      gsap.to(loadingVideo, {
+        scale: croppedScale,
+        xPercent: 0,
+        yPercent: croppedY,
+        duration: 1,
+        ease: "power2.out",
+      });
+
+      gsap.to(loadingVideoShade, {
+        opacity: 0,
+        duration: 0.8,
+        ease: "power2.out",
+      });
+
+      return new Promise((resolve) => {
+        let settled = false;
+        const complete = () => {
+          if (settled) return;
+          settled = true;
+          loadingVideo.removeEventListener("timeupdate", checkRevealTime);
+          loadingVideo.removeEventListener("ended", complete);
+          loadingVideo.removeEventListener("error", complete);
+          resolve();
+        };
+        const checkRevealTime = () => {
+          if (loadingVideo.currentTime >= 4.25) complete();
+        };
+
+        loadingVideo.addEventListener("timeupdate", checkRevealTime);
+        loadingVideo.addEventListener("ended", complete, { once: true });
+        loadingVideo.addEventListener("error", complete, { once: true });
+
+        const playPromise = loadingVideo.play();
+        playPromise?.catch((error) => {
+          console.warn("Loading video playback was prevented:", error);
+          complete();
+        });
+      });
+    };
 
     const finishLoading = (skipped = false) => {
       if (!loading || finished) return;
@@ -121,7 +189,7 @@ function loading__init() {
         .timeline()
         .to(".loading-reveal", {
           scale: 80,
-          duration: 0.75,
+          duration: 0.5,
           ease: "power4.in",
           onStart: initAfterLoading,
         })
@@ -158,13 +226,18 @@ function loading__init() {
 
     if (loadingName && loadingNameText) {
       gsap.set(loadingName, { y: "0%", opacity: 1 });
-      await typeLoadingText(loadingNameText, loadingName);
+      let revealTimeReached = Promise.resolve();
+      await typeLoadingText(loadingNameText, loadingName, 150, () => {
+        revealTimeReached = playLoadingVideoToReveal();
+      });
       if (finished) return;
       await gsap.to(loadingName, {
         scaleY: 0,
         duration: 0.6,
         delay: 0.7,
       });
+      await revealTimeReached;
+      if (finished) return;
     }
 
     finishLoading();
@@ -195,14 +268,24 @@ function scrollHorizon__init() {
     scrollTween.addLabel("slide-0").to({}, { duration: holdDuration });
     sections.slice(1).forEach((_, index) => {
       const slide = index + 1;
+      const isLastSlide = slide === sections.length - 1;
       scrollTween
         .to(sections, {
           xPercent: -100 * slide,
           duration: 1,
           ease: "none",
         })
-        .addLabel(`slide-${slide}`)
-        .to({}, { duration: holdDuration });
+        .addLabel(`slide-${slide}`);
+
+      if (isLastSlide) {
+        scrollTween.to(".scroll-box__progress", {
+          scaleY: 1,
+          duration: holdDuration,
+          ease: "none",
+        });
+      } else {
+        scrollTween.to({}, { duration: holdDuration });
+      }
     });
 
     sections.forEach((section) => {
@@ -266,6 +349,7 @@ function scrollHorizon__init() {
     gsap.set(".horizontal-section", {
       clearProps: "all",
     });
+    gsap.set(".scroll-box__progress", { scaleY: 1 });
   });
 }
 
