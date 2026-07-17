@@ -214,6 +214,14 @@ function loading__init() {
     skipButton?.addEventListener("click", skipLoading);
     document.addEventListener("keydown", handleSkipKeydown);
 
+    let revealTimeReached = Promise.resolve();
+    let loadingVideoStarted = false;
+    const startLoadingVideo = () => {
+      if (loadingVideoStarted) return;
+      loadingVideoStarted = true;
+      revealTimeReached = playLoadingVideoToReveal();
+    };
+
     if (loadingText) {
       await typeLoadingText(loadingText);
       if (finished) return;
@@ -221,14 +229,14 @@ function loading__init() {
         y: "-100%",
         duration: 0.8,
         ease: "power2.inOut",
+        onStart: startLoadingVideo,
       });
     }
 
     if (loadingName && loadingNameText) {
       gsap.set(loadingName, { y: "0%", opacity: 1 });
-      let revealTimeReached = Promise.resolve();
       await typeLoadingText(loadingNameText, loadingName, 150, () => {
-        revealTimeReached = playLoadingVideoToReveal();
+        if (!loadingText) startLoadingVideo();
       });
       if (finished) return;
       await gsap.to(loadingName, {
@@ -255,7 +263,7 @@ function scrollHorizon__init() {
     const holdDuration = 0.25;
     scrollTween = gsap.timeline({
       scrollTrigger: {
-        trigger: ".main",
+        trigger: ".horizontal-wrap",
         pin: true,
         scrub: 1,
         end: () =>
@@ -268,7 +276,6 @@ function scrollHorizon__init() {
     scrollTween.addLabel("slide-0").to({}, { duration: holdDuration });
     sections.slice(1).forEach((_, index) => {
       const slide = index + 1;
-      const isLastSlide = slide === sections.length - 1;
       scrollTween
         .to(sections, {
           xPercent: -100 * slide,
@@ -277,15 +284,7 @@ function scrollHorizon__init() {
         })
         .addLabel(`slide-${slide}`);
 
-      if (isLastSlide) {
-        scrollTween.to(".scroll-box__progress", {
-          scaleY: 1,
-          duration: holdDuration,
-          ease: "none",
-        });
-      } else {
-        scrollTween.to({}, { duration: holdDuration });
-      }
+      scrollTween.to({}, { duration: holdDuration });
     });
 
     sections.forEach((section) => {
@@ -299,7 +298,7 @@ function scrollHorizon__init() {
       });
     });
 
-    gsap.utils.toArray("[data-ani]").forEach((el) => {
+    gsap.utils.toArray(".horizontal-section [data-ani]").forEach((el) => {
       gsap.from(el, {
         y: 80,
         stagger: 0.2,
@@ -349,7 +348,278 @@ function scrollHorizon__init() {
     gsap.set(".horizontal-section", {
       clearProps: "all",
     });
-    gsap.set(".scroll-box__progress", { scaleY: 1 });
+  });
+}
+
+// Vertical project section ------------------------------ //
+function projectVerticalScroll__init() {
+  const project = document.querySelector(".sec-project.vertical-section");
+  const header = document.querySelector("header");
+  const category = project?.querySelector(".category-box");
+  const lineWrapper = project?.querySelector(".bg-line-wrapper");
+  const projectList = document.querySelector("#sec-project-list");
+  const blurTargets = project
+    ? [...project.children].filter(
+        (element) => !element.classList.contains("bg-line-wrapper"),
+      )
+    : [];
+  if (!project) return;
+
+  lineWrapper?.remove();
+  gsap.set(category, { autoAlpha: 1 });
+  gsap.set(project, { "--project-blur-opacity": 0 });
+
+  if (category) {
+    gsap.fromTo(
+      category,
+      { y: 60, autoAlpha: 0 },
+      {
+        y: 0,
+        autoAlpha: 1,
+        duration: 0.8,
+        ease: "power2.out",
+        scrollTrigger: {
+          trigger: project,
+          start: "top 80%",
+          toggleActions: "play none none reverse",
+        },
+      },
+    );
+  }
+
+  ScrollTrigger.create({
+    id: "project-vertical-pin",
+    trigger: project,
+    start: "top top",
+    end: "+=150%",
+    pin: true,
+    pinSpacing: false,
+    anticipatePin: 1,
+    invalidateOnRefresh: true,
+    onEnter: () => header?.classList.add("is-project-section"),
+    onEnterBack: () => header?.classList.add("is-project-section"),
+    onLeave: () => header?.classList.remove("is-project-section"),
+    onLeaveBack: () => header?.classList.remove("is-project-section"),
+  });
+
+  if (projectList) {
+    gsap.fromTo(
+      blurTargets,
+      { filter: "blur(0px)", opacity: 1 },
+      {
+        filter: "blur(18px)",
+        opacity: 0.45,
+        ease: "none",
+        scrollTrigger: {
+          id: "project-list-backdrop-blur",
+          trigger: projectList,
+          start: "top bottom",
+          end: "top 20%",
+          scrub: 0.5,
+          invalidateOnRefresh: true,
+        },
+      },
+    );
+
+    gsap.to(project, {
+      "--project-blur-opacity": 1,
+      ease: "none",
+      scrollTrigger: {
+        trigger: projectList,
+        start: "top bottom",
+        end: "top 20%",
+        scrub: 0.5,
+        invalidateOnRefresh: true,
+      },
+    });
+  }
+}
+
+// Project marquee ------------------------------ //
+function projectMarquee__init() {
+  const marquee = document.querySelector(".sec-project .marquee");
+  const stateText = document.querySelector(".marquee-control__state");
+  const prevButton = document.querySelector(".marquee-control__prev");
+  const toggleButton = document.querySelector(".marquee-control__toggle");
+  const nextButton = document.querySelector(".marquee-control__next");
+  if (!marquee || marquee.dataset.marqueeReady === "true") return;
+
+  const items = [...marquee.children];
+  if (!items.length) return;
+
+  const track = document.createElement("div");
+  const group = document.createElement("div");
+  track.className = "marquee-track";
+  group.className = "marquee-group";
+
+  items.forEach((item) => group.appendChild(item));
+
+  const clone = group.cloneNode(true);
+  clone.setAttribute("aria-hidden", "true");
+  clone.querySelectorAll("a").forEach((link) => {
+    link.tabIndex = -1;
+  });
+
+  track.append(group, clone);
+  marquee.appendChild(track);
+  marquee.dataset.marqueeReady = "true";
+  marquee.dataset.marqueeState = "normal";
+
+  const speeds = [
+    { label: "NORMAL", rate: 1 },
+    { label: "FAST ×2", rate: 2 },
+    { label: "FAST ×4", rate: 4 },
+    { label: "FAST ×8", rate: 8 },
+  ];
+  let speedIndex = 0;
+  let isPaused = false;
+  let isMarqueeHovered = false;
+
+  const updateMarqueeControl = () => {
+    const marqueeAnimation = track.getAnimations()[0];
+    const speed = speeds[speedIndex];
+    if (!marqueeAnimation) return;
+
+    const hoverRate = isMarqueeHovered ? 0.5 : 1;
+    marqueeAnimation.updatePlaybackRate(speed.rate * hoverRate);
+    isPaused ? marqueeAnimation.pause() : marqueeAnimation.play();
+    stateText.textContent = isPaused ? "PAUSED" : speed.label;
+    toggleButton.querySelector("span").textContent = isPaused ? "▶" : "Ⅱ";
+    toggleButton.setAttribute("aria-label", isPaused ? "Play" : "Pause");
+    prevButton.disabled = speedIndex === 0;
+    nextButton.disabled = speedIndex === speeds.length - 1;
+  };
+
+  prevButton?.addEventListener("click", () => {
+    if (speedIndex > 0) speedIndex -= 1;
+    updateMarqueeControl();
+  });
+  nextButton?.addEventListener("click", () => {
+    if (speedIndex < speeds.length - 1) speedIndex += 1;
+    updateMarqueeControl();
+  });
+  toggleButton?.addEventListener("click", () => {
+    isPaused = !isPaused;
+    updateMarqueeControl();
+  });
+  marquee.addEventListener("pointerenter", () => {
+    isMarqueeHovered = true;
+    updateMarqueeControl();
+  });
+  marquee.addEventListener("pointerleave", () => {
+    isMarqueeHovered = false;
+    updateMarqueeControl();
+  });
+
+  requestAnimationFrame(updateMarqueeControl);
+}
+
+// Project mockup drag & throw ------------------------------ //
+function projectMockupDrag__init() {
+  const mockups = document.querySelectorAll(
+    "#sec-project-list .bottom-box > .right-box > .img-box",
+  );
+
+  mockups.forEach((mockup) => {
+    const image = mockup.querySelector("img");
+    if (image) image.draggable = false;
+
+    mockup.addEventListener("pointerdown", (event) => {
+      if (event.button !== 0) return;
+      event.preventDefault();
+
+      gsap.killTweensOf(mockup);
+      mockup.setPointerCapture(event.pointerId);
+      mockup.classList.add("is-dragging");
+      lenis?.stop();
+
+      const rect = mockup.getBoundingClientRect();
+      const startPointer = { x: event.clientX, y: event.clientY };
+      const startPosition = {
+        x: Number(gsap.getProperty(mockup, "x")) || 0,
+        y: Number(gsap.getProperty(mockup, "y")) || 0,
+      };
+      const bounds = {
+        minX: startPosition.x - rect.left,
+        maxX: startPosition.x + window.innerWidth - rect.right,
+        minY: startPosition.y - rect.top,
+        maxY: startPosition.y + window.innerHeight - rect.bottom,
+      };
+      let previousPointer = {
+        x: event.clientX,
+        y: event.clientY,
+        time: performance.now(),
+      };
+      let velocity = { x: 0, y: 0 };
+
+      const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+      const handlePointerMove = (moveEvent) => {
+        const now = performance.now();
+        const elapsed = Math.max(now - previousPointer.time, 16);
+        velocity.x = ((moveEvent.clientX - previousPointer.x) / elapsed) * 1000;
+        velocity.y = ((moveEvent.clientY - previousPointer.y) / elapsed) * 1000;
+        previousPointer = {
+          x: moveEvent.clientX,
+          y: moveEvent.clientY,
+          time: now,
+        };
+
+        gsap.set(mockup, {
+          x: clamp(
+            startPosition.x + moveEvent.clientX - startPointer.x,
+            bounds.minX,
+            bounds.maxX,
+          ),
+          y: clamp(
+            startPosition.y + moveEvent.clientY - startPointer.y,
+            bounds.minY,
+            bounds.maxY,
+          ),
+        });
+      };
+
+      const handlePointerUp = () => {
+        mockup.removeEventListener("pointermove", handlePointerMove);
+        mockup.removeEventListener("pointerup", handlePointerUp);
+        mockup.removeEventListener("pointercancel", handlePointerUp);
+        mockup.classList.remove("is-dragging");
+        lenis?.start();
+
+        const currentX = Number(gsap.getProperty(mockup, "x")) || 0;
+        const currentY = Number(gsap.getProperty(mockup, "y")) || 0;
+        const throwX = clamp(
+          currentX + velocity.x * 0.18,
+          bounds.minX,
+          bounds.maxX,
+        );
+        const throwY = clamp(
+          currentY + velocity.y * 0.18,
+          bounds.minY,
+          bounds.maxY,
+        );
+
+        gsap.to(mockup, {
+          x: throwX,
+          y: throwY,
+          duration: 0.5,
+          ease: "power3.out",
+          onComplete: () => {
+            gsap.to(mockup, {
+              x: 0,
+              y: 0,
+              duration: 0.9,
+              delay: 1,
+              ease: "back.inOut(1.2)",
+            });
+          },
+        });
+      };
+
+      mockup.addEventListener("pointermove", handlePointerMove);
+      mockup.addEventListener("pointerup", handlePointerUp);
+      mockup.addEventListener("pointercancel", handlePointerUp);
+    });
   });
 }
 
@@ -558,6 +828,8 @@ function scrollToMenu__init() {
 }
 // setupPinAccordion ------------------------------ //
 let resizeTimer;
+let resizeRefreshFrame;
+let lastAccordionMobile = window.matchMedia("(max-width: 768px)").matches;
 
 function setupPinAccordion() {
   const section = document.querySelector("#sec-project-list");
@@ -669,7 +941,10 @@ function setupPinAccordion() {
 loading__init();
 function initAfterLoading() {
   HeaderSlider__init();
+  projectMarquee__init();
+  projectMockupDrag__init();
   scrollHorizon__init();
+  projectVerticalScroll__init();
   scrollLeins__init();
   HeaderAboutColor__init();
   HeaderProjectColor__init();
@@ -681,16 +956,35 @@ function initAfterLoading() {
 history.scrollRestoration = "manual";
 
 ScrollTrigger.config({
-  autoRefreshEvents: "visibilitychange,DOMContentLoaded,load,resize",
+  autoRefreshEvents: "visibilitychange,DOMContentLoaded,load",
 });
 
 window.addEventListener("resize", () => {
+  if (!resizeRefreshFrame) {
+    resizeRefreshFrame = requestAnimationFrame(() => {
+      resizeRefreshFrame = undefined;
+
+      const projectList = document.querySelector("#sec-project-list");
+      if (projectList) projectList.style.height = `${window.innerHeight}px`;
+
+      const isAccordionMobile = window.matchMedia("(max-width: 768px)").matches;
+      if (isAccordionMobile !== lastAccordionMobile) {
+        lastAccordionMobile = isAccordionMobile;
+        setupPinAccordion();
+      }
+
+      ScrollTrigger.refresh();
+      lenis?.resize();
+    });
+  }
+
   clearTimeout(resizeTimer);
 
   resizeTimer = setTimeout(() => {
     setupPinAccordion();
     ScrollTrigger.refresh();
-  }, 300);
+    lenis?.resize();
+  }, 120);
 });
 
 window.addEventListener("load", () => {
