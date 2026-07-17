@@ -438,6 +438,7 @@ function projectVerticalScroll__init() {
 // Project marquee ------------------------------ //
 function projectMarquee__init() {
   const marquee = document.querySelector(".sec-project .marquee");
+  const marqueeControl = document.querySelector(".marquee-control");
   const stateText = document.querySelector(".marquee-control__state");
   const prevButton = document.querySelector(".marquee-control__prev");
   const toggleButton = document.querySelector(".marquee-control__toggle");
@@ -469,11 +470,20 @@ function projectMarquee__init() {
     { label: "NORMAL", rate: 1 },
     { label: "FAST ×2", rate: 2 },
     { label: "FAST ×4", rate: 4 },
+    { label: "FAST ×6", rate: 6 },
     { label: "FAST ×8", rate: 8 },
   ];
   let speedIndex = 0;
   let isPaused = false;
   let isMarqueeHovered = false;
+
+  const getMarqueeMetersPerSecond = (animation, rate) => {
+    const loopDistancePx = group.getBoundingClientRect().width;
+    const durationMs = Number(animation.effect?.getTiming().duration) || 36000;
+    const pixelsPerSecond = (loopDistancePx / (durationMs / 1000)) * rate;
+    const metersPerCssPixel = 0.0254 / 96;
+    return pixelsPerSecond * metersPerCssPixel;
+  };
 
   const updateMarqueeControl = () => {
     const marqueeAnimation = track.getAnimations()[0];
@@ -481,10 +491,29 @@ function projectMarquee__init() {
     if (!marqueeAnimation) return;
 
     const hoverRate = isMarqueeHovered ? 0.5 : 1;
+    const effectiveRate = isPaused ? 0 : speed.rate * hoverRate;
     marqueeAnimation.updatePlaybackRate(speed.rate * hoverRate);
     isPaused ? marqueeAnimation.pause() : marqueeAnimation.play();
-    stateText.textContent = isPaused ? "PAUSED" : speed.label;
-    toggleButton.querySelector("span").textContent = isPaused ? "▶" : "Ⅱ";
+    const metersPerSecond = getMarqueeMetersPerSecond(
+      marqueeAnimation,
+      effectiveRate,
+    );
+    const maximumMetersPerSecond = getMarqueeMetersPerSecond(
+      marqueeAnimation,
+      speeds.at(-1).rate,
+    );
+    const speedRatio = maximumMetersPerSecond
+      ? Math.min(Math.max(metersPerSecond / maximumMetersPerSecond, 0), 1)
+      : 0;
+    const needleAngle = -90 + speedRatio * 180;
+    stateText.textContent = `${metersPerSecond.toFixed(3)} m/s`;
+    marqueeControl?.style.setProperty(
+      "--marquee-needle-angle",
+      `${needleAngle}deg`,
+    );
+    toggleButton.querySelector("img").src = isPaused
+      ? "images/Play_arrow_icon.png"
+      : "images/pause_icon.png";
     toggleButton.setAttribute("aria-label", isPaused ? "Play" : "Pause");
     prevButton.disabled = speedIndex === 0;
     nextButton.disabled = speedIndex === speeds.length - 1;
@@ -512,6 +541,9 @@ function projectMarquee__init() {
   });
 
   requestAnimationFrame(updateMarqueeControl);
+
+  const marqueeResizeObserver = new ResizeObserver(updateMarqueeControl);
+  marqueeResizeObserver.observe(group);
 }
 
 // Project mockup drag & throw ------------------------------ //

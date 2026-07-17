@@ -415,13 +415,49 @@
           </svg>
         </div>
         <div class="category-box" data-ani>
-          <span>PROJECT </span>
+          <span>PROJECT</span>
         </div>
         <div class="marquee-control">
-          <span class="marquee-control__caption">MARQUEE SPEED</span>
-          <strong class="marquee-control__state" aria-live="polite"
-            >NORMAL</strong
-          >
+          <svg class="marquee-control__title" viewBox="0 0 240 54" aria-hidden="true">
+            <defs>
+              <path id="marquee-title-curve" d="M35 48 A92 54 0 0 1 205 48" />
+            </defs>
+            <text>
+              <textPath href="#marquee-title-curve" startOffset="50%">MARQUEE SPEED</textPath>
+            </text>
+          </svg>
+          <div class="marquee-gauge" aria-hidden="true">
+            <svg viewBox="0 0 240 150" role="presentation">
+              <path class="marquee-gauge__glow" d="M28 128 A92 92 0 0 1 212 128" />
+              <path class="marquee-gauge__arc" d="M28 128 A92 92 0 0 1 212 128" />
+              <g class="marquee-gauge__ticks">
+                <line x1="120" y1="30" x2="120" y2="44" transform="rotate(-70 120 128)" />
+                <line x1="120" y1="30" x2="120" y2="44" transform="rotate(-46 120 128)" />
+                <line x1="120" y1="30" x2="120" y2="44" transform="rotate(-23 120 128)" />
+                <line x1="120" y1="30" x2="120" y2="44" />
+                <line x1="120" y1="30" x2="120" y2="44" transform="rotate(23 120 128)" />
+                <line class="is-danger" x1="120" y1="30" x2="120" y2="44" transform="rotate(46 120 128)" />
+                <line class="is-danger" x1="120" y1="30" x2="120" y2="44" transform="rotate(70 120 128)" />
+              </g>
+              <g class="marquee-gauge__end-ticks">
+                <line x1="25" y1="128" x2="37" y2="128" />
+                <line class="is-danger" x1="203" y1="128" x2="215" y2="128" />
+              </g>
+              <g class="marquee-gauge__labels">
+                <text x="11" y="133">PLAY</text>
+                <text x="42" y="53">×2</text>
+                <text x="120" y="20">×4</text>
+                <text x="198" y="53">×6</text>
+                <text x="229" y="133">×8</text>
+              </g>
+              <g class="marquee-gauge__needle">
+                <line x1="120" y1="128" x2="120" y2="43" />
+                <circle cx="120" cy="128" r="6" />
+                <circle cx="120" cy="128" r="2" />
+              </g>
+            </svg>
+            <strong class="marquee-control__state" aria-live="polite">NORMAL</strong>
+          </div>
           <div
             class="marquee-control__buttons"
             role="group"
@@ -432,21 +468,21 @@
               type="button"
               aria-label="Slower"
             >
-              <span aria-hidden="true">◀◀</span>
+              <img src="images/Fast_rewind_icon.png" alt="" aria-hidden="true" />
             </button>
             <button
               class="marquee-control__toggle"
               type="button"
               aria-label="Pause"
             >
-              <span aria-hidden="true">Ⅱ</span>
+              <img src="images/pause_icon.png" alt="" aria-hidden="true" />
             </button>
             <button
               class="marquee-control__next"
               type="button"
               aria-label="Faster"
             >
-              <span aria-hidden="true">▶▶</span>
+              <img src="images/Fast_forward_icon.png" alt="" aria-hidden="true" />
             </button>
           </div>
         </div>
