@@ -57,21 +57,21 @@
     <header class="header">
       <div class="hd-container">
         <div class="left-box btn-home">
-          <a data-target="0" class="portfolio-text"> PORTFOLIO </a>
+          <a href="#" data-scroll-menu="home" class="portfolio-text"> PORTFOLIO </a>
         </div>
         <div class="right-box">
           <div class="short-btn-wrapper">
             <div class="short-btn btn-1">
               <div class="left-box"></div>
-              <a data-target="1" class="right-box">ABOUT</a>
+              <a href="#about" data-scroll-menu="about" class="right-box">ABOUT</a>
             </div>
             <div class="short-btn btn-2">
               <div class="left-box"></div>
-              <a data-target="2" class="right-box">PROJECT</a>
+              <a href="#project" data-scroll-menu="project" class="right-box">PROJECT</a>
             </div>
             <div class="short-btn btn-3">
               <div class="left-box"></div>
-              <a class="right-box">CONTACT</a>
+              <a href="#footer" data-scroll-menu="contact" class="right-box">CONTACT</a>
             </div>
           </div>
         </div>
@@ -369,7 +369,7 @@
           </div>
         </section>
       </div>
-      <section class="sec-project section vertical-section">
+      <section class="sec-project section vertical-section" id="project">
         <div class="bg-line-wrapper">
           <svg
             class="bg-line"
@@ -418,16 +418,11 @@
           <span>PROJECT</span>
         </div>
         <div class="marquee-control">
-          <svg class="marquee-control__title" viewBox="0 0 240 54" aria-hidden="true">
-            <defs>
-              <path id="marquee-title-curve" d="M35 48 A92 54 0 0 1 205 48" />
-            </defs>
-            <text>
-              <textPath href="#marquee-title-curve" startOffset="50%">MARQUEE SPEED</textPath>
-            </text>
-          </svg>
-          <div class="marquee-gauge" aria-hidden="true">
-            <svg viewBox="0 0 240 150" role="presentation">
+          <div class="marquee-gauge">
+            <svg viewBox="0 0 240 150" role="presentation" aria-hidden="true">
+              <defs>
+                <path id="marquee-speed-curve" d="M58 87 Q120 40 182 87" />
+              </defs>
               <path class="marquee-gauge__glow" d="M28 128 A92 92 0 0 1 212 128" />
               <path class="marquee-gauge__arc" d="M28 128 A92 92 0 0 1 212 128" />
               <g class="marquee-gauge__ticks">
@@ -444,11 +439,14 @@
                 <line class="is-danger" x1="203" y1="128" x2="215" y2="128" />
               </g>
               <g class="marquee-gauge__labels">
-                <text x="11" y="133">PLAY</text>
+                <text x="11" y="133">0</text>
                 <text x="42" y="53">×2</text>
                 <text x="120" y="20">×4</text>
                 <text x="198" y="53">×6</text>
                 <text x="229" y="133">×8</text>
+                <text class="marquee-gauge__caption">
+                  <textPath href="#marquee-speed-curve" startOffset="50%">SPEED</textPath>
+                </text>
               </g>
               <g class="marquee-gauge__needle">
                 <line x1="120" y1="128" x2="120" y2="43" />
@@ -488,7 +486,7 @@
         </div>
         <div class="list-up marquee">
           <div class="list-item list-item-1">
-            <a class="center-box"
+            <a class="center-box" href="#project-item-1"
               ><img src="images/SWEATIE_img.png" alt="SWEATIE_img"
             /></a>
             <div class="bottom-box">
@@ -502,7 +500,7 @@
             </div>
           </div>
           <div class="list-item list-item-2">
-            <a class="center-box"
+            <a class="center-box" href="#project-item-2"
               ><img src="images/EATGO_img.png" alt="EATGO_img"
             /></a>
             <div class="bottom-box">
@@ -514,7 +512,7 @@
             </div>
           </div>
           <div class="list-item list-item-3">
-            <a class="center-box"
+            <a class="center-box" href="#project-item-3"
               ><img src="images/JW_img.png" alt="JW_img"
             /></a>
             <div class="bottom-box">
@@ -526,7 +524,7 @@
             </div>
           </div>
           <div class="list-item list-item-4">
-            <a class="center-box"
+            <a class="center-box" href="#project-item-4"
               ><img src="images/OY_img.png" alt="OY_img"
             /></a>
             <div class="bottom-box">
@@ -538,7 +536,7 @@
             </div>
           </div>
           <div class="list-item list-item-5">
-            <a class="center-box"
+            <a class="center-box" href="#project-item-5"
               ><img src="images/OC_img.png" alt="OC_img"
             /></a>
             <div class="bottom-box">
@@ -563,6 +561,7 @@
       <div class="project-list-wrapper">
         <section
           class="sec-project-item sec-project-item-1 section vertical-section"
+          id="project-item-1"
         >
           <div class="section-container item-body">
             <div class="top-box">
@@ -635,6 +634,7 @@
         </section>
         <section
           class="sec-project-item sec-project-item-2 section vertical-section"
+          id="project-item-2"
         >
           <div class="section-container item-body">
             <div class="top-box">
@@ -707,6 +707,7 @@
         </section>
         <section
           class="sec-project-item sec-project-item-3 section vertical-section"
+          id="project-item-3"
         >
           <div class="section-container item-body">
             <div class="top-box">
@@ -768,6 +769,7 @@
         </section>
         <section
           class="sec-project-item sec-project-item-4 section vertical-section"
+          id="project-item-4"
         >
           <div class="section-container item-body">
             <div class="top-box">
@@ -829,6 +831,7 @@
         </section>
         <section
           class="sec-project-item sec-project-item-5 section vertical-section"
+          id="project-item-5"
         >
           <div class="section-container item-body">
             <div class="top-box">

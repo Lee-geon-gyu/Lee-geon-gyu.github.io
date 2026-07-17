@@ -1019,6 +1019,7 @@ main .horizontal-wrap {
   > .marquee-group
   > .list-item
   > .center-box {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1034,9 +1035,40 @@ main .horizontal-wrap {
   > .marquee-track
   > .marquee-group
   > .list-item
+  > .center-box::after {
+  content: "Learn more";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 1;
+  color: #fff;
+  font-size: 3.6rem;
+  font-weight: 700;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  transition: opacity 0.3s ease;
+}
+
+.sec-project
+  > .list-up
+  > .marquee-track
+  > .marquee-group
+  > .list-item
+  > .center-box:hover::after {
+  opacity: 1;
+}
+
+.sec-project
+  > .list-up
+  > .marquee-track
+  > .marquee-group
+  > .list-item
   > .center-box:hover
   > img {
   transform: scale(1.05);
+  filter: brightness(0.5) blur(12px);
 }
 
 .sec-project
@@ -1074,17 +1106,17 @@ main .horizontal-wrap {
   width: min(26vw, 34rem);
   flex-direction: column;
   align-items: center;
-  gap: 1.8rem;
+  gap: 0.6rem;
   color: #fff;
   transform: translateY(-50%);
 }
 
 .marquee-control__state {
   position: absolute;
-  top: 63%;
+  top: 62.5%;
   left: 50%;
   z-index: 1;
-  font-size: 1.8rem;
+  font-size: 2.4rem;
   font-weight: 700;
   line-height: 1;
   letter-spacing: 0;
@@ -1092,21 +1124,6 @@ main .horizontal-wrap {
   text-shadow: 0 0 0.4rem rgba(255, 255, 255, 0.35);
   transform: translate(-50%, -50%);
   white-space: nowrap;
-}
-
-.marquee-control__title {
-  width: 100%;
-  height: auto;
-  margin-bottom: -4.5rem;
-  overflow: visible;
-}
-
-.marquee-control__title text {
-  fill: #fff;
-  font-size: 1.4rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-anchor: middle;
 }
 
 .marquee-gauge {
@@ -1164,6 +1181,11 @@ main .horizontal-wrap {
   font-size: 9px;
   font-weight: 700;
   text-anchor: middle;
+}
+
+.marquee-gauge__labels > .marquee-gauge__caption {
+  font-size: 12px;
+  letter-spacing: 0.04em;
 }
 
 .marquee-gauge__needle {
@@ -1312,6 +1334,8 @@ main .horizontal-wrap {
 }
 
 #sec-project-list > .project-list-wrapper > .sec-project-item {
+  --project-bg-darkness: 0.5;
+  --project-bg-blur: 10px;
   position: absolute;
   top: 0;
   left: 0;
@@ -1323,38 +1347,49 @@ main .horizontal-wrap {
   isolation: isolate;
 }
 
+#sec-project-list > .project-list-wrapper > .sec-project-item::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: rgba(0, 0, 0, var(--project-bg-darkness));
+  -webkit-backdrop-filter: blur(var(--project-bg-blur));
+  backdrop-filter: blur(var(--project-bg-blur));
+}
+
 #sec-project-list > .project-list-wrapper > .sec-project-item:nth-child(1) {
+  background: url("../images/SWEATIE_bg.png") center / cover no-repeat;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(#121212, 40%, #93b800, 60%, #121212);
   z-index: 2;
 }
 
 #sec-project-list > .project-list-wrapper > .sec-project-item:nth-child(2) {
+  background: url("../images/EATGO_bg.png") center / cover no-repeat;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #ff3c38, 70%, #ffe7a6);
   z-index: 3;
 }
 
 #sec-project-list > .project-list-wrapper > .sec-project-item:nth-child(3) {
+  background: url("../images/JW_bg.png") center / cover no-repeat;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(#111111, 40%, #267fc3, 60%, #111111);
   z-index: 4;
 }
 
 #sec-project-list > .project-list-wrapper > .sec-project-item:nth-child(4) {
+  background: url("../images/OY_bg.png") center / cover no-repeat;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(90deg, #d8d0c6, 3%, #10c210, 97%, #d8d0c6);
   z-index: 5;
 }
 
 #sec-project-list > .project-list-wrapper > .sec-project-item:nth-child(5) {
+  background: url("../images/OC_bg.png") center / cover no-repeat;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(90deg, #fff7e3, 3%, #e66300, 97%, #fff7e3);
   z-index: 6;
 }
 
@@ -1362,6 +1397,8 @@ main .horizontal-wrap {
   > .project-list-wrapper
   > .sec-project-item
   > .section-container {
+  position: relative;
+  z-index: 1;
   width: 100%;
   height: 100%;
   display: flex;
@@ -1378,6 +1415,7 @@ main .horizontal-wrap {
   > .top-box {
   flex-grow: 1;
   width: 100%;
+  margin-top: 8.6rem;
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
@@ -1797,6 +1835,52 @@ main .horizontal-wrap {
   cursor: grabbing;
 }
 
+.drag-it-hint {
+  position: fixed;
+  z-index: 9999;
+  color: #fff;
+  font-size: 2.4rem;
+  font-weight: 800;
+  line-height: 1;
+  text-shadow: 0 0 0.8rem rgba(0, 0, 0, 0.65);
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  animation: dragItHintFade 3s linear 0.3s forwards;
+}
+
+.drag-it-hint > span {
+  display: block;
+  animation: dragItPulse 1s ease-in-out 0.8s 2;
+  transform-origin: center;
+}
+
+@keyframes dragItHintFade {
+  0% {
+    opacity: 0;
+  }
+
+  16.666%,
+  83.333% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes dragItPulse {
+  0%,
+  100% {
+    transform: scale(0.82);
+  }
+
+  50% {
+    transform: scale(1.18);
+  }
+}
+
 #sec-project-list
   > .project-list-wrapper
   > .sec-project-item
@@ -2044,6 +2128,27 @@ footer > .bottom-box > span {
       font-size: 4.8px;
     }
 
+    .sec-project > .marquee-control {
+      top: auto;
+      bottom: 47.5%;
+      left: 50%;
+      width: min(64rem, 78vw);
+      gap: 1rem;
+      transform: translateX(-50%);
+    }
+
+    .sec-project > .list-up {
+      top: 70%;
+      right: 0;
+      width: 100vw;
+      transform: translateY(-50%);
+    }
+
+    .sec-project > .list-up > .marquee-track > .marquee-group {
+      gap: 2rem;
+      padding-right: 2rem;
+    }
+
     main .horizontal-wrap > .sec-cover {
       height: 80dvh;
     }
@@ -2252,6 +2357,16 @@ footer > .bottom-box > span {
       > .ability-item-box {
       gap: 2.4rem;
     }
+  }
+}
+
+@media screen and (max-width: 374px) {
+  .sec-project > .marquee-control {
+    width: 78%;
+  }
+
+  .sec-project > .list-up {
+    width: 100%;
   }
 }
 

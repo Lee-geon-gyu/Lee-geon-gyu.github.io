@@ -7,24 +7,36 @@ gsap.registerPlugin(SplitText);
 // Header Scroll slide ------------------------------ //
 function HeaderSlider__init() {
   const header = document.querySelector("header");
+  if (!header) return;
 
   let lastScroll = 0;
+  let scrollFrame;
 
-  window.addEventListener("scroll", () => {
-    const currentScroll = window.pageYOffset;
+  window.addEventListener(
+    "scroll",
+    () => {
+      if (scrollFrame) return;
 
-    if (currentScroll <= 0) {
-      header.classList.remove("hide");
-      return;
-    }
-    if (currentScroll > lastScroll) {
-      header.classList.add("hide");
-    } else {
-      header.classList.remove("hide");
-    }
+      scrollFrame = requestAnimationFrame(() => {
+        scrollFrame = undefined;
 
-    lastScroll = currentScroll;
-  });
+        const currentScroll = window.pageYOffset;
+        const isPinActive = ScrollTrigger.getAll().some(
+          (trigger) => trigger.pin && trigger.isActive,
+        );
+
+        if (currentScroll <= 0 || isPinActive) {
+          header.classList.remove("hide");
+          lastScroll = currentScroll;
+          return;
+        }
+
+        header.classList.toggle("hide", currentScroll > lastScroll);
+        lastScroll = currentScroll;
+      });
+    },
+    { passive: true },
+  );
 }
 // GSAP loading ------------------------------ //
 let preventScroll;
@@ -453,7 +465,10 @@ function projectMarquee__init() {
   track.className = "marquee-track";
   group.className = "marquee-group";
 
-  items.forEach((item) => group.appendChild(item));
+  items.forEach((item, index) => {
+    item.dataset.projectIndex = index;
+    group.appendChild(item);
+  });
 
   const clone = group.cloneNode(true);
   clone.setAttribute("aria-hidden", "true");
@@ -540,6 +555,34 @@ function projectMarquee__init() {
     updateMarqueeControl();
   });
 
+  marquee.addEventListener("click", (event) => {
+    const link = event.target.closest(".center-box");
+    const item = link?.closest(".list-item");
+    if (!link || !item) return;
+
+    event.preventDefault();
+
+    const projectIndex = Number(item.dataset.projectIndex);
+    const projectTrigger = ScrollTrigger.getById("proj-pin");
+    const projectTimeline = projectTrigger?.animation;
+    if (!Number.isInteger(projectIndex) || !projectTrigger || !projectTimeline) {
+      return;
+    }
+
+    const panelTime = projectIndex === 0 ? 0 : projectIndex + 0.9;
+    const progress = Math.min(panelTime / projectTimeline.duration(), 1);
+    const targetY =
+      projectTrigger.start +
+      (projectTrigger.end - projectTrigger.start) * progress;
+
+    gsap.to(window, {
+      scrollTo: { y: targetY, autoKill: false },
+      duration: 1.2,
+      ease: "power2.inOut",
+      overwrite: "auto",
+    });
+  });
+
   requestAnimationFrame(updateMarqueeControl);
 
   const marqueeResizeObserver = new ResizeObserver(updateMarqueeControl);
@@ -551,10 +594,41 @@ function projectMockupDrag__init() {
   const mockups = document.querySelectorAll(
     "#sec-project-list .bottom-box > .right-box > .img-box",
   );
+  let dragHintShowCount = 0;
+
+  const showDragHint = (event) => {
+    if (dragHintShowCount >= 2) return;
+    dragHintShowCount += 1;
+
+    const hint = document.createElement("div");
+    const hintText = document.createElement("span");
+    hint.className = "drag-it-hint";
+    hintText.textContent = "Throw It";
+    hint.appendChild(hintText);
+    document.body.appendChild(hint);
+
+    const moveHint = (moveEvent) => {
+      hint.style.left = `${moveEvent.clientX + 18}px`;
+      hint.style.top = `${moveEvent.clientY + 18}px`;
+    };
+
+    const removeHint = (animationEvent) => {
+      if (animationEvent && animationEvent.target !== hint) return;
+      window.removeEventListener("pointermove", moveHint);
+      hint.remove();
+    };
+
+    moveHint(event);
+    window.addEventListener("pointermove", moveHint, { passive: true });
+    hint.addEventListener("animationend", removeHint);
+    window.setTimeout(removeHint, 3500);
+  };
 
   mockups.forEach((mockup) => {
     const image = mockup.querySelector("img");
     if (image) image.draggable = false;
+
+    mockup.addEventListener("mouseenter", showDragHint, { once: true });
 
     mockup.addEventListener("pointerdown", (event) => {
       if (event.button !== 0) return;
@@ -840,20 +914,50 @@ function backSvgMoveTool__init() {
 }
 // GSAP scrollToMenu ------------------------------ //
 function scrollToMenu__init() {
-  const sections = gsap.utils.toArray(".horizontal-section");
-
-  document.querySelectorAll(".header a").forEach((btn) => {
+  document.querySelectorAll("[data-scroll-menu]").forEach((btn) => {
     btn.addEventListener("click", (e) => {
       e.preventDefault();
 
-      const index = btn.dataset.target;
+      const menu = btn.dataset.scrollMenu;
+      const isDesktop = window.matchMedia("(min-width: 1281px)").matches;
+      let targetY = 0;
 
-      const scrollLength = ScrollTrigger.getAll()[0].end;
-      const sectionScroll = scrollLength / (sections.length - 1);
+      if (menu === "about") {
+        if (isDesktop && scrollTween?.scrollTrigger) {
+          const horizontalTrigger = scrollTween.scrollTrigger;
+          const aboutTime = scrollTween.labels["slide-1"] ?? 0;
+          const progress = aboutTime / scrollTween.duration();
+          targetY =
+            horizontalTrigger.start +
+            (horizontalTrigger.end - horizontalTrigger.start) * progress;
+        } else {
+          targetY = document.querySelector(".sec-about")?.offsetTop ?? 0;
+        }
+      }
+
+      if (menu === "project") {
+        targetY =
+          ScrollTrigger.getById("project-vertical-pin")?.start ??
+          document.querySelector(".sec-project")?.offsetTop ??
+          0;
+      }
+
+      if (menu === "contact") {
+        targetY =
+          ScrollTrigger.getById("proj-pin")?.end ??
+          document.documentElement.scrollHeight - window.innerHeight;
+      }
+
+      isContactScroll = menu === "contact";
 
       gsap.to(window, {
-        scrollTo: sectionScroll * index,
-        duration: 1,
+        scrollTo: { y: targetY, autoKill: false },
+        duration: menu === "contact" ? 1.2 : 1,
+        ease: "power2.out",
+        overwrite: "auto",
+        onComplete: () => {
+          isContactScroll = false;
+        },
       });
     });
   });
@@ -1029,125 +1133,6 @@ document.addEventListener("DOMContentLoaded", () => {
   setupPinAccordion();
 });
 
-document.addEventListener("DOMContentLoaded", () => {
-  const contactBtn = document.querySelector(".btn-3 > a");
-  const footer = document.querySelector("footer");
-
-  if (!contactBtn || !footer) return;
-
-  contactBtn.addEventListener("click", (e) => {
-    e.preventDefault();
-
-    isContactScroll = true;
-
-    lenis.scrollTo(footer, {
-      duration: 1.2,
-      onStart: () => {
-        ScrollTrigger.getAll().forEach((st) => st.disable());
-      },
-      onComplete: () => {
-        ScrollTrigger.getAll().forEach((st) => st.enable());
-
-        setTimeout(() => {
-          isContactScroll = false;
-        }, 1000);
-      },
-    });
-  });
-});
-
-document.addEventListener("DOMContentLoaded", () => {
-  const contactBtn = document.querySelector(".btn-2 > a");
-  const project = document.querySelector(".sec-project");
-
-  if (!contactBtn || !project) return;
-
-  const mm = gsap.matchMedia();
-
-  mm.add("(max-width: 1280px)", () => {
-    contactBtn.addEventListener("click", (e) => {
-      e.preventDefault();
-
-      isContactScroll = true;
-
-      gsap.to(window, {
-        scrollTo: {
-          y: project,
-          autoKill: false,
-        },
-        duration: 1,
-        ease: "power2.out",
-        onComplete: () => {
-          setTimeout(() => {
-            isContactScroll = false;
-          }, 1000);
-        },
-      });
-    });
-  });
-});
-
-document.addEventListener("DOMContentLoaded", () => {
-  const contactBtn = document.querySelector(".btn-1 > a");
-  const about = document.querySelector(".sec-about");
-
-  if (!contactBtn || !about) return;
-
-  const mm = gsap.matchMedia();
-
-  mm.add("(max-width: 1280px)", () => {
-    contactBtn.addEventListener("click", (e) => {
-      e.preventDefault();
-
-      isContactScroll = true;
-
-      gsap.to(window, {
-        scrollTo: {
-          y: about,
-          autoKill: false,
-        },
-        duration: 1,
-        ease: "power2.out",
-        onComplete: () => {
-          setTimeout(() => {
-            isContactScroll = false;
-          }, 1000);
-        },
-      });
-    });
-  });
-});
-
-document.addEventListener("DOMContentLoaded", () => {
-  const contactBtn = document.querySelector(".btn-home > a");
-  const cover = document.querySelector(".sec-cover");
-
-  if (!contactBtn || !cover) return;
-
-  const mm = gsap.matchMedia();
-
-  mm.add("(max-width: 1280px)", () => {
-    contactBtn.addEventListener("click", (e) => {
-      e.preventDefault();
-
-      isContactScroll = true;
-
-      gsap.to(window, {
-        scrollTo: {
-          y: cover,
-          autoKill: false,
-        },
-        duration: 1,
-        ease: "power2.out",
-        onComplete: () => {
-          setTimeout(() => {
-            isContactScroll = false;
-          }, 1000);
-        },
-      });
-    });
-  });
-});
 // Refresh tools ------------------------------ //
 ScrollTrigger.addEventListener("refreshInit", () => {
   if (isContactScroll) {
