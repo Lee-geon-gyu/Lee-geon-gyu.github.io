@@ -41,7 +41,6 @@ function HeaderSlider__init() {
 // GSAP loading ------------------------------ //
 let preventScroll;
 let preventKey;
-let cancelLoadingTyping;
 
 function disableUserInput() {
   $("html, body").css({
@@ -77,40 +76,6 @@ function enableUserInput() {
   document.removeEventListener("keydown", preventKey);
 }
 
-function typeLoadingText(
-  element,
-  cursorElement = element,
-  interval = 150,
-  onFirstCharacter,
-) {
-  const text = element.textContent.trim();
-  element.textContent = "";
-  element.style.opacity = 1;
-  cursorElement.classList.add("is-typing");
-
-  return new Promise((resolve) => {
-    let index = 0;
-    let completed = false;
-    const finish = () => {
-      if (completed) return;
-      completed = true;
-      clearInterval(timer);
-      cancelLoadingTyping = undefined;
-      cursorElement.classList.remove("is-typing");
-      resolve();
-    };
-    const timer = setInterval(() => {
-      element.textContent += text[index] || "";
-      if (index === 0) onFirstCharacter?.();
-      index += 1;
-      if (index >= text.length) {
-        setTimeout(finish, interval);
-      }
-    }, interval);
-    cancelLoadingTyping = finish;
-  });
-}
-
 function loading__init() {
   window.addEventListener("load", async () => {
     disableUserInput();
@@ -120,7 +85,6 @@ function loading__init() {
       (element) => window.getComputedStyle(element).display !== "none",
     );
     const loadingName = document.querySelector(".loading-name");
-    const loadingNameText = loadingName?.querySelector("i");
     const skipButton = document.querySelector(".loading-skip");
     const loadingVideo = document.querySelector("video.loading-video");
     const loadingVideoShade = document.querySelector(".loading-video-shade");
@@ -189,7 +153,6 @@ function loading__init() {
     const finishLoading = (skipped = false) => {
       if (!loading || finished) return;
       finished = true;
-      cancelLoadingTyping?.();
       skipButton?.removeEventListener("click", skipLoading);
       document.removeEventListener("keydown", handleSkipKeydown);
 
@@ -240,20 +203,36 @@ function loading__init() {
         duration: 1,
       });
       if (finished) return;
-      await gsap.to(loadingText, {
-        y: "-100%",
-        duration: 0.8,
-        delay: 1.2,
-        ease: "power2.inOut",
-        onStart: startLoadingVideo,
-      });
+      await Promise.all([
+        gsap.to(loadingText, {
+          y: "-100%",
+          duration: 0.8,
+          delay: 1.2,
+          ease: "power2.inOut",
+          onStart: startLoadingVideo,
+        }),
+        loadingName
+          ? gsap.to(loadingName, {
+              y: "0%",
+              opacity: 1,
+              duration: 0.8,
+              delay: 1.2,
+              ease: "power2.inOut",
+            })
+          : Promise.resolve(),
+      ]);
     }
 
-    if (loadingName && loadingNameText) {
-      gsap.set(loadingName, { y: "0%", opacity: 1 });
-      await typeLoadingText(loadingNameText, loadingName, 150, () => {
-        if (!loadingText) startLoadingVideo();
-      });
+    if (loadingName) {
+      if (!loadingText) {
+        startLoadingVideo();
+        await gsap.to(loadingName, {
+          y: "0%",
+          opacity: 1,
+          duration: 0.8,
+          ease: "power2.inOut",
+        });
+      }
       if (finished) return;
       await gsap.to(loadingName, {
         scaleY: 0,
@@ -272,6 +251,95 @@ let scrollTween;
 
 function scrollHorizon__init() {
   const mm = gsap.matchMedia();
+  const cover = document.querySelector(".sec-cover");
+  const coverTopText = cover?.querySelector(".cover-title > .top-box");
+  const coverPortfolio = cover?.querySelector(".cover-title > .bottom-box");
+  const coverCopy = cover?.querySelector(".copy-wrapper");
+  const portfolioSplit = coverPortfolio
+    ? new SplitText(coverPortfolio, {
+        type: "chars",
+        charsClass: "cover-title-char",
+      })
+    : null;
+
+  portfolioSplit?.chars.forEach((character) => {
+    character.addEventListener("pointerenter", (event) => {
+      if (
+        event.pointerType === "touch" ||
+        window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
+        character._coverJumpTween?.isActive()
+      ) {
+        return;
+      }
+
+      const jumpState = { progress: 0 };
+      character._coverJumpTween = gsap.to(jumpState, {
+        progress: 1,
+        duration: 1.2,
+        ease: "sine.inOut",
+        onUpdate: () => {
+          const progress = jumpState.progress;
+          const jumpCurve = Math.sin(Math.PI * progress);
+
+          gsap.set(character, {
+            y: `${-0.16 * jumpCurve}em`,
+            rotation: -15 * Math.sin(Math.PI * 2 * progress),
+            scale: 1 + 0.035 * jumpCurve,
+          });
+        },
+        onComplete: () => {
+          gsap.set(character, { y: 0, rotation: 0, scale: 1 });
+          character._coverJumpTween = undefined;
+        },
+      });
+    });
+  });
+
+  const replayCoverIntro = () => {
+    if (!coverTopText || !portfolioSplit?.chars.length || !coverCopy) return;
+
+    portfolioSplit.chars.forEach((character) => {
+      character._coverJumpTween?.kill();
+      character._coverJumpTween = undefined;
+    });
+    gsap.killTweensOf([coverTopText, portfolioSplit.chars, coverCopy]);
+    gsap
+      .timeline()
+      .fromTo(
+        coverTopText,
+        { x: -320, autoAlpha: 0 },
+        {
+          x: 0,
+          autoAlpha: 1,
+          duration: 0.8,
+          ease: "power2.out",
+        },
+      )
+      .fromTo(
+        portfolioSplit.chars,
+        { y: -80, rotation: 0, scale: 1, autoAlpha: 0 },
+        {
+          y: 0,
+          rotation: 0,
+          scale: 1,
+          autoAlpha: 1,
+          duration: 0.65,
+          stagger: 0.05,
+          ease: "power3.out",
+        },
+        "-=0.25",
+      )
+      .fromTo(
+        coverCopy,
+        { y: 40, autoAlpha: 0 },
+        {
+          y: 0,
+          autoAlpha: 1,
+          duration: 0.7,
+          ease: "power2.out",
+        },
+      );
+  };
 
   mm.add("(min-width:1281px)", () => {
     const sections = gsap.utils.toArray(".horizontal-section");
@@ -329,13 +397,15 @@ function scrollHorizon__init() {
       });
     });
 
-    gsap.from(".sec-cover [data-ani-2]", {
-      x: -320,
-      opacity: 0,
-      duration: 0.8,
-      stagger: 0.15,
-      ease: "power2.out",
+    const coverReplayTrigger = ScrollTrigger.create({
+      trigger: cover,
+      containerAnimation: scrollTween,
+      start: "left center",
+      end: "right center",
+      onEnterBack: replayCoverIntro,
     });
+
+    replayCoverIntro();
 
     gsap.utils
       .toArray("[data-ani-2]")
@@ -356,6 +426,7 @@ function scrollHorizon__init() {
       });
 
     return () => {
+      coverReplayTrigger.kill();
       scrollTween?.kill();
     };
   });
@@ -364,6 +435,17 @@ function scrollHorizon__init() {
     gsap.set(".horizontal-section", {
       clearProps: "all",
     });
+
+    const coverReplayTrigger = ScrollTrigger.create({
+      trigger: cover,
+      start: "top 80%",
+      end: "bottom 20%",
+      onEnterBack: replayCoverIntro,
+    });
+
+    replayCoverIntro();
+
+    return () => coverReplayTrigger.kill();
   });
 }
 
@@ -596,7 +678,11 @@ function projectMarquee__init() {
     const projectIndex = Number(item.dataset.projectIndex);
     const projectTrigger = ScrollTrigger.getById("proj-pin");
     const projectTimeline = projectTrigger?.animation;
-    if (!Number.isInteger(projectIndex) || !projectTrigger || !projectTimeline) {
+    if (
+      !Number.isInteger(projectIndex) ||
+      !projectTrigger ||
+      !projectTimeline
+    ) {
       return;
     }
 
@@ -633,7 +719,7 @@ function projectMockupDrag__init() {
 
     const hint = document.createElement("div");
     const hintText = document.createElement("span");
-    hint.className = "drag-it-hint";
+    hint.className = "drag-it-hint throw-it-hint";
     hintText.textContent = "Throw It";
     hint.appendChild(hintText);
     document.body.appendChild(hint);
@@ -749,6 +835,104 @@ function projectMockupDrag__init() {
       mockup.addEventListener("pointercancel", handlePointerUp);
     });
   });
+}
+
+// About license card float & center rotation ------------------------------ //
+function aboutLicenseCard__init() {
+  const card = document.querySelector(
+    ".sec-about > .section-container > .content-wrapper",
+  );
+  if (!card || card.dataset.cardInteractionReady === "true") return;
+  card.dataset.cardInteractionReady = "true";
+
+  let rotation = Number(gsap.getProperty(card, "rotation")) || 0;
+  let previousPointerAngle = 0;
+
+  const showTurnHint = (event) => {
+    const hint = document.createElement("div");
+    const hintText = document.createElement("span");
+    hint.className = "drag-it-hint turn-it-hint";
+    hintText.textContent = "Turn It";
+    hint.appendChild(hintText);
+    document.body.appendChild(hint);
+
+    const moveHint = (moveEvent) => {
+      hint.style.left = `${moveEvent.clientX + 18}px`;
+      hint.style.top = `${moveEvent.clientY + 18}px`;
+    };
+
+    const removeHint = (animationEvent) => {
+      if (animationEvent && animationEvent.target !== hint) return;
+      window.removeEventListener("pointermove", moveHint);
+      hint.remove();
+    };
+
+    moveHint(event);
+    window.addEventListener("pointermove", moveHint, { passive: true });
+    hint.addEventListener("animationend", removeHint);
+    window.setTimeout(removeHint, 3500);
+  };
+
+  const startFloating = () => {
+    gsap.killTweensOf(card, "x,y");
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      gsap.set(card, { x: 0, y: 0 });
+      return;
+    }
+    gsap.to(card, {
+      x: gsap.utils.random(-8, 8),
+      y: gsap.utils.random(-10, 10),
+      duration: gsap.utils.random(2.6, 3.4),
+      ease: "sine.inOut",
+      repeat: -1,
+      yoyo: true,
+    });
+  };
+
+  const getPointerAngle = (event) => {
+    const rect = card.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    return Math.atan2(event.clientY - centerY, event.clientX - centerX);
+  };
+
+  const handlePointerDown = (event) => {
+    if (event.button !== 0 || event.pointerType === "touch") return;
+    event.preventDefault();
+
+    gsap.killTweensOf(card, "x,y");
+    card.setPointerCapture(event.pointerId);
+    card.classList.add("is-rotating");
+    previousPointerAngle = getPointerAngle(event);
+
+    const handlePointerMove = (moveEvent) => {
+      const pointerAngle = getPointerAngle(moveEvent);
+      let angleDelta = pointerAngle - previousPointerAngle;
+
+      if (angleDelta > Math.PI) angleDelta -= Math.PI * 2;
+      if (angleDelta < -Math.PI) angleDelta += Math.PI * 2;
+
+      rotation += (angleDelta * 180) / Math.PI;
+      previousPointerAngle = pointerAngle;
+      gsap.set(card, { rotation });
+    };
+
+    const handlePointerUp = () => {
+      card.removeEventListener("pointermove", handlePointerMove);
+      card.removeEventListener("pointerup", handlePointerUp);
+      card.removeEventListener("pointercancel", handlePointerUp);
+      card.classList.remove("is-rotating");
+      startFloating();
+    };
+
+    card.addEventListener("pointermove", handlePointerMove);
+    card.addEventListener("pointerup", handlePointerUp);
+    card.addEventListener("pointercancel", handlePointerUp);
+  };
+
+  card.addEventListener("pointerdown", handlePointerDown);
+  card.addEventListener("mouseenter", showTurnHint, { once: true });
+  startFloating();
 }
 
 // Header color in project list ------------------------------ //
@@ -1102,6 +1286,7 @@ function initAfterLoading() {
   projectMarquee__init();
   projectMockupDrag__init();
   scrollHorizon__init();
+  aboutLicenseCard__init();
   projectVerticalScroll__init();
   scrollLeins__init();
   HeaderAboutColor__init();
