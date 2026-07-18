@@ -235,11 +235,15 @@ function loading__init() {
     };
 
     if (loadingText) {
-      await typeLoadingText(loadingText);
+      await gsap.to(loadingText, {
+        opacity: 1,
+        duration: 1,
+      });
       if (finished) return;
       await gsap.to(loadingText, {
         y: "-100%",
         duration: 0.8,
+        delay: 1.2,
         ease: "power2.inOut",
         onStart: startLoadingVideo,
       });
@@ -737,15 +741,6 @@ function projectMockupDrag__init() {
           y: throwY,
           duration: 0.5,
           ease: "power3.out",
-          onComplete: () => {
-            gsap.to(mockup, {
-              x: 0,
-              y: 0,
-              duration: 0.5,
-              delay: 0,
-              ease: "back.inOut(1.2)",
-            });
-          },
         });
       };
 
