@@ -1346,7 +1346,7 @@ main .horizontal-wrap {
   overflow: hidden;
   min-width: 375px;
   background-color: var(--color-black);
-  border-radius: 2.4rem;
+  border-radius: 2.4rem 2.4rem 0 0;
 }
 
 #sec-project-list > .project-list-wrapper {
@@ -1766,7 +1766,7 @@ main .horizontal-wrap {
   > .left-box
   > .bottom-box
   > .sub-wrap {
-    width: 100%;
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
