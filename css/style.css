@@ -9,8 +9,7 @@
 
 @font-face {
   font-family: "Urbanist";
-  src: url("../fonts/Urbanist-Italic-VariableFont_wght.ttf")
-    format("truetype");
+  src: url("../fonts/Urbanist-Italic-VariableFont_wght.ttf") format("truetype");
   font-weight: 100 900;
   font-style: italic;
   font-display: swap;
@@ -1313,15 +1312,19 @@ main .horizontal-wrap {
 }
 
 .sec-about .tool-box > .item-1::before {
-  content: "01  DESIGN";
+  content: "- DESIGN";
 }
 
 .sec-about .tool-box > .item-2::before {
-  content: "02  DEVELOPMENT";
+  content: "- DEVELOPMENT";
 }
 
 .sec-about .tool-box > .item-3::before {
-  content: "03  WORKFLOW";
+  content: "- LIBRARY";
+}
+
+.sec-about .tool-box > .item-4::before {
+  content: "- TOOLS";
 }
 
 .sec-about
