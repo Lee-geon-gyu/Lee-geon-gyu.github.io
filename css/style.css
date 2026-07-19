@@ -1,5 +1,30 @@
 /* Add on Font ------------------------------------------------------------ */
 @font-face {
+  font-family: "Urbanist";
+  src: url("../fonts/Urbanist-VariableFont_wght.ttf") format("truetype");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Urbanist";
+  src: url("../fonts/Urbanist-Italic-VariableFont_wght.ttf")
+    format("truetype");
+  font-weight: 100 900;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Space Grotesk";
+  src: url("../fonts/SpaceGrotesk-VariableFont_wght.ttf") format("truetype");
+  font-weight: 300 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
   font-family: "Pretendard";
   src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/pretendard@1.0/Pretendard-Regular.woff2")
     format("woff2");
@@ -93,6 +118,8 @@ span {
 }
 /* Variable ------------------------------------------------------------ */
 :root {
+  --font-urbanist: "Urbanist", "Pretendard", sans-serif;
+  --font-space-grotesk: "Space Grotesk", "Pretendard", sans-serif;
   --margin-grid-system: 0 10rem;
   --padding-grid-syetem: 10rem;
   --maxWidth-grid-system: 172rem;
