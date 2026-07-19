@@ -1637,45 +1637,79 @@ main .horizontal-wrap {
   border-radius: 0.6rem;
 }
 
-.sec-project
-  > .list-up
-  > .marquee-track
-  > .marquee-group
-  > .list-item
-  > .center-box::after {
-  content: "Learn more";
+.sec-project .project-preview-overlay {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  z-index: 1;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  padding: 3.2rem 2.4rem;
+  box-sizing: border-box;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3.2rem;
   color: #fff;
-  font-size: 3.6rem;
-  font-weight: 700;
-  white-space: nowrap;
+  background: rgba(30, 30, 30, 0.68);
   opacity: 0;
   pointer-events: none;
-  transform: translate(-50%, -50%);
-  transition: opacity 0.3s ease;
+  text-align: center;
+  transition: opacity 0.35s ease;
 }
 
-.sec-project
-  > .list-up
-  > .marquee-track
-  > .marquee-group
-  > .list-item
-  > .center-box:hover::after {
+.sec-project .center-box:hover > .project-preview-overlay,
+.sec-project .center-box:focus-within > .project-preview-overlay {
   opacity: 1;
+  pointer-events: auto;
 }
 
-.sec-project
-  > .list-up
-  > .marquee-track
-  > .marquee-group
-  > .list-item
-  > .center-box:hover
-  > img {
-  transform: scale(1.05);
-  filter: brightness(0.5) blur(12px);
+.sec-project .center-box:hover > img,
+.sec-project .center-box:focus-within > img {
+  transform: scale(1.5);
+  filter: brightness(0.55) blur(10px);
+}
+
+.sec-project .project-preview-type {
+  font-size: 3.2rem;
+  font-weight: 600;
+}
+
+.sec-project .project-preview-description {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 400;
+  line-height: 1.6;
+  word-break: keep-all;
+}
+
+.sec-project .project-learn-more {
+  display: inline-flex;
+  min-width: 12rem;
+  min-height: 5.2rem;
+  padding: 0 2.8rem;
+  box-sizing: border-box;
+  align-items: center;
+  justify-content: center;
+  border-radius: 99rem;
+  color: #111;
+  background: #fff;
+  font-size: 2.2rem;
+  font-weight: 800;
+  line-height: 1;
+  transition:
+    color 0.2s ease,
+    background-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.sec-project .project-learn-more:hover {
+  color: #fff;
+  background: var(--primary-color);
+  transform: scale(1.04);
+}
+
+.sec-project .project-learn-more:focus-visible {
+  outline: 0.2rem solid #fff;
+  outline-offset: 0.3rem;
 }
 
 .sec-project
@@ -1689,7 +1723,7 @@ main .horizontal-wrap {
   height: 100%;
   object-fit: cover;
   transition: all 0.3s ease;
-  cursor: pointer;
+  cursor: default;
 }
 
 @keyframes projectMarquee {

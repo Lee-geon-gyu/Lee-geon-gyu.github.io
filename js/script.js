@@ -368,7 +368,7 @@ function scrollHorizon__init() {
           );
         },
         null,
-        "portfolioLanded+=0.25",
+        "portfolioLanded+=0.05",
       );
     }
   };
@@ -701,7 +701,7 @@ function projectMarquee__init() {
   });
 
   marquee.addEventListener("click", (event) => {
-    const link = event.target.closest(".center-box");
+    const link = event.target.closest(".project-learn-more");
     const item = link?.closest(".list-item");
     if (!link || !item) return;
 
