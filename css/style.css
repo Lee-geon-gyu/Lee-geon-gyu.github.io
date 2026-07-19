@@ -95,7 +95,7 @@ html {
 }
 
 html body {
-  font-family: "Pretendard", sans-serif;
+  font-family: var(--font-urbanist);
   max-width: 100%;
   overflow-x: hidden;
   overflow-y: auto;
@@ -115,6 +115,18 @@ img {
 
 span {
   cursor: default;
+}
+
+header > .hd-container > .left-box > .portfolio-text,
+.sec-cover > .cover-title > .bottom-box,
+.sec-about
+  > .section-container
+  > .content-wrapper
+  > .about-left-box
+  > .category-wrapper,
+.sec-project > .category-box > span,
+footer > .top-box > .left-box {
+  font-family: var(--font-space-grotesk);
 }
 /* Variable ------------------------------------------------------------ */
 :root {
@@ -288,7 +300,7 @@ header {
   height: 7rem;
   padding: var(--margin-grid-system);
   box-sizing: border-box;
-  font-family: "Pretendard";
+  font-family: var(--font-urbanist);
   background-color: rgba(240, 240, 240, 0.2);
   backdrop-filter: blur(10px);
   min-width: 375px;
@@ -424,7 +436,7 @@ header
 }
 /* main ========================================= */
 main {
-  font-family: "Pretendard";
+  font-family: var(--font-urbanist);
   position: relative;
   overflow: hidden;
 }
