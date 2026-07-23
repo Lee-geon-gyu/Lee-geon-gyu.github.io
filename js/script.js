@@ -261,9 +261,6 @@ function scrollHorizon__init() {
         charsClass: "cover-title-char",
       })
     : null;
-  let coverAutoJumping = false;
-  let coverAutoJumpCalls = [];
-
   const playCoverCharacterJump = (character, onComplete) => {
     const jumpState = { progress: 0 };
     character._coverJumpTween = gsap.to(jumpState, {
@@ -293,7 +290,6 @@ function scrollHorizon__init() {
       if (
         event.pointerType === "touch" ||
         window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
-        coverAutoJumping ||
         character._coverJumpTween?.isActive()
       ) {
         return;
@@ -310,9 +306,6 @@ function scrollHorizon__init() {
       character._coverJumpTween?.kill();
       character._coverJumpTween = undefined;
     });
-    coverAutoJumpCalls.forEach((call) => call.kill());
-    coverAutoJumpCalls = [];
-    coverAutoJumping = false;
     gsap.killTweensOf([coverTopText, portfolioSplit.chars, coverCopy]);
     const introTimeline = gsap
       .timeline()
@@ -340,7 +333,6 @@ function scrollHorizon__init() {
         },
         "-=0.25",
       )
-      .addLabel("portfolioLanded")
       .fromTo(
         coverCopy,
         { y: 40, autoAlpha: 0 },
@@ -351,26 +343,6 @@ function scrollHorizon__init() {
           ease: "power2.out",
         },
       );
-
-    if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      introTimeline.call(
-        () => {
-          coverAutoJumping = true;
-          coverAutoJumpCalls = portfolioSplit.chars.map((character, index) =>
-            gsap.delayedCall(index * 0.1, () => {
-              playCoverCharacterJump(character, () => {
-                if (index === portfolioSplit.chars.length - 1) {
-                  coverAutoJumping = false;
-                  coverAutoJumpCalls = [];
-                }
-              });
-            }),
-          );
-        },
-        null,
-        "portfolioLanded+=0.05",
-      );
-    }
   };
 
   mm.add("(min-width:1281px)", () => {
