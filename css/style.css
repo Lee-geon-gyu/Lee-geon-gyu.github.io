@@ -2772,7 +2772,7 @@ footer > .bottom-box {
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 0.1rem solid var(--color-white);
+  border-top: 0.1rem solid var(--color-white);
 }
 
 footer > .bottom-box > span {
