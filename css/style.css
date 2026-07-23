@@ -2049,31 +2049,38 @@ main .horizontal-wrap {
 }
 
 #sec-project-list > .project-list-wrapper > .sec-project-item:nth-child(2) {
-  background: url("../images/EATGO_bg.png") center / cover no-repeat;
+  background: url("../images/DIVE_bg.png") center / cover no-repeat;
   align-items: center;
   justify-content: center;
   z-index: 3;
 }
 
 #sec-project-list > .project-list-wrapper > .sec-project-item:nth-child(3) {
-  background: url("../images/JW_bg.png") center / cover no-repeat;
+  background: url("../images/EATGO_bg.png") center / cover no-repeat;
   align-items: center;
   justify-content: center;
   z-index: 4;
 }
 
 #sec-project-list > .project-list-wrapper > .sec-project-item:nth-child(4) {
-  background: url("../images/OY_bg.png") center / cover no-repeat;
+  background: url("../images/JW_bg.png") center / cover no-repeat;
   align-items: center;
   justify-content: center;
   z-index: 5;
 }
 
 #sec-project-list > .project-list-wrapper > .sec-project-item:nth-child(5) {
-  background: url("../images/OC_bg.png") center / cover no-repeat;
+  background: url("../images/OY_bg.png") center / cover no-repeat;
   align-items: center;
   justify-content: center;
   z-index: 6;
+}
+
+#sec-project-list > .project-list-wrapper > .sec-project-item:nth-child(6) {
+  background: url("../images/OC_bg.png") center / cover no-repeat;
+  align-items: center;
+  justify-content: center;
+  z-index: 7;
 }
 
 #sec-project-list
@@ -2129,7 +2136,7 @@ main .horizontal-wrap {
 
 #sec-project-list
   > .project-list-wrapper
-  > .sec-project-item:nth-child(4)
+  > .sec-project-item:nth-child(5)
   > .section-container
   > .top-box
   > .box-item-2 {
