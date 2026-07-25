@@ -90,7 +90,8 @@ a {
 }
 
 html {
-  font-size: 0.52083333vw;
+  font-size: min(0.52083333vw, 1.05vh);
+  scrollbar-gutter: stable;
 }
 
 html body {
@@ -415,6 +416,7 @@ main {
   font-family: var(--font-urbanist);
   position: relative;
   overflow: hidden;
+  background-color: var(--color-white);
 }
 
 main .horizontal-wrap {
@@ -792,6 +794,7 @@ main .horizontal-wrap {
 /* About driver license card ----------------------------------------- */
 .sec-about > .section-container {
   justify-content: center;
+  margin-top: 0;
 }
 
 .sec-about > .section-container > .content-wrapper {
@@ -948,7 +951,7 @@ main .horizontal-wrap {
   position: absolute;
   top: 0;
   right: 0;
-  left: calc(var(--about-profile-width) - 0.2rem);
+  left: calc(var(--about-profile-width) - 0.4rem);
   z-index: 3;
   display: flex;
   height: var(--about-header-height);
@@ -1436,6 +1439,43 @@ main .horizontal-wrap {
   }
 }
 
+/* main > project reveal copy ========================================= */
+.project-reveal-copy {
+  --project-reveal-copy-y: 50dvh;
+  width: 100%;
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.project-reveal-copy > div {
+  position: absolute;
+  top: var(--project-reveal-copy-y);
+  left: 50%;
+  color: transparent;
+  background: linear-gradient(
+    135deg,
+    rgb(19, 59, 160) 0%,
+    var(--color-black) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  font-family: var(--font-space-grotesk);
+  font-size: 10rem;
+  font-weight: 700;
+  line-height: 1.2;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 2.4rem;
+  white-space: nowrap;
+}
+
 /* main > sec-project ========================================= */
 .sec-project {
   --project-blur-opacity: 0;
@@ -1460,6 +1500,10 @@ main .horizontal-wrap {
     var(--color-black)
   );
   isolation: isolate;
+}
+
+.sec-project {
+  will-change: clip-path;
 }
 
 .sec-project::before {

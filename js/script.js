@@ -11,6 +11,19 @@ function HeaderSlider__init() {
 
   let lastScroll = 0;
   let scrollFrame;
+  let isSyncingScroll = false;
+
+  const syncHeaderScroll = () => {
+    lastScroll = window.pageYOffset;
+    isSyncingScroll = true;
+    header.classList.remove("hide");
+    requestAnimationFrame(() => {
+      lastScroll = window.pageYOffset;
+      isSyncingScroll = false;
+    });
+  };
+
+  window.addEventListener("header-scroll-sync", syncHeaderScroll);
 
   window.addEventListener(
     "scroll",
@@ -21,17 +34,22 @@ function HeaderSlider__init() {
         scrollFrame = undefined;
 
         const currentScroll = window.pageYOffset;
-        const isPinActive = ScrollTrigger.getAll().some(
-          (trigger) => trigger.pin && trigger.isActive,
-        );
 
-        if (currentScroll <= 0 || isPinActive) {
+        if (isSyncingScroll) {
+          lastScroll = currentScroll;
+          return;
+        }
+
+        if (currentScroll <= 0) {
           header.classList.remove("hide");
           lastScroll = currentScroll;
           return;
         }
 
-        header.classList.toggle("hide", currentScroll > lastScroll);
+        const scrollDelta = currentScroll - lastScroll;
+        if (Math.abs(scrollDelta) < 1) return;
+
+        header.classList.toggle("hide", scrollDelta > 0);
         lastScroll = currentScroll;
       });
     },
@@ -78,9 +96,31 @@ function enableUserInput() {
 
 function loading__init() {
   window.addEventListener("load", async () => {
+    const loading = document.querySelector(".loading");
+    let skipLoadingAfterResponsiveReload = false;
+
+    try {
+      skipLoadingAfterResponsiveReload =
+        sessionStorage.getItem("portfolio-responsive-reload") === "true";
+      sessionStorage.removeItem("portfolio-responsive-reload");
+    } catch (error) {}
+
+    if (skipLoadingAfterResponsiveReload) {
+      loading?.remove();
+      document.documentElement.classList.remove("skip-loading");
+      window.scrollTo(0, 0);
+      initAfterLoading();
+
+      requestAnimationFrame(() => {
+        window.scrollTo(0, 0);
+        ScrollTrigger.refresh();
+        lenis?.resize();
+      });
+      return;
+    }
+
     disableUserInput();
 
-    const loading = document.querySelector(".loading");
     const loadingText = [...document.querySelectorAll(".loading-text")].find(
       (element) => window.getComputedStyle(element).display !== "none",
     );
@@ -457,6 +497,7 @@ function projectVerticalScroll__init() {
   const category = project?.querySelector(".category-box");
   const lineWrapper = project?.querySelector(".bg-line-wrapper");
   const projectList = document.querySelector("#sec-project-list");
+  const revealCopy = document.querySelector(".project-reveal-copy");
   const blurTargets = project
     ? [...project.children].filter(
         (element) => !element.classList.contains("bg-line-wrapper"),
@@ -486,7 +527,7 @@ function projectVerticalScroll__init() {
     );
   }
 
-  ScrollTrigger.create({
+  const projectPin = ScrollTrigger.create({
     id: "project-vertical-pin",
     trigger: project,
     start: "top top",
@@ -499,6 +540,338 @@ function projectVerticalScroll__init() {
     onEnterBack: () => header?.classList.add("is-project-section"),
     onLeave: () => header?.classList.remove("is-project-section"),
     onLeaveBack: () => header?.classList.remove("is-project-section"),
+  });
+
+  const revealMedia = gsap.matchMedia();
+
+  revealMedia.add("(min-width: 0px)", () => {
+    const hiddenClip = "circle(15px at 50% 115%)";
+    const centeredClip = "circle(15px at 50% 50%)";
+    const expandedClip = "circle(150vmax at 50% 50%)";
+    let revealState = "collapsed";
+    let isAnimating = false;
+    let isScrollLocked = false;
+    let isWaitingForReveal = false;
+    let revealDirection;
+    let revealTimeline;
+    let previousRevealScrollY = window.scrollY;
+    let previousHtmlOverflowY = "";
+    let previousBodyOverflowY = "";
+    let revealTouchStartY;
+
+    gsap.set(project, { clipPath: hiddenClip });
+    gsap.set(revealCopy, { autoAlpha: 0 });
+
+    const updateRevealCopyPosition = () => {
+      if (!revealCopy) return;
+
+      const projectTop = gsap.utils.clamp(
+        0,
+        window.innerHeight,
+        project.getBoundingClientRect().top,
+      );
+      const whiteAreaCenter =
+        projectTop + (window.innerHeight - projectTop) / 2;
+
+      gsap.set(revealCopy, {
+        "--project-reveal-copy-y": `${whiteAreaCenter}px`,
+      });
+    };
+
+    const fadeRevealCopy = (show) => {
+      gsap.to(revealCopy, {
+        autoAlpha: show ? 1 : 0,
+        duration: show ? 1 : 0.3,
+        ease: "power1.out",
+        overwrite: true,
+      });
+    };
+
+    const copyVisibilityTrigger = ScrollTrigger.create({
+      id: "project-reveal-copy-visibility",
+      trigger: project,
+      start: "top 50%",
+      end: () => projectPin.end,
+      onEnter: () => {
+        updateRevealCopyPosition();
+        fadeRevealCopy(true);
+      },
+      onEnterBack: () => {
+        updateRevealCopyPosition();
+        fadeRevealCopy(true);
+      },
+      onLeave: () => fadeRevealCopy(false),
+      onLeaveBack: () => fadeRevealCopy(false),
+      onUpdate: updateRevealCopyPosition,
+      invalidateOnRefresh: true,
+    });
+
+    const setRevealScrollLocked = (locked) => {
+      if (isScrollLocked === locked) return;
+
+      isScrollLocked = locked;
+
+      if (locked) {
+        previousHtmlOverflowY = document.documentElement.style.overflowY;
+        previousBodyOverflowY = document.body.style.overflowY;
+        document.documentElement.style.overflowY = "hidden";
+        document.body.style.overflowY = "hidden";
+        lenis?.stop();
+      } else {
+        document.documentElement.style.overflowY = previousHtmlOverflowY;
+        document.body.style.overflowY = previousBodyOverflowY;
+        lenis?.start();
+        ScrollTrigger.update();
+        window.dispatchEvent(new Event("header-scroll-sync"));
+      }
+    };
+
+    const scrollToRevealPosition = (position) => {
+      if (lenis) {
+        lenis.scrollTo(position, {
+          immediate: true,
+          force: true,
+        });
+      } else {
+        window.scrollTo(0, position);
+      }
+      ScrollTrigger.update();
+      window.dispatchEvent(new Event("header-scroll-sync"));
+    };
+
+    const getProjectListEntryStart = () => {
+      const listEntryTrigger = ScrollTrigger.getById(
+        "project-list-backdrop-blur",
+      );
+      if (listEntryTrigger) return listEntryTrigger.start;
+
+      const projectListTop =
+        window.scrollY +
+        (projectList?.getBoundingClientRect().top ?? window.innerHeight);
+      return projectListTop - window.innerHeight;
+    };
+
+    const animateReveal = (expand) => {
+      if (isAnimating) return;
+
+      isAnimating = true;
+      revealDirection = expand ? "expanding" : "collapsing";
+      setRevealScrollLocked(true);
+      if (expand && projectList) {
+        gsap.set(projectList, {
+          autoAlpha: 0,
+          pointerEvents: "none",
+        });
+      }
+      gsap.killTweensOf(project, "clipPath");
+
+      const finishReveal = () => {
+        revealState = expand ? "expanded" : "collapsed";
+        isAnimating = false;
+        revealDirection = undefined;
+        revealTimeline = undefined;
+        if (projectList) {
+          gsap.set(projectList, {
+            autoAlpha: 1,
+            pointerEvents: "auto",
+          });
+        }
+        setRevealScrollLocked(false);
+      };
+
+      revealTimeline = gsap.timeline({
+        defaults: {
+          overwrite: true,
+        },
+        onComplete: finishReveal,
+        onInterrupt: finishReveal,
+      });
+
+      if (expand) {
+        revealTimeline
+          .to(project, {
+            clipPath: centeredClip,
+            duration: 2.5,
+            ease: "power2.out",
+          })
+          .to(project, {
+            clipPath: expandedClip,
+            duration: 1.5,
+            ease: "power2.inOut",
+          })
+          .call(
+            () => header?.classList.add("is-project-section"),
+            null,
+            "<50%",
+          );
+      } else {
+        revealTimeline
+          .to(project, {
+            clipPath: centeredClip,
+            duration: 2.5,
+            ease: "power2.inOut",
+          })
+          .to(project, {
+            clipPath: hiddenClip,
+            duration: 1.5,
+            ease: "power2.in",
+          });
+      }
+    };
+
+    const handleRevealBoundaries = () => {
+      const currentScrollY = window.scrollY;
+      const isScrollingDown = currentScrollY > previousRevealScrollY;
+      const isScrollingUp = currentScrollY < previousRevealScrollY;
+      previousRevealScrollY = currentScrollY;
+
+      if (isAnimating) {
+        if (revealDirection !== "expanding" || isScrollLocked) return;
+
+        const listGate = getProjectListEntryStart() - 2;
+        if (currentScrollY < listGate) return;
+
+        setRevealScrollLocked(true);
+        scrollToRevealPosition(listGate);
+        return;
+      }
+
+      const boundaryTolerance = Math.max(40, window.innerHeight * 0.04);
+      const projectListRect = projectList?.getBoundingClientRect();
+      const isProjectListClosed =
+        !projectListRect ||
+        projectListRect.top >= window.innerHeight - boundaryTolerance;
+      const collapseGate = getProjectListEntryStart();
+
+      if (
+        revealState === "collapsed" &&
+        isScrollingDown &&
+        currentScrollY >= projectPin.start - boundaryTolerance &&
+        currentScrollY <= projectPin.end + boundaryTolerance
+      ) {
+        scrollToRevealPosition(projectPin.start);
+        isWaitingForReveal = true;
+        setRevealScrollLocked(true);
+      } else if (
+        revealState === "expanded" &&
+        isScrollingUp &&
+        isProjectListClosed &&
+        currentScrollY <= collapseGate + boundaryTolerance
+      ) {
+        scrollToRevealPosition(collapseGate);
+        animateReveal(false);
+      }
+    };
+
+    const handleRevealInput = (deltaY, event) => {
+      if (isWaitingForReveal) {
+        isWaitingForReveal = false;
+
+        if (deltaY > 0) {
+          event.preventDefault();
+          event.stopImmediatePropagation();
+          animateReveal(true);
+        } else {
+          setRevealScrollLocked(false);
+        }
+        return;
+      }
+
+      if (isAnimating) {
+        if (isScrollLocked) {
+          event.preventDefault();
+          event.stopImmediatePropagation();
+        }
+        return;
+      }
+
+      const pinTolerance = Math.max(40, window.innerHeight * 0.04);
+      const isAtPinStart =
+        Math.abs(window.scrollY - projectPin.start) <= pinTolerance;
+      const collapseGate = getProjectListEntryStart();
+      const isAtCollapseGate =
+        Math.abs(window.scrollY - collapseGate) <= pinTolerance;
+      const projectListRect = projectList?.getBoundingClientRect();
+      const isProjectListClosed =
+        !projectListRect ||
+        projectListRect.top >= window.innerHeight - pinTolerance;
+
+      if (
+        revealState === "collapsed" &&
+        projectPin.isActive &&
+        isAtPinStart &&
+        deltaY > 0
+      ) {
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        animateReveal(true);
+      } else if (
+        revealState === "expanded" &&
+        isAtCollapseGate &&
+        isProjectListClosed &&
+        deltaY < 0
+      ) {
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        animateReveal(false);
+      }
+    };
+
+    const handleRevealWheel = (event) => {
+      if (Math.abs(event.deltaY) <= Math.abs(event.deltaX)) return;
+      handleRevealInput(event.deltaY, event);
+    };
+
+    const handleRevealTouchStart = (event) => {
+      revealTouchStartY = event.touches[0]?.clientY;
+    };
+
+    const handleRevealTouchMove = (event) => {
+      const currentTouchY = event.touches[0]?.clientY;
+      if (revealTouchStartY === undefined || currentTouchY === undefined) {
+        return;
+      }
+
+      const deltaY = revealTouchStartY - currentTouchY;
+      if (Math.abs(deltaY) < 8) return;
+
+      handleRevealInput(deltaY, event);
+      revealTouchStartY = currentTouchY;
+    };
+
+    window.addEventListener("wheel", handleRevealWheel, {
+      passive: false,
+      capture: true,
+    });
+    window.addEventListener("touchstart", handleRevealTouchStart, {
+      passive: true,
+      capture: true,
+    });
+    window.addEventListener("touchmove", handleRevealTouchMove, {
+      passive: false,
+      capture: true,
+    });
+    window.addEventListener("scroll", handleRevealBoundaries, {
+      passive: true,
+    });
+
+    return () => {
+      window.removeEventListener("wheel", handleRevealWheel, true);
+      window.removeEventListener("touchstart", handleRevealTouchStart, true);
+      window.removeEventListener("touchmove", handleRevealTouchMove, true);
+      window.removeEventListener("scroll", handleRevealBoundaries);
+      copyVisibilityTrigger.kill();
+      revealTimeline?.kill();
+      gsap.killTweensOf(project, "clipPath");
+      gsap.set(project, { clearProps: "clipPath" });
+      if (projectList) {
+        gsap.set(projectList, {
+          clearProps: "opacity,visibility,pointerEvents",
+        });
+      }
+      gsap.set(revealCopy, { clearProps: "opacity,visibility" });
+      setRevealScrollLocked(false);
+    };
   });
 
   if (projectList) {
@@ -1173,6 +1546,8 @@ function scrollToMenu__init() {
 let resizeTimer;
 let resizeRefreshFrame;
 let lastAccordionMobile = window.matchMedia("(max-width: 768px)").matches;
+const initialViewportWidth = window.innerWidth;
+let responsiveReloadTimer;
 
 function setupPinAccordion() {
   const section = document.querySelector("#sec-project-list");
@@ -1304,6 +1679,17 @@ ScrollTrigger.config({
 });
 
 window.addEventListener("resize", () => {
+  if (window.innerWidth !== initialViewportWidth) {
+    clearTimeout(responsiveReloadTimer);
+    responsiveReloadTimer = setTimeout(() => {
+      try {
+        sessionStorage.setItem("portfolio-responsive-reload", "true");
+      } catch (error) {}
+      window.location.reload();
+    }, 180);
+    return;
+  }
+
   if (!resizeRefreshFrame) {
     resizeRefreshFrame = requestAnimationFrame(() => {
       resizeRefreshFrame = undefined;
