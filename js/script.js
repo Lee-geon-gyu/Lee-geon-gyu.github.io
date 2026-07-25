@@ -552,6 +552,7 @@ function projectVerticalScroll__init() {
     let isAnimating = false;
     let isScrollLocked = false;
     let isWaitingForReveal = false;
+    let isMenuReturnTransition = false;
     let revealDirection;
     let revealTimeline;
     let previousRevealScrollY = window.scrollY;
@@ -651,7 +652,7 @@ function projectVerticalScroll__init() {
       return projectListTop - window.innerHeight;
     };
 
-    const animateReveal = (expand) => {
+    const animateReveal = (expand, onComplete) => {
       if (isAnimating) return;
 
       isAnimating = true;
@@ -677,6 +678,7 @@ function projectVerticalScroll__init() {
           });
         }
         setRevealScrollLocked(false);
+        onComplete?.();
       };
 
       revealTimeline = gsap.timeline({
@@ -720,6 +722,8 @@ function projectVerticalScroll__init() {
     };
 
     const handleRevealBoundaries = () => {
+      if (isMenuReturnTransition) return;
+
       const currentScrollY = window.scrollY;
       const isScrollingDown = currentScrollY > previousRevealScrollY;
       const isScrollingUp = currentScrollY < previousRevealScrollY;
@@ -839,6 +843,52 @@ function projectVerticalScroll__init() {
       revealTouchStartY = currentTouchY;
     };
 
+    const handleProjectMenuReveal = () => {
+      isWaitingForReveal = false;
+
+      if (revealState === "collapsed" && !isAnimating) {
+        scrollToRevealPosition(projectPin.start);
+        animateReveal(true);
+      }
+    };
+
+    const handleProjectMenuReturn = (event) => {
+      const { continueNavigation } = event.detail ?? {};
+      if (typeof continueNavigation !== "function") return;
+
+      if (revealState !== "expanded" || isAnimating) {
+        return;
+      }
+
+      event.detail.handled = true;
+      isMenuReturnTransition = true;
+      isWaitingForReveal = false;
+      setRevealScrollLocked(true);
+
+      const collapseAndContinue = () => {
+        animateReveal(false, () => {
+          isMenuReturnTransition = false;
+          header?.classList.remove("is-project-section", "is-project-list");
+          continueNavigation();
+        });
+      };
+      const collapseGate = getProjectListEntryStart();
+      const isBelowCollapseGate =
+        window.scrollY > collapseGate + Math.max(40, window.innerHeight * 0.04);
+
+      if (isBelowCollapseGate) {
+        gsap.to(window, {
+          scrollTo: { y: collapseGate, autoKill: false },
+          duration: 1,
+          ease: "power2.out",
+          overwrite: "auto",
+          onComplete: collapseAndContinue,
+        });
+      } else {
+        collapseAndContinue();
+      }
+    };
+
     window.addEventListener("wheel", handleRevealWheel, {
       passive: false,
       capture: true,
@@ -854,12 +904,22 @@ function projectVerticalScroll__init() {
     window.addEventListener("scroll", handleRevealBoundaries, {
       passive: true,
     });
+    window.addEventListener("project-menu-reveal", handleProjectMenuReveal);
+    window.addEventListener("project-menu-return", handleProjectMenuReturn);
 
     return () => {
       window.removeEventListener("wheel", handleRevealWheel, true);
       window.removeEventListener("touchstart", handleRevealTouchStart, true);
       window.removeEventListener("touchmove", handleRevealTouchMove, true);
       window.removeEventListener("scroll", handleRevealBoundaries);
+      window.removeEventListener(
+        "project-menu-reveal",
+        handleProjectMenuReveal,
+      );
+      window.removeEventListener(
+        "project-menu-return",
+        handleProjectMenuReturn,
+      );
       copyVisibilityTrigger.kill();
       revealTimeline?.kill();
       gsap.killTweensOf(project, "clipPath");
@@ -1494,6 +1554,8 @@ function backSvgMoveTool__init() {
 }
 // GSAP scrollToMenu ------------------------------ //
 function scrollToMenu__init() {
+  const header = document.querySelector("header");
+
   document.querySelectorAll("[data-scroll-menu]").forEach((btn) => {
     btn.addEventListener("click", (e) => {
       e.preventDefault();
@@ -1530,15 +1592,38 @@ function scrollToMenu__init() {
 
       isContactScroll = menu === "contact";
 
-      gsap.to(window, {
-        scrollTo: { y: targetY, autoKill: false },
-        duration: menu === "contact" ? 1.2 : 1,
-        ease: "power2.out",
-        overwrite: "auto",
-        onComplete: () => {
-          isContactScroll = false;
-        },
-      });
+      const navigateToMenu = () => {
+        gsap.to(window, {
+          scrollTo: { y: targetY, autoKill: false },
+          duration: menu === "contact" ? 1.2 : 1,
+          ease: "power2.out",
+          overwrite: "auto",
+          onComplete: () => {
+            isContactScroll = false;
+            if (menu === "home" || menu === "about") {
+              header?.classList.remove("is-project-section", "is-project-list");
+              ScrollTrigger.update();
+              window.dispatchEvent(new Event("header-scroll-sync"));
+            }
+            if (menu === "project") {
+              window.dispatchEvent(new Event("project-menu-reveal"));
+            }
+          },
+        });
+      };
+
+      if (menu === "home" || menu === "about") {
+        const detail = {
+          handled: false,
+          continueNavigation: navigateToMenu,
+        };
+        window.dispatchEvent(
+          new CustomEvent("project-menu-return", { detail }),
+        );
+        if (detail.handled) return;
+      }
+
+      navigateToMenu();
     });
   });
 }
