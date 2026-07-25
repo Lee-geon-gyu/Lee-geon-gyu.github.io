@@ -845,10 +845,20 @@ function projectVerticalScroll__init() {
 
     const handleProjectMenuReveal = () => {
       isWaitingForReveal = false;
+      isMenuReturnTransition = false;
 
       if (revealState === "collapsed" && !isAnimating) {
         scrollToRevealPosition(projectPin.start);
         animateReveal(true);
+      }
+    };
+
+    const handleProjectMenuNavigate = () => {
+      const boundaryTolerance = Math.max(40, window.innerHeight * 0.04);
+
+      if (window.scrollY >= projectPin.start - boundaryTolerance) {
+        isMenuReturnTransition = true;
+        isWaitingForReveal = false;
       }
     };
 
@@ -904,6 +914,7 @@ function projectVerticalScroll__init() {
     window.addEventListener("scroll", handleRevealBoundaries, {
       passive: true,
     });
+    window.addEventListener("project-menu-navigate", handleProjectMenuNavigate);
     window.addEventListener("project-menu-reveal", handleProjectMenuReveal);
     window.addEventListener("project-menu-return", handleProjectMenuReturn);
 
@@ -912,6 +923,10 @@ function projectVerticalScroll__init() {
       window.removeEventListener("touchstart", handleRevealTouchStart, true);
       window.removeEventListener("touchmove", handleRevealTouchMove, true);
       window.removeEventListener("scroll", handleRevealBoundaries);
+      window.removeEventListener(
+        "project-menu-navigate",
+        handleProjectMenuNavigate,
+      );
       window.removeEventListener(
         "project-menu-reveal",
         handleProjectMenuReveal,
@@ -1593,6 +1608,10 @@ function scrollToMenu__init() {
       isContactScroll = menu === "contact";
 
       const navigateToMenu = () => {
+        if (menu === "project") {
+          window.dispatchEvent(new Event("project-menu-navigate"));
+        }
+
         gsap.to(window, {
           scrollTo: { y: targetY, autoKill: false },
           duration: menu === "contact" ? 1.2 : 1,
