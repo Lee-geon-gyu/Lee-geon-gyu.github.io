@@ -85,7 +85,6 @@ function loading__init() {
       (element) => window.getComputedStyle(element).display !== "none",
     );
     const loadingName = document.querySelector(".loading-name");
-    const skipButton = document.querySelector(".loading-skip");
     const loadingVideo = document.querySelector("video.loading-video");
     const loadingVideoShade = document.querySelector(".loading-video-shade");
     let finished = false;
@@ -153,7 +152,6 @@ function loading__init() {
     const finishLoading = (skipped = false) => {
       if (!loading || finished) return;
       finished = true;
-      skipButton?.removeEventListener("click", skipLoading);
       document.removeEventListener("keydown", handleSkipKeydown);
 
       if (skipped) {
@@ -186,7 +184,6 @@ function loading__init() {
         skipLoading();
       }
     };
-    skipButton?.addEventListener("click", skipLoading);
     document.addEventListener("keydown", handleSkipKeydown);
 
     let revealTimeReached = Promise.resolve();
