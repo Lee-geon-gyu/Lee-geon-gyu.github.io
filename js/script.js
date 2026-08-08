@@ -57,6 +57,38 @@ function HeaderSlider__init() {
   );
 }
 
+// Mobile Header Navigation ------------------------------ //
+function mobileNavigation__init() {
+  const header = document.querySelector("header");
+  const toggle = header?.querySelector(".mobile-menu-toggle");
+  const navigation = header?.querySelector(".mobile-navigation");
+  const backdrop = header?.querySelector(".mobile-navigation-backdrop");
+  const closeButton = navigation?.querySelector(".mobile-navigation__close");
+  if (!header || !toggle || !navigation || !backdrop || !closeButton) return;
+
+  const setOpen = (isOpen) => {
+    header.classList.toggle("is-mobile-menu-open", isOpen);
+    document.body.classList.toggle("is-mobile-menu-open", isOpen);
+    toggle.setAttribute("aria-expanded", String(isOpen));
+    navigation.setAttribute("aria-hidden", String(!isOpen));
+  };
+
+  toggle.addEventListener("click", () => setOpen(true));
+  backdrop.addEventListener("click", () => setOpen(false));
+  closeButton.addEventListener("click", () => setOpen(false));
+  navigation.querySelectorAll("[data-scroll-menu]").forEach((link) => {
+    link.addEventListener("click", () => setOpen(false));
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") setOpen(false);
+  });
+
+  window.addEventListener("resize", () => {
+    if (window.innerWidth > 768) setOpen(false);
+  });
+}
+
 // Custom vertical scrollbar ------------------------------ //
 function customScrollbar__init() {
   const track = document.querySelector(".site-scrollbar__track");
@@ -157,6 +189,7 @@ function disableUserInput() {
 
   preventScroll = function (e) {
     e.preventDefault();
+    e.stopImmediatePropagation();
   };
 
   window.addEventListener("wheel", preventScroll, { passive: false });
@@ -215,6 +248,7 @@ function loading__init() {
     );
     const loadingName = document.querySelector(".loading-name");
     const loadingVideo = document.querySelector("video.loading-video");
+    const loadingSkip = document.querySelector(".loading-skip");
     const loadingVideoShade = document.querySelector(".loading-video-shade");
     const loadingLensFlare = document.querySelector(".loading-lens-flare");
     const loaderMist = document.querySelector(".loader-mist");
@@ -236,6 +270,7 @@ function loading__init() {
       if (coverInitialized) return;
       coverInitialized = true;
       initAfterLoading();
+      lenis?.stop();
     };
 
     const completeLoadingDom = () => {
@@ -243,8 +278,24 @@ function loading__init() {
         clearProps: "opacity,visibility",
       });
       loading?.remove();
-      enableUserInput();
-      setTimeout(() => ScrollTrigger.refresh(), 100);
+      window.scrollTo(0, 0);
+      lenis?.scrollTo(0, { immediate: true, force: true });
+
+      requestAnimationFrame(() => {
+        window.scrollTo(0, 0);
+        lenis?.scrollTo(0, { immediate: true, force: true });
+        ScrollTrigger.refresh();
+        lenis?.resize();
+
+        requestAnimationFrame(() => {
+          window.scrollTo(0, 0);
+          lenis?.scrollTo(0, { immediate: true, force: true });
+          ScrollTrigger.update();
+          lenis?.start();
+          enableUserInput();
+          window.dispatchEvent(new Event("header-scroll-sync"));
+        });
+      });
     };
 
     if (loadingVideo) {
@@ -252,6 +303,7 @@ function loading__init() {
       loadingVideo.volume = 0;
       loadingVideo.playsInline = true;
     }
+    gsap.set(loadingSkip, { opacity: 0 });
 
     const playLoadingVideoToReveal = () => {
       if (!loadingVideo) return Promise.resolve();
@@ -416,6 +468,18 @@ function loading__init() {
 
       return new Promise((resolve) => {
         let settled = false;
+        loadingVideo.addEventListener(
+          "playing",
+          () => {
+            gsap.to(loadingSkip, {
+              opacity: 1,
+              duration: 0.25,
+              ease: "power1.out",
+              overwrite: true,
+            });
+          },
+          { once: true },
+        );
         const complete = () => {
           if (settled) return;
           settled = true;
@@ -755,6 +819,9 @@ function introSections__init() {
     const projectRevealMask = forestScene?.querySelector(
       ".project-reveal__mask",
     );
+    const projectMagneticField = forestScene?.querySelector(
+      ".project-reveal__magnetic-field",
+    );
     const revealElements = project?.querySelectorAll(
       ".category-box, .list-up, .marquee-control, .scroll-cue",
     );
@@ -765,6 +832,18 @@ function introSections__init() {
       ".sec-project .project-planet__parallax",
     );
     const aboutRightBox = about?.querySelector(".about-right-box");
+    const aboutScreenShutter = about?.querySelector(
+      ".mission-screen__boot-shutter",
+    );
+    const aboutScreenCovers = gsap.utils.toArray(
+      ".sec-about .mission-screen__boot-cover",
+    );
+    const aboutScreenBootLoader = aboutScreenShutter?.querySelector(
+      ".mission-screen__boot-loader",
+    );
+    const aboutScreenBootProgress = aboutScreenShutter?.querySelector(
+      ".project-tablet__loading-progress",
+    );
     const aboutCardElements = [
       about?.querySelector(".mission-identity"),
       about?.querySelector(".mission-log"),
@@ -921,15 +1000,17 @@ function introSections__init() {
     gsap.set(aboutTitleElements, { autoAlpha: 0, x: -120 });
     gsap.set(aboutRightBox, {
       autoAlpha: 0,
-      scale: cinematicMotion ? 0.08 : 0.96,
-      transformOrigin: getTabletTransformOrigin,
+      scale: 1,
+      transformOrigin: "50% 50%",
       force3D: false,
     });
-    gsap.set(aboutCardElements, {
-      autoAlpha: 0,
-      y: 18,
-      scale: 0.96,
-      transformOrigin: "50% 50%",
+    gsap.set(aboutCardElements, { autoAlpha: 1, y: 0, scale: 1 });
+    gsap.set(aboutScreenShutter, { autoAlpha: 1 });
+    gsap.set(aboutScreenCovers, { scaleY: 1 });
+    gsap.set(aboutScreenBootLoader, { autoAlpha: 0 });
+    gsap.set(aboutScreenBootProgress, {
+      scaleX: 0,
+      transformOrigin: "left center",
     });
     gsap.set(journeyTransition, { autoAlpha: 0 });
     gsap.set(cloudTransition, {
@@ -963,13 +1044,19 @@ function introSections__init() {
       pointerEvents: "none",
     });
     gsap.set(revealPhraseDelayedLines, {
-      autoAlpha: 0,
-      y: projectBackReducedMotion ? 0 : 18,
+      autoAlpha: 1,
+      y: 0,
     });
     gsap.set(projectReveal, { pointerEvents: "none" });
     gsap.set(projectRevealMask, {
       visibility: "visible",
       clipPath: "circle(0% at 50% 0%)",
+    });
+    gsap.set(projectMagneticField, {
+      opacity: 0,
+      scale: 0.006,
+      xPercent: -50,
+      yPercent: -50,
     });
     gsap.set(project, { clearProps: "clipPath,transform,filter" });
     gsap.set(revealElements, { autoAlpha: 0, y: 40 });
@@ -1024,8 +1111,8 @@ function introSections__init() {
         filter: `blur(${projectBackTextBlur}px)`,
       });
       gsap.set(revealPhraseDelayedLines, {
-        autoAlpha: 0,
-        y: projectBackReducedMotion ? 0 : 18,
+        autoAlpha: 1,
+        y: 0,
       });
     };
     window.addEventListener(
@@ -1034,26 +1121,44 @@ function introSections__init() {
     );
     const aboutEntranceTimeline = gsap
       .timeline({ paused: true })
-      .to(aboutRightBox, {
-        autoAlpha: 1,
-        scale: 1,
-        transformOrigin: getTabletTransformOrigin,
-        duration: 0.8,
-        ease: "power3.out",
-        force3D: false,
-      })
       .to(
-        aboutCardElements,
+        aboutRightBox,
         {
           autoAlpha: 1,
-          y: 0,
-          scale: 1,
-          duration: 0.4,
-          stagger: 0.2,
-          ease: "power2.out",
+          duration: 0.8,
+          ease: "power3.out",
         },
-        "-=0.05",
-      );
+        0,
+      )
+      .set(aboutScreenBootLoader, { autoAlpha: 1 }, 0.4)
+      .to(
+        aboutScreenBootProgress,
+        {
+          scaleX: 1,
+          duration: 0.5,
+          ease: "power1.inOut",
+        },
+        0.4,
+      )
+      .to(
+        aboutScreenBootLoader,
+        {
+          autoAlpha: 0,
+          duration: 0.25,
+          ease: "power1.out",
+        },
+        0.8,
+      )
+      .to(
+        aboutScreenCovers,
+        {
+          scaleY: 0,
+          duration: 0.5,
+          ease: "power2.inOut",
+        },
+        1.2,
+      )
+      .set(aboutScreenShutter, { autoAlpha: 0 }, 2);
 
     const cloudTransitionPlayback = gsap
       .timeline({ paused: true })
@@ -1143,7 +1248,7 @@ function introSections__init() {
           const currentMasterTime = scrollTween?.time() || 0;
           const projectedMasterTime = self.progress * masterDuration;
           const aboutStart = scrollTween?.labels.aboutArrived ?? 1;
-          const aboutEntranceStart = aboutStart * 0.9;
+          const aboutEntranceStart = aboutStart * 0.75;
           const aboutEnd = scrollTween?.labels.aboutContentExit ?? 4.1;
           const isInsideAbout =
             projectedMasterTime >= aboutEntranceStart &&
@@ -1358,32 +1463,38 @@ function introSections__init() {
 
     // Preserve the original 12.5 circle-reveal position while enriching the
     // existing three-phrase sequence inside the same time budget.
-    const circleStart = 14;
-    const phraseEnterDuration = 0.5;
-    const phraseExitDuration = 0.45;
-    // Each full phrase is the stopping point itself, so no extra master-time
-    // hold is needed between phrases. The user's next wheel input provides it.
-    const phraseHoldDuration = 0;
+    const originalCircleStart = 14;
+    const projectRevealSpeed = 2;
+    const baseProjectCircleSpeed = 1.5;
+    const projectCircleDurationScale = 1.7;
+    const projectCircleSpeed =
+      baseProjectCircleSpeed / projectCircleDurationScale;
+    const scaleProjectRevealTime = (time) => time / projectRevealSpeed;
+    const scaleProjectCircleTime = (time) => time / projectCircleSpeed;
+    const originalProjectReadyTime =
+      originalCircleStart +
+      1.55 +
+      1.4 +
+      Math.max(projectPlanetRevealLayers.length - 1, 0) * 0.22;
+    const originalProjectBoundaryTime = originalProjectReadyTime + 0.12;
+    const phraseEnterDuration = 1;
+    const phraseExitDuration = 0.225;
+    const phraseStepDuration = 0.5;
+    // Keep the phrases distributed across projectBack so the final phrase
+    // reaches the circle-reveal gate without a long empty camera-rise lead-in.
+    // Shorten each desktop projectBack phrase-to-phrase scroll interval by
+    // about 25% while preserving the existing reveal/exit animation speeds.
+    const phraseHoldDuration = 0.94;
     const phraseOverlapDelay = 0.1;
-    const getPhraseRevealDuration = (phrase) =>
-      phrase.querySelectorAll(".cinematic-text__line").length > 1
-        ? 1.75
-        : phraseEnterDuration;
-    const phraseSequenceDuration = revealPhrases.reduce(
-      (total, phrase, index) =>
-        total +
-        getPhraseRevealDuration(phrase) +
-        phraseHoldDuration +
-        (index < revealPhrases.length - 1 ? phraseOverlapDelay : 0),
-      0,
-    );
-    let phraseEnterTime = circleStart - phraseSequenceDuration;
+    const getPhraseRevealDuration = () => phraseStepDuration;
+    const projectBackTransitionComplete =
+      scrollTween.labels.cloudTransitionOut ??
+      scrollTween.labels.projectBackgroundSettled ??
+      7.05;
+    let phraseEnterTime = projectBackTransitionComplete;
     const projectPhraseStepTimes = [];
 
     revealPhrases.forEach((phrase, index) => {
-      const delayedLines = [
-        ...phrase.querySelectorAll(".cinematic-text__line"),
-      ].slice(1);
       const phraseRevealDuration = getPhraseRevealDuration(phrase);
       projectPhraseStepTimes.push(phraseEnterTime + phraseRevealDuration);
       scrollTween.to(
@@ -1398,19 +1509,6 @@ function introSections__init() {
         },
         phraseEnterTime,
       );
-      if (delayedLines.length) {
-        scrollTween.to(
-          delayedLines,
-          {
-            autoAlpha: 1,
-            y: 0,
-            duration: 0.5,
-            ease: "power2.out",
-          },
-          phraseEnterTime + 1.25,
-        );
-      }
-
       const phraseHoldEnd =
         phraseEnterTime + phraseRevealDuration + phraseHoldDuration;
       const nextPhrase = revealPhrases[index + 1];
@@ -1430,7 +1528,21 @@ function introSections__init() {
       }
     });
     scrollTween.projectPhraseStepTimes = projectPhraseStepTimes;
-    scrollTween.projectBackEntryTime = projectPhraseStepTimes[0];
+    scrollTween.projectBackEntryTime =
+      projectBackTransitionComplete + phraseEnterDuration;
+    const baseProjectRevealStepDuration = 5 / projectRevealSpeed;
+    const baseCircleRevealDuration = 2.2 / baseProjectCircleSpeed;
+    const extendedCircleRevealDuration = scaleProjectCircleTime(2.2);
+    scrollTween.projectRevealStepDuration =
+      baseProjectRevealStepDuration +
+      (extendedCircleRevealDuration - baseCircleRevealDuration);
+    scrollTween.projectLastPhraseVisibleTime =
+      phraseEnterTime + phraseEnterDuration;
+
+    const lastPhraseStop = scrollTween.projectLastPhraseVisibleTime;
+    const circleStart =
+      lastPhraseStop +
+      scaleProjectRevealTime(originalCircleStart - lastPhraseStop);
 
     projectBackEndTime = circleStart;
     const projectBackScrollDuration = circleStart - projectBackStartTime;
@@ -1467,7 +1579,7 @@ function introSections__init() {
       );
 
     scrollTween
-      .addLabel("cinematicPause", circleStart - 0.5)
+      .addLabel("cinematicPause", circleStart - scaleProjectRevealTime(0.5))
       .addLabel("circle-reveal", circleStart)
       .addLabel("projectReveal", circleStart)
       .set(projectReveal, { pointerEvents: "auto" }, circleStart)
@@ -1475,7 +1587,7 @@ function introSections__init() {
         journeyTransition,
         {
           autoAlpha: 0,
-          duration: 2.2,
+          duration: scaleProjectCircleTime(2.2),
           ease: "sine.inOut",
         },
         circleStart,
@@ -1484,7 +1596,7 @@ function introSections__init() {
         projectBackScrollLayer,
         {
           scale: projectBackReducedMotion ? 1 : 1.25,
-          duration: 2.2,
+          duration: scaleProjectCircleTime(2.2),
           ease: "power2.inOut",
           transformOrigin: "50% 50%",
         },
@@ -1494,10 +1606,41 @@ function introSections__init() {
         projectRevealMask,
         {
           clipPath: "circle(150% at 50% 0%)",
-          duration: 2.2,
+          duration: scaleProjectCircleTime(2.2),
           ease: "power2.inOut",
         },
         circleStart,
+      )
+      .to(
+        projectMagneticField,
+        {
+          scale: 1.1,
+          duration: scaleProjectCircleTime(2.2),
+          ease: "power2.inOut",
+        },
+        circleStart,
+      )
+      .to(
+        projectMagneticField,
+        {
+          opacity: projectBackReducedMotion ? 0.28 : 0.85,
+          duration: scaleProjectRevealTime(
+            projectBackReducedMotion ? 0.15 : 0.35,
+          ),
+          ease: "power1.out",
+        },
+        circleStart,
+      )
+      .to(
+        projectMagneticField,
+        {
+          opacity: 0,
+          duration: scaleProjectRevealTime(
+            projectBackReducedMotion ? 0.3 : 0.65,
+          ),
+          ease: "power1.in",
+        },
+        circleStart + scaleProjectCircleTime(1.35),
       )
       .to(
         revealPhrases.at(-1),
@@ -1505,7 +1648,7 @@ function introSections__init() {
           autoAlpha: 0,
           y: projectBackReducedMotion ? 0 : -18,
           filter: projectBackReducedMotion ? "blur(0px)" : "blur(6px)",
-          duration: phraseExitDuration,
+          duration: scaleProjectRevealTime(phraseExitDuration),
           ease: projectBackReducedMotion ? "power1.out" : "power2.in",
         },
         circleStart,
@@ -1515,11 +1658,11 @@ function introSections__init() {
         {
           autoAlpha: 1,
           y: 0,
-          duration: 0.8,
-          stagger: 0.12,
+          duration: scaleProjectRevealTime(0.8),
+          stagger: scaleProjectRevealTime(0.12),
           ease: "power2.out",
         },
-        circleStart + 1.35,
+        circleStart + scaleProjectCircleTime(1.35),
       )
       .to(
         projectPlanetRevealLayers,
@@ -1527,11 +1670,11 @@ function introSections__init() {
           autoAlpha: 1,
           y: 0,
           scale: 1,
-          duration: 1.4,
-          stagger: 0.22,
+          duration: scaleProjectRevealTime(1.4),
+          stagger: scaleProjectRevealTime(0.22),
           ease: "power3.out",
         },
-        circleStart + 1.55,
+        circleStart + scaleProjectCircleTime(1.55),
       )
       .addLabel("project-ready")
       .to(
@@ -1549,15 +1692,23 @@ function introSections__init() {
                 .closest(".project-planet")
                 ?.style.getPropertyValue("--planet-parallax-y"),
             ) || 0) * (window.innerWidth <= 1280 ? 0.6 : 1),
-          duration: 1.4,
+          duration: scaleProjectRevealTime(1.4),
           ease: "none",
         },
-        "project-ready-=1.4",
+        `project-ready-=${scaleProjectRevealTime(1.4)}`,
       )
       // Keep the completed planet frame just inside the forest pin. This
       // zero-motion guard prevents the following tablet trigger from firing
       // on the same wheel input; the next input crosses this boundary.
-      .to({}, { duration: 0.12 })
+      .to(
+        {},
+        {
+          duration: Math.max(
+            originalProjectBoundaryTime - scrollTween.duration(),
+            0.12,
+          ),
+        },
+      )
       .addLabel("project-boundary-guard");
 
     const coverReplayTrigger = ScrollTrigger.create({
@@ -1675,6 +1826,9 @@ function projectVerticalScroll__init() {
   const project = document.querySelector(".sec-project.vertical-section");
   const projectRevealMask = project?.closest(".project-reveal__mask");
   const projectReveal = projectRevealMask?.closest(".project-reveal");
+  const projectMagneticField = projectReveal?.querySelector(
+    ".project-reveal__magnetic-field",
+  );
   const projectBackViewport = projectReveal?.querySelector(
     ".project-back-viewport--mobile",
   );
@@ -1719,6 +1873,12 @@ function projectVerticalScroll__init() {
     visibility: "visible",
     clipPath: hiddenClip,
     willChange: "clip-path",
+  });
+  gsap.set(projectMagneticField, {
+    opacity: 0,
+    scale: 0.006,
+    xPercent: -50,
+    yPercent: -50,
   });
   gsap.set(revealCopy, { autoAlpha: 1 });
   gsap.set(revealPhrases, {
@@ -1840,6 +2000,33 @@ function projectVerticalScroll__init() {
         ease: "power2.inOut",
       },
       "mobileCircleReveal",
+    )
+    .to(
+      projectMagneticField,
+      {
+        scale: 1.1,
+        duration: 3,
+        ease: "power2.inOut",
+      },
+      "mobileCircleReveal",
+    )
+    .to(
+      projectMagneticField,
+      {
+        opacity: reducedMotion ? 0.24 : 0.82,
+        duration: reducedMotion ? 0.15 : 0.4,
+        ease: "power1.out",
+      },
+      "mobileCircleReveal",
+    )
+    .to(
+      projectMagneticField,
+      {
+        opacity: 0,
+        duration: reducedMotion ? 0.35 : 0.8,
+        ease: "power1.in",
+      },
+      "mobileCircleReveal+=1.8",
     )
     .to(
       revealElements,
@@ -3096,17 +3283,14 @@ function projectPlanetMotion__init() {
         : floatLayers.map((layer, index) => {
             if (!layer) return null;
             const config = floatConfigs[index];
-            const x = mobile
-              ? gsap.utils.clamp(-2, 2, config.x * motionScale)
-              : config.x * motionScale;
-            const y = mobile
-              ? gsap.utils.clamp(-2, 2, config.y * motionScale)
-              : config.y * motionScale;
+            const x = mobile ? 0 : config.x * motionScale;
+            const y = mobile ? 0 : config.y * motionScale;
             return gsap.to(layer, {
               x,
               y,
-              duration: config.duration,
-              delay: -index * 0.85,
+              yPercent: mobile ? -3.5 : 0,
+              duration: mobile ? 3 : config.duration,
+              delay: mobile ? index * 0.45 : -index * 0.85,
               repeat: -1,
               yoyo: true,
               ease: "sine.inOut",
@@ -3149,8 +3333,9 @@ function projectPlanetMotion__init() {
       if (usesOrbit) window.addEventListener("resize", handleResize);
 
       const hoverCleanups = planetItems.map((item, index) => {
-        const hoverTarget =
-          item.querySelector(".project-planet__position") || item;
+        const hoverTarget = usesOrbit
+          ? item.querySelector(".project-planet__hover") || item
+          : item.querySelector(".project-planet__position") || item;
         const enter = () => {
           hoveredIndex = index;
           gsap.to(hoverLayers[index], {
@@ -3789,6 +3974,46 @@ function fullPageStepScroll__init() {
     );
   };
 
+  const isFreeProjectBackScroll = (direction = 0) => {
+    if (!window.matchMedia("(min-width: 769px)").matches) return false;
+
+    const forestTrigger = ScrollTrigger.getById("forest-master");
+    const phraseStepTimes = scrollTween?.projectPhraseStepTimes ?? [];
+    if (!forestTrigger || !scrollTween || phraseStepTimes.length < 2) {
+      return false;
+    }
+
+    const masterDuration = scrollTween.duration() || 1;
+    const scrollProgress = Math.max(
+      0,
+      Math.min(
+        (window.scrollY - forestTrigger.start) /
+          Math.max(forestTrigger.end - forestTrigger.start, 1),
+        1,
+      ),
+    );
+    const projectedMasterTime = scrollProgress * masterDuration;
+    const firstPhraseTime =
+      scrollTween.projectBackEntryTime ?? phraseStepTimes[0];
+    const lastPhraseTime = phraseStepTimes.at(-1);
+
+    if (direction > 0) {
+      return (
+        projectedMasterTime >= firstPhraseTime - 0.05 &&
+        projectedMasterTime < lastPhraseTime - 0.12
+      );
+    }
+
+    if (direction < 0) {
+      return (
+        projectedMasterTime > firstPhraseTime + 0.12 &&
+        projectedMasterTime <= lastPhraseTime + 0.05
+      );
+    }
+
+    return false;
+  };
+
   const moveOneViewport = (direction, startY = window.scrollY) => {
     if (isStepping || !direction) return;
 
@@ -3813,6 +4038,8 @@ function fullPageStepScroll__init() {
     let syncMasterTime;
     let syncTriggerAnimation;
     let syncTriggerTime;
+    const isReversingFromProjectReady =
+      direction < 0 && hasStoppedAtProjectReady;
     const tabletEntranceStepTrigger = ScrollTrigger.getById(
       "project-tablet-entrance",
     );
@@ -3841,7 +4068,7 @@ function fullPageStepScroll__init() {
           forestTrigger.start +
           (forestTrigger.end - forestTrigger.start) *
             (aboutStart / masterDuration);
-        stepDuration = 3;
+        stepDuration = 2.75;
         syncMasterTime = aboutStart;
       } else if (
         projectedMasterTime >= aboutStart - 0.2 &&
@@ -3853,8 +4080,8 @@ function fullPageStepScroll__init() {
           forestTrigger.start +
           (forestTrigger.end - forestTrigger.start) *
             (projectBackEntryTime / masterDuration);
-        stepDuration = 6;
-        stepUnlockDelay = 2;
+        stepDuration = 3.5;
+        stepUnlockDelay = 3.5;
         syncMasterTime = projectBackEntryTime;
       } else if (
         projectedMasterTime >= projectBackStart - 0.2 &&
@@ -3886,7 +4113,7 @@ function fullPageStepScroll__init() {
               tabletEntranceStepTrigger.start - 2,
             );
           }
-          stepDuration = 5;
+          stepDuration = scrollTween.projectRevealStepDuration ?? 5 / 2;
           stepEasing = (t) => t;
           syncMasterTime = projectReadyTime;
           hasStoppedAtProjectReady = true;
@@ -3933,7 +4160,7 @@ function fullPageStepScroll__init() {
 
       if (isBeforeTabletSettles) {
         requestedY = tabletEntranceTrigger.end + 2;
-        stepDuration = 2.8;
+        stepDuration = 2.8 / 2.25;
         syncTriggerAnimation = tabletEntranceTrigger.animation;
         syncTriggerTime = tabletEntranceTrigger.animation?.duration() ?? 1;
       } else if (
@@ -3978,8 +4205,8 @@ function fullPageStepScroll__init() {
           const footerStepStops = [
             {
               time: projectTimeline.labels.footerThankYouFirstComplete,
-              duration: 6,
-              unlockDelay: 3.5,
+              duration: projectTimeline.tabletExitStepDuration ?? 6 / 1.5,
+              unlockDelay: projectTimeline.tabletExitUnlockDelay ?? 3.5 / 1.5,
               linear: true,
             },
             {
@@ -4043,7 +4270,12 @@ function fullPageStepScroll__init() {
           { time: 3, duration: 1.65 },
           { time: 4, duration: 1.65 },
           { time: 5, duration: 1.65 },
-          { time: 6, duration: 4, linear: true, footer: true },
+          {
+            time: 6,
+            duration: projectTimeline.tabletExitReverseStepDuration ?? 4 / 1.5,
+            linear: true,
+            footer: true,
+          },
           {
             time:
               projectTimeline.labels.footerSecondMessageComplete !== undefined
@@ -4106,7 +4338,7 @@ function fullPageStepScroll__init() {
         (isAtFirstProjectStart || startY >= tabletEntranceTrigger.end - 3)
       ) {
         requestedY = tabletEntranceTrigger.start - 2;
-        stepDuration = 2.8;
+        stepDuration = 2.8 / 2.25;
         syncTriggerAnimation = tabletEntranceTrigger.animation;
         syncTriggerTime = 0;
         reverseStepHandled = true;
@@ -4129,6 +4361,10 @@ function fullPageStepScroll__init() {
           scrollTween.labels.projectBackgroundSettled ?? 7.05;
         const phraseStepTimes = scrollTween.projectPhraseStepTimes ?? [];
         const projectReadyTime = scrollTween.labels["project-ready"];
+        const projectBackEntryTime =
+          scrollTween.projectBackEntryTime ?? phraseStepTimes[0];
+        const lastPhraseVisibleTime =
+          scrollTween.projectLastPhraseVisibleTime ?? phraseStepTimes.at(-1);
         const firstPhraseTime = phraseStepTimes[0];
         const secondPhraseTime = phraseStepTimes[1];
         let previousMasterStep;
@@ -4136,25 +4372,33 @@ function fullPageStepScroll__init() {
         let returnDirectlyToAbout = false;
 
         if (
+          isReversingFromProjectReady &&
+          projectReadyTime !== undefined &&
+          phraseStepTimes.length > 0
+        ) {
+          previousMasterStep = lastPhraseVisibleTime;
+          reverseDuration = scrollTween.projectRevealStepDuration ?? 5 / 2;
+          stepEasing = (t) => t;
+        } else if (
+          firstPhraseTime !== undefined &&
+          projectedMasterTime >= projectBackEntryTime - 0.2 &&
+          projectedMasterTime <= projectBackEntryTime + 0.3
+        ) {
+          returnDirectlyToAbout = true;
+          reverseDuration = 3.5;
+        } else if (
           firstPhraseTime !== undefined &&
           secondPhraseTime !== undefined &&
-          projectedMasterTime > firstPhraseTime + 0.18 &&
+          projectedMasterTime > projectBackEntryTime + 0.3 &&
           projectedMasterTime <= secondPhraseTime + 0.3
         ) {
           previousMasterStep = firstPhraseTime;
         } else if (
-          firstPhraseTime !== undefined &&
-          projectedMasterTime >= projectBackStart - 0.2 &&
-          projectedMasterTime <= firstPhraseTime + 0.3
-        ) {
-          returnDirectlyToAbout = true;
-          reverseDuration = 6;
-        } else if (
           projectReadyTime !== undefined &&
           projectedMasterTime > phraseStepTimes.at(-1) + 0.18
         ) {
-          previousMasterStep = phraseStepTimes.at(-1);
-          reverseDuration = 5;
+          previousMasterStep = lastPhraseVisibleTime;
+          reverseDuration = scrollTween.projectRevealStepDuration ?? 5 / 2;
           stepEasing = (t) => t;
         } else {
           previousMasterStep = phraseStepTimes
@@ -4172,7 +4416,7 @@ function fullPageStepScroll__init() {
             (forestTrigger.end - forestTrigger.start) *
               (aboutStart / masterDuration);
           stepDuration = reverseDuration;
-          stepUnlockDelay = 2;
+          stepUnlockDelay = reverseDuration;
           syncMasterTime = aboutStart;
         } else if (
           previousMasterStep !== undefined &&
@@ -4189,7 +4433,7 @@ function fullPageStepScroll__init() {
           projectedMasterTime <= aboutStart + 0.3
         ) {
           requestedY = forestTrigger.start;
-          stepDuration = 3;
+          stepDuration = 2.75;
           syncMasterTime = 0;
         }
       }
@@ -4228,14 +4472,18 @@ function fullPageStepScroll__init() {
         if (syncMasterTime !== undefined && scrollTween) {
           scrollTween.time(syncMasterTime, false);
           if (direction > 0) {
+            const isProjectBackEntry =
+              scrollTween.projectBackEntryTime !== undefined &&
+              Math.abs(syncMasterTime - scrollTween.projectBackEntryTime) <
+                0.05;
             const phraseStepIndex =
               scrollTween.projectPhraseStepTimes?.findIndex(
                 (time) => Math.abs(syncMasterTime - time) < 0.05,
               );
-            if (phraseStepIndex >= 0) {
-              const projectPhrases = gsap.utils.toArray(
-                ".project-reveal-copy > div > span",
-              );
+            const projectPhrases = gsap.utils.toArray(
+              ".project-reveal-copy > div > span",
+            );
+            if (!isProjectBackEntry && phraseStepIndex >= 0) {
               gsap.set(
                 projectPhrases.filter((_, index) => index !== phraseStepIndex),
                 {
@@ -4256,6 +4504,7 @@ function fullPageStepScroll__init() {
                 { autoAlpha: 1, y: 0 },
               );
             } else if (
+              !isProjectBackEntry &&
               syncMasterTime < scrollTween.projectPhraseStepTimes?.[0]
             ) {
               gsap.set(".project-reveal-copy > div > span", {
@@ -4289,6 +4538,7 @@ function fullPageStepScroll__init() {
       if (event.ctrlKey || isInteractiveTarget(event.target)) return;
       const wheelDirection = event.deltaY > 0 ? 1 : -1;
       if (isFreeProjectListScroll(wheelDirection)) return;
+      if (isFreeProjectBackScroll(wheelDirection)) return;
       event.preventDefault();
       if (isTabletLoading()) return;
       if (!isStepping && Math.abs(event.deltaY) >= 1) {
@@ -4320,6 +4570,7 @@ function fullPageStepScroll__init() {
       const swipeDistance = touchStartY - event.changedTouches[0].clientY;
       const swipeDirection = swipeDistance > 0 ? 1 : -1;
       if (isFreeProjectListScroll(swipeDirection)) return;
+      if (isFreeProjectBackScroll(swipeDirection)) return;
       if (isTabletLoading()) return;
       if (Math.abs(swipeDistance) >= 40) {
         moveOneViewport(swipeDirection, touchStartScroll);
@@ -4819,6 +5070,8 @@ function projectTabletTransition__init() {
         },
         "-=0.1",
       );
+
+    loadingTimeline.duration(1);
   };
 
   const restoreProjectIntro = () => {
@@ -5114,42 +5367,62 @@ function setupPinAccordion() {
   });
 
   const project06Complete = items.length;
-  const tabletExitDuration = isMobile ? 1.75 : 3.5;
+  const tabletExitSpeed = 1.5;
+  const scaleTabletExitTime = (time) => time / tabletExitSpeed;
+  const tabletExitDuration = scaleTabletExitTime(isMobile ? 1.75 : 3.5);
+  tl.tabletExitStepDuration = 6 / tabletExitSpeed;
+  tl.tabletExitUnlockDelay = 3.5 / tabletExitSpeed;
+  tl.tabletExitReverseStepDuration = 4 / tabletExitSpeed;
   tl.addLabel("project06Complete", project06Complete)
     .set([footer, curtain], { autoAlpha: 1 })
     .to(
       tabletScreenLayers,
       {
         autoAlpha: 0,
-        duration: 2,
+        duration: scaleTabletExitTime(2),
         ease: "power2.inOut",
       },
       "project06Complete",
     )
     .to(
       tabletPowerShutters,
-      { scaleY: 1, duration: 2, ease: "power3.inOut" },
+      {
+        scaleY: 1,
+        duration: scaleTabletExitTime(2),
+        ease: "power3.inOut",
+      },
       "project06Complete",
     )
-    .set(tabletPowerLogo, { autoAlpha: 1 }, "project06Complete+=1.5")
+    .set(
+      tabletPowerLogo,
+      { autoAlpha: 1 },
+      `project06Complete+=${scaleTabletExitTime(1.5)}`,
+    )
     .to(
       tabletPowerLogoLetters,
       {
         opacity: 1,
         y: 0,
-        duration: 0.3,
-        stagger: 0.08,
+        duration: scaleTabletExitTime(0.3),
+        stagger: scaleTabletExitTime(0.08),
         ease: "power2.out",
       },
-      "project06Complete+=1.5",
+      `project06Complete+=${scaleTabletExitTime(1.5)}`,
     )
-    .addLabel("tabletPowerLogoComplete", "project06Complete+=2")
+    .addLabel(
+      "tabletPowerLogoComplete",
+      `project06Complete+=${scaleTabletExitTime(2)}`,
+    )
     .to(
       curtain,
-      { autoAlpha: 0, duration: 0.35, ease: "power2.out" },
-      "project06Complete+=1.65",
+      {
+        autoAlpha: 0,
+        duration: scaleTabletExitTime(0.35),
+        ease: "power2.out",
+      },
+      `project06Complete+=${scaleTabletExitTime(1.65)}`,
     )
-    .addLabel("tabletExit", "project06Complete+=2.5")
+    .addLabel("tabletExit", `project06Complete+=${scaleTabletExitTime(2.5)}`)
     .to(
       tablet,
       {
@@ -5263,6 +5536,7 @@ loading__init();
 function initAfterLoading() {
   prepareProjectRevealPhraseLines();
   HeaderSlider__init();
+  mobileNavigation__init();
   customScrollbar__init();
   introSections__init();
   projectBackgroundMotion__init();

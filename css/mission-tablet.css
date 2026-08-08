@@ -805,6 +805,243 @@ html
   }
 }
 
+/* Mission data reference visual ====================================== */
+html
+  body
+  main
+  .sec-about
+  > .section-container
+  > .content-wrapper
+  > .mission-tablet {
+  --mission-cyan: #dff5ff;
+  --mission-line: rgba(102, 190, 247, 0.42);
+  border-color: rgba(199, 227, 240, 0.72);
+  background:
+    linear-gradient(
+        90deg,
+        transparent 3%,
+        rgba(107, 190, 244, 0.22) 50%,
+        transparent 97%
+      )
+      top / 100% 2px no-repeat,
+    linear-gradient(
+      145deg,
+      #59636a 0%,
+      #18232c 3%,
+      #07111a 9%,
+      #03080d 91%,
+      #44515a 98%,
+      #111820 100%
+    );
+  box-shadow:
+    inset 0 0 0 2px rgba(8, 17, 25, 0.95),
+    inset 0 0 0 4px rgba(158, 211, 241, 0.16),
+    inset 0 0 24px rgba(75, 170, 232, 0.2),
+    0 0 18px rgba(65, 159, 225, 0.18),
+    0 30px 90px rgba(0, 0, 0, 0.62);
+}
+
+html
+  body
+  main
+  .sec-about
+  > .section-container
+  > .content-wrapper
+  > .mission-tablet::before {
+  border: 1px solid rgba(188, 224, 244, 0.34);
+  background: linear-gradient(180deg, #07131e, #02070c);
+  box-shadow:
+    inset 0 0 20px rgba(85, 175, 235, 0.16),
+    0 0 7px rgba(155, 218, 255, 0.16);
+}
+
+html
+  body
+  main
+  .sec-about
+  > .section-container
+  > .content-wrapper
+  > .mission-tablet::after {
+  border-color: rgba(119, 199, 250, 0.19);
+  background:
+    radial-gradient(
+      circle at 70% 20%,
+      rgba(34, 111, 169, 0.12),
+      transparent 34%
+    ),
+    #020a11;
+  box-shadow:
+    inset 0 0 32px rgba(0, 0, 0, 0.86),
+    inset 0 0 10px rgba(70, 167, 231, 0.12);
+}
+
+.sec-about .mission-tablet__header,
+.sec-about .mission-tablet__body,
+.sec-about .mission-tablet__dock {
+  background-color: rgba(2, 12, 21, 0.96);
+  background-image:
+    linear-gradient(rgba(87, 172, 230, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(87, 172, 230, 0.035) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+
+.sec-about .mission-tablet__header {
+  min-height: 4.2rem;
+  padding-bottom: 0.7rem;
+  border-bottom-color: rgba(111, 195, 250, 0.24);
+}
+
+.sec-about .mission-tablet__header h2 {
+  font-family: var(--font-urbanist);
+  font-weight: 600;
+  letter-spacing: 0.3em;
+}
+
+.sec-about .mission-tablet__body {
+  gap: 0.8rem;
+  padding-top: 0.8rem;
+}
+
+.sec-about .mission-panel {
+  border-color: rgba(105, 190, 246, 0.38);
+  border-radius: 7px;
+  background-color: rgba(3, 16, 27, 0.86);
+  background-image:
+    radial-gradient(
+      circle at 100% 0,
+      rgba(48, 139, 201, 0.08),
+      transparent 38%
+    ),
+    linear-gradient(rgba(105, 190, 246, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(105, 190, 246, 0.035) 1px, transparent 1px);
+  background-size:
+    auto,
+    18px 18px,
+    18px 18px;
+  box-shadow:
+    inset 0 0 0 1px rgba(189, 229, 251, 0.025),
+    inset 0 0 22px rgba(35, 118, 178, 0.08),
+    0 0 10px rgba(27, 106, 164, 0.08);
+}
+
+.sec-about .mission-panel__title {
+  border-bottom-color: rgba(108, 191, 245, 0.2);
+  color: rgba(226, 247, 255, 0.92);
+}
+
+.mission-modules__columns {
+  gap: 0.7rem;
+}
+
+.mission-modules li {
+  position: relative;
+  min-height: 3.2rem;
+  margin-bottom: 0.45rem;
+  padding: 0.65rem 0.6rem 0.65rem 3.5rem;
+  border-color: rgba(84, 170, 228, 0.22);
+  background: linear-gradient(
+    135deg,
+    rgba(10, 36, 57, 0.86),
+    rgba(2, 14, 24, 0.94)
+  );
+  box-shadow: inset 0 0 12px rgba(54, 144, 205, 0.05);
+}
+
+.mission-modules li::before {
+  position: absolute;
+  top: 50%;
+  left: 0.7rem;
+  width: 2.1rem;
+  aspect-ratio: 1;
+  border: 1px solid rgba(92, 187, 248, 0.34);
+  border-radius: 3px;
+  background: rgba(3, 20, 33, 0.9) url("../images/Play_arrow_icon.png") center /
+    70% auto no-repeat;
+  box-shadow: 0 0 8px rgba(54, 153, 222, 0.13);
+  content: "";
+  transform: translateY(-50%);
+}
+
+.mission-profile {
+  background: linear-gradient(
+    180deg,
+    rgba(19, 67, 96, 0.55),
+    rgba(3, 16, 26, 0.9)
+  );
+}
+
+.mission-tablet__dock {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0.3rem;
+  min-height: 5.2rem;
+  margin-top: 0.8rem;
+  padding: 0.5rem 0.8rem 0.25rem;
+  border: 1px solid rgba(105, 190, 246, 0.28);
+  border-radius: 7px;
+}
+
+.mission-tablet__dock a {
+  position: relative;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 0.25rem;
+  min-width: 0;
+  color: rgba(151, 199, 228, 0.55);
+  font-family: var(--font-urbanist);
+  font-size: clamp(9px, 0.52vw, 11px);
+  letter-spacing: 0.08em;
+  text-decoration: none;
+}
+
+.mission-tablet__dock a + a::before {
+  position: absolute;
+  top: 18%;
+  bottom: 18%;
+  left: 0;
+  width: 1px;
+  background: linear-gradient(
+    transparent,
+    rgba(94, 177, 232, 0.2),
+    transparent
+  );
+  content: "";
+}
+
+.mission-tablet__dock img {
+  width: 1.6rem;
+  height: 1.6rem;
+  object-fit: contain;
+  opacity: 0.48;
+  filter: brightness(0) saturate(100%) invert(74%) sepia(28%) saturate(1006%)
+    hue-rotate(168deg) brightness(95%);
+}
+
+.mission-tablet__dock a.is-active {
+  color: #8bd7ff;
+  text-shadow: 0 0 7px rgba(75, 181, 245, 0.6);
+}
+
+.mission-tablet__dock a.is-active img {
+  opacity: 1;
+  filter: brightness(0) saturate(100%) invert(83%) sepia(35%) saturate(1778%)
+    hue-rotate(172deg) brightness(104%);
+}
+
+@media (max-width: 768px) {
+  .mission-tablet__dock {
+    min-height: 4.6rem;
+    margin: 0.8rem;
+  }
+
+  .mission-modules li {
+    padding-left: 3.2rem;
+  }
+}
+
 @media (max-width: 520px) {
   html
     body
@@ -1215,4 +1452,92 @@ html
     padding-right: 8px;
     padding-left: 8px;
   }
+}
+
+/* Keep the reference skin last so earlier responsive hardware rules do not override it. */
+html
+  body
+  main
+  .sec-about
+  > .section-container
+  > .content-wrapper
+  > .mission-tablet {
+  border-color: rgba(199, 227, 240, 0.72);
+  background:
+    linear-gradient(
+        90deg,
+        transparent 3%,
+        rgba(107, 190, 244, 0.22) 50%,
+        transparent 97%
+      )
+      top / 100% 2px no-repeat,
+    linear-gradient(
+      145deg,
+      #59636a 0%,
+      #18232c 3%,
+      #07111a 9%,
+      #03080d 91%,
+      #44515a 98%,
+      #111820 100%
+    );
+  box-shadow:
+    inset 0 0 0 2px rgba(8, 17, 25, 0.95),
+    inset 0 0 0 4px rgba(158, 211, 241, 0.16),
+    inset 0 0 24px rgba(75, 170, 232, 0.2),
+    0 0 18px rgba(65, 159, 225, 0.18),
+    0 30px 90px rgba(0, 0, 0, 0.62);
+}
+
+html
+  body
+  main
+  .sec-about
+  > .section-container
+  > .content-wrapper
+  > .mission-tablet::before {
+  border: 1px solid rgba(188, 224, 244, 0.34);
+  background: linear-gradient(180deg, #07131e, #02070c);
+  box-shadow:
+    inset 0 0 20px rgba(85, 175, 235, 0.16),
+    0 0 7px rgba(155, 218, 255, 0.16);
+}
+
+html
+  body
+  main
+  .sec-about
+  > .section-container
+  > .content-wrapper
+  > .mission-tablet::after {
+  border-color: rgba(119, 199, 250, 0.19);
+  background:
+    radial-gradient(
+      circle at 70% 20%,
+      rgba(34, 111, 169, 0.12),
+      transparent 34%
+    ),
+    #020a11;
+  box-shadow:
+    inset 0 0 32px rgba(0, 0, 0, 0.86),
+    inset 0 0 10px rgba(70, 167, 231, 0.12);
+}
+
+.sec-about .mission-tablet__header,
+.sec-about .mission-tablet__body,
+.sec-about .mission-panel {
+  background-color: rgba(2, 12, 21, 0.96);
+}
+
+.sec-about .mission-panel__title::before,
+.sec-about .mission-log .mission-panel__title::before,
+.sec-about .mission-modules .mission-panel__title::before,
+.sec-about .mission-certification .mission-panel__title::before,
+.sec-about .mission-achievement .mission-panel__title::before {
+  width: 1.4rem;
+  height: 1.4rem;
+  border: 0;
+  border-radius: 0;
+  background: url("../images/Play_arrow_icon.png") center / contain no-repeat;
+  box-shadow: none;
+  vertical-align: -0.3rem;
 }

@@ -500,7 +500,7 @@
 }
 
 /* Keep Cover/About aligned through the tablet breakpoints. */
-@media screen and (min-width: 769px) and (max-width: 1280px) {
+@media screen and (min-width: 769px) and (max-width: 1440px) {
   html body main .forest-world > .horizontal-wrap > .sec-cover,
   html body main .forest-world > .horizontal-wrap > .sec-about {
     width: 100vw;
@@ -851,8 +851,8 @@
   }
 }
 
-/* At 1280px and below, the intro sits above a card that fills its parent. */
-@media screen and (max-width: 1280px) {
+/* At 1440px and below, the intro sits above a card that fills its parent. */
+@media screen and (max-width: 1440px) {
   html body main .sec-cover {
     --cover-title-stack-height: 9.5rem;
     --cover-message-gap: 7.2rem;
@@ -1085,7 +1085,7 @@ header
 
 html body main .sec-cover .cover-status-panel dt,
 html body main .sec-cover .cover-scroll-guide strong {
-  font-size: max(1.4rem, 10px);
+  font-size: max(1.4rem, 11px);
 }
 
 html body main .sec-cover .cover-status-panel dd {
@@ -1123,7 +1123,7 @@ html
   font-size: max(1.2rem, 10px);
 }
 
-@media screen and (max-width: 1280px) {
+@media screen and (max-width: 1440px) {
   html
     body
     main
@@ -1312,7 +1312,7 @@ html body main .sec-about .about-profile-panel .profile-container {
   gap: clamp(0.4rem, 0.7vw, 0.8rem);
 }
 
-@media screen and (max-width: 1280px) {
+@media screen and (max-width: 1440px) {
   html body main .sec-cover > .cover-title {
     top: 44%;
     right: 5%;
@@ -1344,7 +1344,7 @@ html body main .sec-about .about-profile-panel .profile-container {
   }
 }
 
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 1440px) {
   html body main .sec-cover > .cover-title,
   html body main .sec-cover > .copy-wrapper {
     right: auto;
@@ -1366,7 +1366,7 @@ html body main .sec-about .about-profile-panel .profile-container {
   }
 }
 
-@media screen and (max-width: 1280px) {
+@media screen and (max-width: 1440px) {
   html body main .sec-about {
     padding-inline: 0 !important;
   }

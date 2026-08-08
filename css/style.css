@@ -1059,6 +1059,7 @@ footer > .top-box > .left-box {
   left: 50%;
   bottom: 10%;
   z-index: 300;
+  opacity: 0;
   color: var(--color-white);
   font-size: 20px;
   text-decoration: underline;
@@ -1595,6 +1596,204 @@ main {
   }
 }
 
+/* Mobile header navigation */
+.mobile-menu-toggle,
+.mobile-navigation-backdrop,
+.mobile-navigation {
+  display: none;
+}
+
+@media screen and (max-width: 768px) {
+  header > .hd-container > .right-box > .short-btn-wrapper {
+    display: none;
+  }
+
+  .mobile-menu-toggle {
+    display: grid;
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    place-items: center;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+  }
+
+  .mobile-menu-toggle img {
+    display: block;
+    width: 30px;
+    height: 21px;
+    object-fit: contain;
+  }
+
+  .mobile-menu-toggle:hover {
+    transform: scale(1.1);
+  }
+
+  .mobile-navigation-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: block;
+    width: 100vw;
+    height: 100dvh;
+    padding: 0;
+    border: 0;
+    background: rgba(0, 13, 31, 0.08);
+    opacity: 0;
+    transition:
+      opacity 0.35s ease-in-out,
+      visibility 0s linear 0.35s;
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  header.is-mobile-menu-open .mobile-navigation-backdrop {
+    opacity: 1;
+    transition-delay: 0s;
+    visibility: visible;
+    pointer-events: auto;
+  }
+
+  body.is-mobile-menu-open > main,
+  body.is-mobile-menu-open > .site-scrollbar,
+  body.is-mobile-menu-open > header > .hd-container,
+  body.is-mobile-menu-open #sec-project-list > .project-tablet-stage {
+    filter: blur(7px);
+  }
+
+  body > main,
+  body > .site-scrollbar,
+  body > header > .hd-container,
+  #sec-project-list > .project-tablet-stage {
+    transition: filter 0.35s ease-in-out;
+  }
+
+  .mobile-navigation {
+    position: fixed;
+    top: 0;
+    right: 0;
+    z-index: 1001;
+    display: block;
+    width: 44vw;
+    min-width: 164px;
+    height: 100dvh;
+    padding: 56px 20px 28px;
+    box-sizing: border-box;
+    border-left: 1px solid rgba(105, 184, 255, 0.16);
+    background: linear-gradient(
+      180deg,
+      rgba(3, 39, 84, 0.84) 0%,
+      rgba(1, 14, 32, 0.91) 100%
+    );
+    -webkit-backdrop-filter: blur(5px) saturate(115%);
+    backdrop-filter: blur(5px) saturate(115%);
+    box-shadow: -16px 0 36px rgba(0, 10, 29, 0.22);
+    transform: translate3d(100%, 0, 0);
+    transition:
+      transform 0.35s ease-in-out,
+      visibility 0s linear 0.35s;
+    visibility: hidden;
+    pointer-events: none;
+    will-change: transform;
+  }
+
+  header.is-mobile-menu-open {
+    transform: none;
+  }
+
+  header.is-mobile-menu-open .mobile-navigation {
+    transform: translate3d(0, 0, 0);
+    transition-delay: 0s;
+    visibility: visible;
+    pointer-events: auto;
+  }
+
+  .mobile-navigation__close {
+    position: absolute;
+    top: 18px;
+    right: 16px;
+    display: grid;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    place-items: center;
+    cursor: pointer;
+    transition: transform 6s ease;
+  }
+
+  .mobile-navigation__close:hover {
+    transform: rotate(3600deg);
+  }
+
+  .mobile-navigation__close img {
+    display: block;
+    width: 18px;
+    height: 18px;
+    object-fit: contain;
+  }
+
+  .mobile-navigation__links {
+    margin-top: 36px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 28px;
+  }
+
+  .mobile-navigation__links a:hover {
+    transform: scale(1.075);
+  }
+
+  .mobile-navigation__links a {
+    position: relative;
+    padding-left: 16px;
+    color: #fff;
+    font-family: var(--font-cinzel);
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 1.2;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: transform 0.2s linear;
+  }
+
+  .mobile-navigation__links a:hover::before {
+    background-color: #fff;
+  }
+
+  .mobile-navigation__links a::before {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 8px;
+    height: 8px;
+    border: 1px solid currentColor;
+    border-radius: 50%;
+    box-sizing: border-box;
+    content: "";
+    transform: translateY(-50%);
+    transition: all 0.2s linear;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mobile-navigation-backdrop,
+  .mobile-navigation {
+    transition-duration: 0.01ms;
+  }
+
+  body > main,
+  body > .site-scrollbar,
+  body > header > .hd-container,
+  #sec-project-list > .project-tablet-stage {
+    transition-duration: 0.01ms;
+  }
+}
+
 .about-transition-background::after {
   position: absolute;
   top: 0;
@@ -1724,6 +1923,90 @@ main {
   pointer-events: none;
 }
 
+.project-reveal__magnetic-field {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  z-index: 2;
+  width: 242vmax;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  opacity: 0;
+  visibility: visible;
+  pointer-events: none;
+  transform: translate(-50%, -50%) scale(0.006);
+  transform-origin: 50% 50%;
+  will-change: transform, opacity;
+}
+
+.project-reveal__magnetic-field::before,
+.project-reveal__magnetic-field::after {
+  position: absolute;
+  inset: 0;
+  border-radius: 52% 48% 46% 54% / 48% 55% 45% 52%;
+  content: "";
+  pointer-events: none;
+}
+
+.project-reveal__magnetic-field::before {
+  background: conic-gradient(
+    from 18deg,
+    transparent 0 7%,
+    rgba(212, 244, 255, 0.92) 12%,
+    rgba(79, 171, 244, 0.68) 17%,
+    transparent 23% 39%,
+    rgba(117, 207, 255, 0.78) 46%,
+    transparent 54% 71%,
+    rgba(224, 248, 255, 0.86) 79%,
+    transparent 87% 100%
+  );
+  filter: drop-shadow(0 0 10px rgba(74, 170, 244, 0.72));
+  transform: scale(1.1, 1.075);
+  -webkit-mask: radial-gradient(
+    circle,
+    transparent 0 49.1%,
+    #000 49.25% 49.75%,
+    transparent 49.9%
+  );
+  mask: radial-gradient(
+    circle,
+    transparent 0 49.1%,
+    #000 49.25% 49.75%,
+    transparent 49.9%
+  );
+  animation: project-magnetic-field-drift 18s linear infinite;
+}
+
+.project-reveal__magnetic-field::after {
+  inset: 4.2%;
+  border: 2px solid rgba(104, 190, 255, 0.68);
+  border-radius: 49% 51% 54% 46% / 53% 47% 51% 49%;
+  box-shadow:
+    0 0 8px rgba(185, 232, 255, 0.58),
+    0 0 14px rgba(48, 139, 225, 0.38);
+  transform: scale(1.055, 1.085);
+  animation: project-magnetic-field-drift-reverse 23s linear infinite;
+}
+
+@keyframes project-magnetic-field-drift {
+  to {
+    rotate: 360deg;
+  }
+}
+
+@keyframes project-magnetic-field-drift-reverse {
+  to {
+    rotate: -360deg;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .project-reveal__magnetic-field::before,
+  .project-reveal__magnetic-field::after {
+    animation: none;
+  }
+}
+
 .project-reveal__mask {
   position: absolute;
   inset: 0;
@@ -1754,6 +2037,20 @@ main .horizontal-wrap {
 }
 
 @media screen and (max-width: 768px) {
+  .project-reveal__magnetic-field {
+    width: 300vmax;
+  }
+
+  .project-reveal__magnetic-field::before,
+  .project-reveal__magnetic-field::after {
+    filter: none;
+  }
+
+  .project-reveal__magnetic-field::after {
+    border-color: rgba(132, 205, 250, 0.58);
+    box-shadow: 0 0 8px rgba(64, 158, 232, 0.32);
+  }
+
   .forest-scene {
     height: auto;
     overflow: visible;
@@ -3120,7 +3417,7 @@ main .horizontal-wrap {
   min-height: 3.1em;
   color: #fff;
   font-family: var(--font-cinzel);
-  font-size: clamp(2.8rem, 3.1vw, 5.6rem);
+  font-size: clamp(22px, 3vw, 5.6rem);
   font-weight: 300;
   line-height: 1.55;
   letter-spacing: 0.045em;
@@ -4624,7 +4921,7 @@ main .horizontal-wrap {
   display: grid;
   grid-template-columns: clamp(110px, 14rem, 140px) minmax(0, 1fr);
   align-items: center;
-  gap: clamp(12px, 2.5vw, 48px);
+  gap: clamp(12px, 2.25vw, 28px);
   font-weight: 600;
   font-size: clamp(14px, 2rem, 20px);
   color: var(--color-white);
@@ -5240,6 +5537,10 @@ footer > .bottom-box > span {
     background-color 0.35s ease,
     border-color 0.35s ease,
     box-shadow 0.35s ease;
+  cursor: pointer;
+}
+.footer-contact__link span {
+  cursor: pointer;
 }
 .footer-contact__link:hover {
   transform: translateY(-3px) scale(1.02);
@@ -6143,6 +6444,17 @@ header:not(.is-about, .is-project-list, .is-project-section)
 
 .project-planet__hover {
   pointer-events: auto;
+}
+
+@media (min-width: 769px) {
+  .project-planet__position {
+    pointer-events: none;
+  }
+
+  .project-planet__hover {
+    border-radius: 50%;
+    pointer-events: auto;
+  }
 }
 
 .project-planet__orbit,
