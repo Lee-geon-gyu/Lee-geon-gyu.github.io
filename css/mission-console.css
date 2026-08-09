@@ -1186,6 +1186,7 @@ html
   font-size: clamp(10px, 0.65vw, 11px);
   text-decoration: none;
   background: transparent;
+  cursor: default;
 }
 .sec-about .mission-tablet__dock a + a::before {
   position: absolute;
@@ -1219,6 +1220,7 @@ html
 .sec-about .mission-tablet__dock a:first-child svg {
   filter: drop-shadow(0 0 4px rgba(53, 200, 255, 0.95))
     drop-shadow(0 0 9px rgba(35, 164, 255, 0.45));
+  cursor: default;
 }
 .sec-about .mission-console__coordinates {
   display: flex;

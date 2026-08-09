@@ -1674,23 +1674,25 @@ main {
     position: fixed;
     top: 0;
     right: 0;
+    left: 0;
     z-index: 1001;
     display: block;
-    width: 44vw;
-    min-width: 164px;
-    height: 100dvh;
-    padding: 56px 20px 28px;
+    width: 100%;
+    height: clamp(260px, 37.5dvh, 340px);
+    min-height: 0;
+    padding: 56px 36px 32px;
     box-sizing: border-box;
-    border-left: 1px solid rgba(105, 184, 255, 0.16);
+    border-bottom: 1px solid rgba(105, 184, 255, 0.16);
+    border-radius: 0 0 12px 12px;
     background: linear-gradient(
       180deg,
-      rgba(3, 39, 84, 0.84) 0%,
-      rgba(1, 14, 32, 0.91) 100%
+      rgba(3, 39, 84, 0.96) 0%,
+      rgba(1, 14, 32, 0.98) 100%
     );
     -webkit-backdrop-filter: blur(5px) saturate(115%);
     backdrop-filter: blur(5px) saturate(115%);
-    box-shadow: -16px 0 36px rgba(0, 10, 29, 0.22);
-    transform: translate3d(100%, 0, 0);
+    box-shadow: 0 16px 36px rgba(0, 10, 29, 0.28);
+    transform: translate3d(0, -100%, 0);
     transition:
       transform 0.35s ease-in-out,
       visibility 0s linear 0.35s;
@@ -1737,11 +1739,11 @@ main {
   }
 
   .mobile-navigation__links {
-    margin-top: 36px;
+    margin-top: 20px;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: 28px;
+    gap: 38px;
   }
 
   .mobile-navigation__links a:hover {
@@ -1753,7 +1755,7 @@ main {
     padding-left: 16px;
     color: #fff;
     font-family: var(--font-cinzel);
-    font-size: 18px;
+    font-size: clamp(18px, 3.5vw, 24px);
     font-weight: 600;
     line-height: 1.2;
     text-decoration: none;
@@ -5489,6 +5491,7 @@ footer > .bottom-box > span {
   padding: 0 30px;
   color: #fff;
   text-decoration: none;
+  cursor: default;
 }
 .footer-contact__item + .footer-contact__item {
   border-left: 1px solid rgba(210, 190, 255, 0.34);
@@ -5499,6 +5502,7 @@ footer > .bottom-box > span {
   height: 22px;
   object-fit: contain;
   filter: drop-shadow(0 0 5px rgba(189, 137, 255, 0.3));
+  cursor: default;
 }
 .footer-contact__label {
   grid-area: label;

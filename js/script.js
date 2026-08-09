@@ -73,7 +73,19 @@ function mobileNavigation__init() {
     navigation.setAttribute("aria-hidden", String(!isOpen));
   };
 
-  toggle.addEventListener("click", () => setOpen(true));
+  const isLenisMoving = () => {
+    if (!lenis) return false;
+    if (lenis.isScrolling) return true;
+
+    const currentScroll = lenis.animatedScroll ?? window.scrollY;
+    const targetScroll = lenis.targetScroll ?? currentScroll;
+    return Math.abs(targetScroll - currentScroll) > 0.5;
+  };
+
+  toggle.addEventListener("click", () => {
+    if (isLenisMoving()) return;
+    setOpen(true);
+  });
   backdrop.addEventListener("click", () => setOpen(false));
   closeButton.addEventListener("click", () => setOpen(false));
   navigation.querySelectorAll("[data-scroll-menu]").forEach((link) => {
@@ -83,6 +95,17 @@ function mobileNavigation__init() {
   document.addEventListener("keydown", (event) => {
     if (event.key === "Escape") setOpen(false);
   });
+
+  window.addEventListener(
+    "scroll",
+    () => {
+      if (!header.classList.contains("is-mobile-menu-open")) return;
+
+      setOpen(false);
+      window.dispatchEvent(new Event("header-scroll-sync"));
+    },
+    { passive: true },
+  );
 
   window.addEventListener("resize", () => {
     if (window.innerWidth > 768) setOpen(false);
