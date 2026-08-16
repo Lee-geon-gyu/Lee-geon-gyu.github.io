@@ -1001,7 +1001,6 @@ function introSections__init() {
     });
     gsap.set(aboutContent, {
       autoAlpha: 1,
-      yPercent: 0,
       visibility: "visible",
       pointerEvents: "auto",
     });
@@ -1023,11 +1022,13 @@ function introSections__init() {
     gsap.set(aboutTitleElements, { autoAlpha: 0, x: -120 });
     gsap.set(aboutRightBox, {
       autoAlpha: 0,
-      scale: 1,
       transformOrigin: "50% 50%",
       force3D: false,
     });
-    gsap.set(aboutCardElements, { autoAlpha: 1, y: 0, scale: 1 });
+    gsap.set(aboutCardElements, {
+      autoAlpha: 1,
+      clearProps: "transform,willChange",
+    });
     gsap.set(aboutScreenShutter, { autoAlpha: 1 });
     gsap.set(aboutScreenCovers, { scaleY: 1 });
     gsap.set(aboutScreenBootLoader, { autoAlpha: 0 });
@@ -1152,6 +1153,13 @@ function introSections__init() {
           ease: "power3.out",
         },
         0,
+      )
+      // The tablet only fades in. Remove GSAP's completed compositing state so
+      // the full UI is not kept as a transformed/opacity raster layer at rest.
+      .set(
+        aboutRightBox,
+        { clearProps: "transform,opacity,visibility,willChange" },
+        0.8,
       )
       .set(aboutScreenBootLoader, { autoAlpha: 1 }, 0.4)
       .to(
@@ -1371,6 +1379,9 @@ function introSections__init() {
       .addLabel("slide-1", 1)
       .addLabel("aboutArrived", 1)
       .addLabel("aboutStable", 1)
+      // The camera has reached its final About position. Keeping will-change
+      // here forces the entire world (including the tablet) into a GPU layer.
+      .set(forestWorld, { willChange: "auto" }, "aboutStable")
       .to({}, { duration: 0.12 }, "aboutStable")
       .addLabel("aboutUiExpand", 1.3)
       .addLabel("cardsReveal", 2.02)
