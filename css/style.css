@@ -7013,10 +7013,10 @@ header:not(.is-about, .is-project-list, .is-project-section)
 
 /* Mobile-only corrections placed last to override the legacy responsive rules. */
 @media screen and (max-width: 768px) {
-  /* Keep the first mobile frame stable while the browser chrome collapses. */
+  /* Follow the live mobile viewport as the browser chrome opens or collapses. */
   main .horizontal-wrap > .sec-cover {
-    height: var(--mobile-stage-height, 100svh);
-    min-height: var(--mobile-stage-height, 100svh);
+    height: 100dvh;
+    min-height: 100dvh;
   }
 
   .forest-world > .horizontal-wrap > .sec-cover::before {
@@ -7032,8 +7032,8 @@ header:not(.is-about, .is-project-list, .is-project-section)
     > .project-reveal__mask
     > .sec-project,
   .project-reveal.is-mobile-stable-reveal > .project-reveal-copy {
-    height: var(--mobile-stage-height, 100svh) !important;
-    min-height: var(--mobile-stage-height, 100svh) !important;
+    height: 100dvh !important;
+    min-height: 100dvh !important;
   }
 
   .project-reveal.is-mobile-stable-reveal > .project-back-viewport--mobile {
@@ -7061,15 +7061,13 @@ header:not(.is-about, .is-project-list, .is-project-section)
   }
 
   .project-reveal.is-mobile-stable-reveal > .project-reveal-copy {
-    --project-reveal-copy-y: calc(
-      var(--mobile-stage-height, 100svh) * 0.5
-    ) !important;
+    --project-reveal-copy-y: 50dvh !important;
   }
 
   #sec-project-list {
     min-width: 0;
-    height: var(--mobile-stage-height, 100svh) !important;
-    min-height: var(--mobile-stage-height, 100svh);
+    height: 100dvh !important;
+    min-height: 100dvh;
     margin-top: 0;
   }
 

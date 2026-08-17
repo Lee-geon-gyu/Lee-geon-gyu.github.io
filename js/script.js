@@ -1878,15 +1878,13 @@ function projectVerticalScroll__init() {
     ".sec-project .project-planet__reveal",
   );
   const header = document.querySelector("header");
-  // Mobile browser chrome changes `innerHeight` while the user scrolls. Keep
-  // the pinned scene on its initial height so its boundaries stay stable.
-  const mobileViewportHeight = Math.round(
-    window.visualViewport?.height || window.innerHeight,
-  );
-  document.documentElement.style.setProperty(
-    "--mobile-stage-height",
-    `${mobileViewportHeight}px`,
-  );
+  // Keep the scene tied to the *current* visual viewport. Capturing this value
+  // once made the layout retain the short, browser-chrome-open height after
+  // Chrome's address/navigation bars collapsed.
+  const getMobileViewportHeight = () =>
+    Math.round(window.visualViewport?.height || window.innerHeight);
+  let mobileViewportRefreshTimer;
+  let lastMobileViewportHeight = getMobileViewportHeight();
 
   if (
     !project ||
@@ -1951,7 +1949,7 @@ function projectVerticalScroll__init() {
       id: "project-vertical-pin",
       trigger: projectReveal,
       start: "top top",
-      end: () => `+=${mobileViewportHeight * 6}`,
+      end: () => `+=${getMobileViewportHeight() * 6}`,
       pin: true,
       pinType: "fixed",
       pinSpacing: true,
@@ -2088,6 +2086,29 @@ function projectVerticalScroll__init() {
     .set(revealCopy, { autoAlpha: 0 })
     .addLabel("mobileProjectReady")
     .to({}, { duration: 3.4 });
+
+  // `100dvh` updates the painted scene as mobile browser chrome opens/closes.
+  // Refresh after that movement settles as well, otherwise ScrollTrigger keeps
+  // the old (shorter) pin distance and ProjectBack can leave the screen early.
+  window.visualViewport?.addEventListener("resize", () => {
+    if (
+      document.activeElement?.matches?.(
+        "input, textarea, select, [contenteditable]",
+      )
+    ) {
+      return;
+    }
+
+    const nextHeight = getMobileViewportHeight();
+    if (Math.abs(nextHeight - lastMobileViewportHeight) < 2) return;
+
+    lastMobileViewportHeight = nextHeight;
+    clearTimeout(mobileViewportRefreshTimer);
+    mobileViewportRefreshTimer = setTimeout(() => {
+      lenis?.resize();
+      ScrollTrigger.refresh();
+    }, 220);
+  });
 }
 
 // Legacy mobile step controller (kept inactive) ------------------------------ //
