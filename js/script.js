@@ -1878,6 +1878,25 @@ function projectVerticalScroll__init() {
     ".sec-project .project-planet__reveal",
   );
   const header = document.querySelector("header");
+
+  // Narrow phones skip the cinematic ProjectBack scene entirely. Rendering
+  // Project as a normal document section avoids the expensive pin/scrub/clip
+  // path sequence between About and the project list.
+  if (window.matchMedia("(max-width: 450px)").matches) {
+    projectReveal?.classList.add("is-mobile-direct-project");
+    projectBackViewport?.setAttribute("hidden", "");
+    revealCopy?.setAttribute("hidden", "");
+
+    gsap.set(projectRevealMask, {
+      visibility: "visible",
+      clipPath: "none",
+      clearProps: "transform",
+    });
+    gsap.set(revealElements, { autoAlpha: 1, y: 0 });
+    gsap.set(planetRevealLayers, { autoAlpha: 1, y: 0, scale: 1 });
+    return;
+  }
+
   // Keep the scene tied to the *current* visual viewport. Capturing this value
   // once made the layout retain the short, browser-chrome-open height after
   // Chrome's address/navigation bars collapsed.

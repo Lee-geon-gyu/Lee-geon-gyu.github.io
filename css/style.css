@@ -7213,6 +7213,49 @@ header:not(.is-about, .is-project-list, .is-project-section)
 }
 
 @media screen and (max-width: 450px) {
+  .cover-status-panel {
+    display: none !important;
+  }
+
+  .forest-scene > .project-reveal.is-mobile-direct-project {
+    position: relative !important;
+    inset: auto !important;
+    display: block;
+    width: 100%;
+    height: 100dvh;
+    min-height: 100dvh;
+    overflow: hidden;
+    background: #020713;
+  }
+
+  .project-reveal.is-mobile-direct-project > .project-back-viewport--mobile,
+  .project-reveal.is-mobile-direct-project > .project-reveal__magnetic-field,
+  .project-reveal-copy[hidden] {
+    display: none !important;
+  }
+
+  .project-reveal.is-mobile-direct-project > .project-reveal__mask {
+    position: relative !important;
+    inset: auto !important;
+    width: 100%;
+    height: 100dvh;
+    min-height: 100dvh;
+    overflow: hidden;
+    visibility: visible !important;
+    clip-path: none !important;
+    contain: paint;
+  }
+
+  .project-reveal.is-mobile-direct-project
+    > .project-reveal__mask
+    > .sec-project {
+    position: absolute !important;
+    inset: 0 !important;
+    width: 100%;
+    height: 100%;
+    min-height: 100%;
+  }
+
   .throw-it-hint {
     display: none !important;
   }
@@ -7227,12 +7270,6 @@ header:not(.is-about, .is-project-list, .is-project-section)
     cursor: default;
     touch-action: pan-y;
     will-change: auto;
-  }
-
-  #sec-project-list .project-list-wrapper > .sec-project-item::before {
-    background: rgba(0, 0, 0, 0.62);
-    -webkit-backdrop-filter: none;
-    backdrop-filter: none;
   }
 
   #sec-project-list
