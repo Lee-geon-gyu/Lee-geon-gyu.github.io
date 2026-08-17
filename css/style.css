@@ -2112,7 +2112,7 @@ main .horizontal-wrap {
     background-color: #020713;
     /* Permanent fallback: animation setup must never determine whether the
        ProjectBack artwork itself is visible. */
-    background-image: url("../images/ProjectBack.png");
+    background-image: url("../images/ProjectBack-mobile.jpg");
     background-position: center bottom;
     background-size: cover;
     background-repeat: no-repeat;
@@ -6956,7 +6956,7 @@ header:not(.is-about, .is-project-list, .is-project-section)
     height: 100dvh;
     min-height: 100dvh;
     overflow: hidden;
-    background: #020713 url("../images/ProjectBack.png") center bottom / cover
+    background: #020713 url("../images/ProjectBack-mobile.jpg") center bottom / cover
       no-repeat;
   }
 
@@ -7048,7 +7048,7 @@ header:not(.is-about, .is-project-list, .is-project-section)
     z-index: 3;
     visibility: visible;
     opacity: 1;
-    background: #020713 url("../images/ProjectBack.png") center bottom / cover
+    background: #020713 url("../images/ProjectBack-mobile.jpg") center bottom / cover
       no-repeat;
   }
 
