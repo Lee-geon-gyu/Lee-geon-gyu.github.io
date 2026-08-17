@@ -7043,9 +7043,11 @@ header:not(.is-about, .is-project-list, .is-project-section)
   }
 
   .project-reveal.is-mobile-stable-reveal > .project-back-viewport--mobile {
-    z-index: 1;
-    visibility: visible !important;
-    opacity: 1 !important;
+    /* Keep ProjectBack above the closed project mask. JS fades this layer only
+       when the circular project reveal actually starts. */
+    z-index: 3;
+    visibility: visible;
+    opacity: 1;
     background: #020713 url("../images/ProjectBack.png") center bottom / cover
       no-repeat;
   }

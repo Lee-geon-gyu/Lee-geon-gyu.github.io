@@ -2031,6 +2031,15 @@ function projectVerticalScroll__init() {
   mobileTimeline
     .addLabel("mobileCircleReveal")
     .to(
+      projectBackViewport,
+      {
+        autoAlpha: 0,
+        duration: 0.7,
+        ease: "power1.inOut",
+      },
+      "mobileCircleReveal",
+    )
+    .to(
       projectRevealMask,
       {
         clipPath: expandedClip,
