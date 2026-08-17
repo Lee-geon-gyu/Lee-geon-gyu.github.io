@@ -2110,7 +2110,12 @@ main .horizontal-wrap {
     min-height: 100dvh;
     overflow: visible;
     background-color: #020713;
-    background-image: none;
+    /* Permanent fallback: animation setup must never determine whether the
+       ProjectBack artwork itself is visible. */
+    background-image: url("../images/ProjectBack.png");
+    background-position: center bottom;
+    background-size: cover;
+    background-repeat: no-repeat;
   }
 
   .project-back-viewport--mobile {
@@ -6973,6 +6978,7 @@ header:not(.is-about, .is-project-list, .is-project-section)
     min-height: 100dvh;
     overflow: hidden;
     contain: paint;
+    clip-path: circle(0px at 50% 0%);
   }
 
   .project-reveal.is-mobile-stable-reveal
@@ -7192,6 +7198,41 @@ header:not(.is-about, .is-project-list, .is-project-section)
 }
 
 @media screen and (max-width: 450px) {
+  .throw-it-hint {
+    display: none !important;
+  }
+
+  #sec-project-list
+    .project-list-wrapper
+    > .sec-project-item
+    > .section-container
+    > .bottom-box
+    > .right-box
+    > .img-box {
+    cursor: default;
+    touch-action: pan-y;
+    will-change: auto;
+  }
+
+  #sec-project-list .project-list-wrapper > .sec-project-item::before {
+    background: rgba(0, 0, 0, 0.62);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
+  #sec-project-list
+    .project-list-wrapper
+    > .sec-project-item
+    > .section-container
+    > .bottom-box
+    > .right-box
+    > .img-box
+    > img {
+    animation: none !important;
+    transform: none !important;
+    will-change: auto;
+  }
+
   #sec-project-list
     .project-list-wrapper
     > .sec-project-item

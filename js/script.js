@@ -1886,6 +1886,13 @@ function projectVerticalScroll__init() {
   let mobileViewportRefreshTimer;
   let lastMobileViewportHeight = getMobileViewportHeight();
 
+  // Apply the visible fallback before validating animation-only elements. If
+  // one optional reveal layer is unavailable, ProjectBack must still render.
+  projectReveal?.classList.add("is-mobile-stable-reveal");
+  if (projectBackViewport) {
+    gsap.set(projectBackViewport, { autoAlpha: 1 });
+  }
+
   if (
     !project ||
     !projectRevealMask ||
@@ -1898,7 +1905,6 @@ function projectVerticalScroll__init() {
     return;
   }
 
-  projectReveal.classList.add("is-mobile-stable-reveal");
   projectReveal.appendChild(revealCopy);
 
   const reducedMotion = window.matchMedia(
@@ -3665,6 +3671,11 @@ function projectMarquee__init() {
 
 // Project mockup drag & throw ------------------------------ //
 function projectMockupDrag__init() {
+  // On narrow phones the mockup is part of the scroll surface. Drag/throw
+  // intercepts touch gestures and continuously updates transforms, so leave it
+  // completely static there.
+  if (window.matchMedia("(max-width: 450px)").matches) return;
+
   const mockups = document.querySelectorAll(
     "#sec-project-list .bottom-box > .right-box > .img-box",
   );
@@ -3805,7 +3816,14 @@ function aboutLicenseCard__init() {
   // The desktop About UI now expands directly from the astronaut's tablet.
   // Keep the legacy touch/tablet interaction, but avoid a competing floating
   // HUD motion while the cinematic desktop timeline owns the transform.
-  if (window.matchMedia("(min-width: 1281px)").matches) return;
+  if (
+    window.matchMedia("(min-width: 1281px)").matches ||
+    window.matchMedia("(max-width: 768px)").matches
+  ) {
+    gsap.killTweensOf(card);
+    gsap.set(card, { x: 0, y: 0, rotation: 0 });
+    return;
+  }
 
   const startFloating = () => {
     gsap.killTweensOf(card, "x,y");
