@@ -1957,7 +1957,9 @@ function projectVerticalScroll__init() {
       start: "top top",
       end: () => `+=${getMobileViewportHeight() * 6}`,
       pin: true,
-      pinType: "fixed",
+      // Keep the nested forest scene in its existing compositing context.
+      // Android browsers can drop this layer when it switches to fixed.
+      pinType: "transform",
       pinSpacing: true,
       scrub: reducedMotion ? true : 0.55,
       anticipatePin: 1,

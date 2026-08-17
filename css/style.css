@@ -6951,13 +6951,21 @@ header:not(.is-about, .is-project-list, .is-project-section)
   .project-reveal.is-mobile-stable-reveal {
     position: relative;
     inset: auto;
+    z-index: 2;
     display: block;
     width: 100%;
     height: 100dvh;
     min-height: 100dvh;
     overflow: hidden;
+    isolation: isolate;
+    transform: translateZ(0);
     background: #020713 url("../images/ProjectBack-mobile.jpg") center bottom /
       cover no-repeat;
+  }
+
+  .pin-spacer > .project-reveal.is-mobile-stable-reveal {
+    z-index: 2 !important;
+    visibility: visible !important;
   }
 
   .project-reveal.is-mobile-stable-reveal > .project-back-viewport--mobile {
