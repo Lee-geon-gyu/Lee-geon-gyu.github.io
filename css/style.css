@@ -6956,8 +6956,8 @@ header:not(.is-about, .is-project-list, .is-project-section)
     height: 100dvh;
     min-height: 100dvh;
     overflow: hidden;
-    background: #020713 url("../images/ProjectBack-mobile.jpg") center bottom / cover
-      no-repeat;
+    background: #020713 url("../images/ProjectBack-mobile.jpg") center bottom /
+      cover no-repeat;
   }
 
   .project-reveal.is-mobile-stable-reveal > .project-back-viewport--mobile {
@@ -6972,7 +6972,9 @@ header:not(.is-about, .is-project-list, .is-project-section)
   .project-reveal.is-mobile-stable-reveal > .project-reveal__mask {
     position: absolute !important;
     inset: 0 !important;
-    z-index: 2;
+    /* The circular mask reveals Project over ProjectBack. Keeping it above the
+       image removes the black gap caused by fading the whole image first. */
+    z-index: 4;
     width: 100%;
     height: 100dvh;
     min-height: 100dvh;
@@ -7043,13 +7045,16 @@ header:not(.is-about, .is-project-list, .is-project-section)
   }
 
   .project-reveal.is-mobile-stable-reveal > .project-back-viewport--mobile {
-    /* Keep ProjectBack above the closed project mask. JS fades this layer only
-       when the circular project reveal actually starts. */
+    /* Remain visible below the circular project mask for the whole transition. */
     z-index: 3;
     visibility: visible;
     opacity: 1;
-    background: #020713 url("../images/ProjectBack-mobile.jpg") center bottom / cover
-      no-repeat;
+    background: #020713 url("../images/ProjectBack-mobile.jpg") center bottom /
+      cover no-repeat;
+  }
+
+  .project-reveal.is-mobile-stable-reveal > .project-reveal__magnetic-field {
+    z-index: 5;
   }
 
   .project-reveal.is-mobile-stable-reveal .project-back-mobile-progress-layer {
