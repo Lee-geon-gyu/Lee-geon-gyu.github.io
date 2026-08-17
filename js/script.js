@@ -1878,6 +1878,15 @@ function projectVerticalScroll__init() {
     ".sec-project .project-planet__reveal",
   );
   const header = document.querySelector("header");
+  // Mobile browser chrome changes `innerHeight` while the user scrolls. Keep
+  // the pinned scene on its initial height so its boundaries stay stable.
+  const mobileViewportHeight = Math.round(
+    window.visualViewport?.height || window.innerHeight,
+  );
+  document.documentElement.style.setProperty(
+    "--mobile-stage-height",
+    `${mobileViewportHeight}px`,
+  );
 
   if (
     !project ||
@@ -1918,7 +1927,7 @@ function projectVerticalScroll__init() {
   gsap.set(revealPhrases, {
     autoAlpha: 0,
     y: reducedMotion ? 0 : 24,
-    filter: reducedMotion ? "blur(0px)" : "blur(8px)",
+    filter: "none",
     pointerEvents: "none",
   });
   gsap.set(delayedLines, {
@@ -1942,9 +1951,9 @@ function projectVerticalScroll__init() {
       id: "project-vertical-pin",
       trigger: projectReveal,
       start: "top top",
-      end: () => `+=${window.innerHeight * 6}`,
+      end: () => `+=${mobileViewportHeight * 6}`,
       pin: true,
-      pinType: "transform",
+      pinType: "fixed",
       pinSpacing: true,
       scrub: reducedMotion ? true : 0.55,
       anticipatePin: 1,
@@ -1955,7 +1964,7 @@ function projectVerticalScroll__init() {
         gsap.set(revealPhrases[0], {
           autoAlpha: 1,
           y: 0,
-          filter: "blur(0px)",
+          filter: "none",
         });
       },
       onEnterBack: () => header?.classList.add("is-project-section"),
@@ -1974,7 +1983,7 @@ function projectVerticalScroll__init() {
     if (index === 0) {
       mobileTimeline.set(
         phrase,
-        { autoAlpha: 1, y: 0, filter: "blur(0px)" },
+        { autoAlpha: 1, y: 0, filter: "none" },
         phraseLabel,
       );
     } else {
@@ -1983,7 +1992,7 @@ function projectVerticalScroll__init() {
         {
           autoAlpha: 1,
           y: 0,
-          filter: "blur(0px)",
+          filter: "none",
           duration: 0.5,
           ease: "power2.out",
         },
@@ -2009,7 +2018,7 @@ function projectVerticalScroll__init() {
       .to(phrase, {
         autoAlpha: 0,
         y: reducedMotion ? 0 : -18,
-        filter: reducedMotion ? "blur(0px)" : "blur(6px)",
+        filter: "none",
         duration: 0.45,
         ease: "power2.in",
       });
@@ -5611,6 +5620,11 @@ window.addEventListener("resize", () => {
     }, 180);
     return;
   }
+
+  // Address-bar movement fires resize continuously on phones even though the
+  // layout width is unchanged. Refreshing every trigger here caused jank and
+  // made the pinned ProjectBack scene jump.
+  if (window.matchMedia("(max-width: 768px)").matches) return;
 
   if (!resizeRefreshFrame) {
     resizeRefreshFrame = requestAnimationFrame(() => {
