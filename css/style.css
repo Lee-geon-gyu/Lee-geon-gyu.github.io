@@ -7013,6 +7013,18 @@ header:not(.is-about, .is-project-list, .is-project-section)
 
 /* Mobile-only corrections placed last to override the legacy responsive rules. */
 @media screen and (max-width: 768px) {
+  /* Keep the first mobile frame stable while the browser chrome collapses. */
+  main .horizontal-wrap > .sec-cover {
+    height: var(--mobile-stage-height, 100svh);
+    min-height: var(--mobile-stage-height, 100svh);
+  }
+
+  .forest-world > .horizontal-wrap > .sec-cover::before {
+    animation: none;
+    background-position: center;
+    scale: 1;
+  }
+
   .project-reveal.is-mobile-stable-reveal,
   .project-reveal.is-mobile-stable-reveal > .project-back-viewport--mobile,
   .project-reveal.is-mobile-stable-reveal > .project-reveal__mask,
@@ -7022,6 +7034,30 @@ header:not(.is-about, .is-project-list, .is-project-section)
   .project-reveal.is-mobile-stable-reveal > .project-reveal-copy {
     height: var(--mobile-stage-height, 100svh) !important;
     min-height: var(--mobile-stage-height, 100svh) !important;
+  }
+
+  .project-reveal.is-mobile-stable-reveal > .project-back-viewport--mobile {
+    z-index: 1;
+    visibility: visible !important;
+    opacity: 1 !important;
+    background: #020713 url("../images/ProjectBack.png") center bottom / cover
+      no-repeat;
+  }
+
+  .project-reveal.is-mobile-stable-reveal .project-back-mobile-progress-layer {
+    transform: none !important;
+  }
+
+  .project-reveal.is-mobile-stable-reveal .project-back-mobile-background {
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center bottom;
+    transform: none;
+    visibility: visible;
+    opacity: 1;
   }
 
   .project-reveal.is-mobile-stable-reveal > .project-reveal-copy {
@@ -7056,6 +7092,95 @@ header:not(.is-about, .is-project-list, .is-project-section)
     min-height: 0;
   }
 
+  #sec-project-list .project-tablet__content,
+  #sec-project-list .project-tablet__loading {
+    top: var(--project-tablet-hud-height);
+    right: 0;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: auto;
+    min-height: 0;
+  }
+
+  #sec-project-list .project-list-wrapper > .sec-project-item {
+    padding: clamp(12px, 2.5vh, 24px);
+  }
+
+  #sec-project-list
+    .project-list-wrapper
+    > .sec-project-item
+    > .section-container {
+    height: 100%;
+    min-height: 0;
+    justify-content: stretch;
+    gap: clamp(8px, 1.5vh, 16px);
+  }
+
+  #sec-project-list
+    .project-list-wrapper
+    > .sec-project-item
+    > .section-container
+    > .top-box {
+    flex: 0 0 auto;
+    margin-top: 0;
+  }
+
+  #sec-project-list
+    .project-list-wrapper
+    > .sec-project-item
+    > .section-container
+    > .bottom-box {
+    min-height: 0;
+    flex: 1 1 auto;
+    gap: clamp(8px, 1.5vh, 16px);
+    overflow: hidden;
+  }
+
+  #sec-project-list
+    .project-list-wrapper
+    > .sec-project-item
+    > .section-container
+    > .bottom-box
+    > .left-box {
+    min-height: 0;
+    gap: clamp(16px, 3vh, 32px);
+  }
+
+  #sec-project-list
+    .project-list-wrapper
+    > .sec-project-item
+    > .section-container
+    > .bottom-box
+    > .left-box
+    > .top-box {
+    height: auto;
+    gap: clamp(12px, 2vh, 24px);
+  }
+
+  #sec-project-list
+    .project-list-wrapper
+    > .sec-project-item
+    > .section-container
+    > .bottom-box
+    > .right-box {
+    min-height: 0;
+    flex: 1 1 44%;
+  }
+
+  #sec-project-list
+    .project-list-wrapper
+    > .sec-project-item
+    > .section-container
+    > .bottom-box
+    > .right-box
+    > .img-box {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    max-height: none;
+  }
+
   #sec-project-list > .project-tablet-stage {
     padding: 6px;
   }
@@ -7065,5 +7190,28 @@ header:not(.is-about, .is-project-list, .is-project-section)
   .project-back-mobile-progress-layer {
     will-change: auto;
     backface-visibility: hidden;
+  }
+}
+
+@media screen and (max-width: 450px) {
+  #sec-project-list
+    .project-list-wrapper
+    > .sec-project-item
+    > .section-container
+    > .bottom-box
+    > .left-box
+    > .bottom-box {
+    display: none;
+  }
+
+  #sec-project-list
+    .project-list-wrapper
+    > .sec-project-item
+    > .section-container
+    > .top-box {
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 6px;
   }
 }

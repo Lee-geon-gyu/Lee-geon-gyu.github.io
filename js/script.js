@@ -2027,15 +2027,6 @@ function projectVerticalScroll__init() {
   mobileTimeline
     .addLabel("mobileCircleReveal")
     .to(
-      projectBackProgressLayer,
-      {
-        scale: reducedMotion ? 1 : 1.25,
-        duration: 3,
-        ease: "power2.inOut",
-      },
-      "mobileCircleReveal",
-    )
-    .to(
       projectRevealMask,
       {
         clipPath: expandedClip,
