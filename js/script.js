@@ -1883,8 +1883,6 @@ function projectVerticalScroll__init() {
   // Chrome's address/navigation bars collapsed.
   const getMobileViewportHeight = () =>
     Math.round(window.visualViewport?.height || window.innerHeight);
-  let mobileViewportRefreshTimer;
-  let lastMobileViewportHeight = getMobileViewportHeight();
 
   // Apply the visible fallback before validating animation-only elements. If
   // one optional reveal layer is unavailable, ProjectBack must still render.
@@ -1957,9 +1955,10 @@ function projectVerticalScroll__init() {
       start: "top top",
       end: () => `+=${getMobileViewportHeight() * 6}`,
       pin: true,
-      // Keep the nested forest scene in its existing compositing context.
-      // Android browsers can drop this layer when it switches to fixed.
-      pinType: "transform",
+      // Reparent the fixed pin outside the transformed forest ancestors. This
+      // keeps ProjectBack visually fixed without Android dropping the layer.
+      pinType: "fixed",
+      pinReparent: true,
       pinSpacing: true,
       scrub: reducedMotion ? true : 0.55,
       anticipatePin: 1,
@@ -2094,29 +2093,6 @@ function projectVerticalScroll__init() {
     .set(revealCopy, { autoAlpha: 0 })
     .addLabel("mobileProjectReady")
     .to({}, { duration: 3.4 });
-
-  // `100dvh` updates the painted scene as mobile browser chrome opens/closes.
-  // Refresh after that movement settles as well, otherwise ScrollTrigger keeps
-  // the old (shorter) pin distance and ProjectBack can leave the screen early.
-  window.visualViewport?.addEventListener("resize", () => {
-    if (
-      document.activeElement?.matches?.(
-        "input, textarea, select, [contenteditable]",
-      )
-    ) {
-      return;
-    }
-
-    const nextHeight = getMobileViewportHeight();
-    if (Math.abs(nextHeight - lastMobileViewportHeight) < 2) return;
-
-    lastMobileViewportHeight = nextHeight;
-    clearTimeout(mobileViewportRefreshTimer);
-    mobileViewportRefreshTimer = setTimeout(() => {
-      lenis?.resize();
-      ScrollTrigger.refresh();
-    }, 220);
-  });
 }
 
 // Legacy mobile step controller (kept inactive) ------------------------------ //
@@ -5639,6 +5615,10 @@ history.scrollRestoration = "manual";
 
 ScrollTrigger.config({
   autoRefreshEvents: "visibilitychange,DOMContentLoaded,load",
+  // Mobile browser chrome continuously changes the visual viewport while the
+  // user scrolls. Re-measuring active pins during that motion causes visible
+  // jumps between ProjectBack, Project, and the project list.
+  ignoreMobileResize: true,
 });
 
 window.addEventListener("resize", () => {
