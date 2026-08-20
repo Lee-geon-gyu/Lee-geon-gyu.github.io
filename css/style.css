@@ -4094,7 +4094,7 @@ main .horizontal-wrap {
 }
 
 .scroll-cue__label {
-  font-size: 2rem;
+  font-size: max(12px, 2rem);
   font-weight: 700;
   line-height: 1;
 }
