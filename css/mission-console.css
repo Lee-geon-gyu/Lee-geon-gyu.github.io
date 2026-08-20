@@ -1499,3 +1499,17 @@ html
     display: none;
   }
 }
+
+/* Keep the identity portrait treatment consistent across every breakpoint. */
+.sec-about .mission-profile {
+  overflow: hidden;
+  border-radius: 0.6rem;
+}
+
+.sec-about .mission-profile::before {
+  content: none;
+}
+
+.sec-about .mission-profile img {
+  border-radius: inherit;
+}
