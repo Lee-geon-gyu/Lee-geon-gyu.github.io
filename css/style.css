@@ -4676,22 +4676,16 @@ main .horizontal-wrap {
   > .left-box
   > .top-box::before {
   position: absolute;
-  top: clamp(28px, 3.6rem, 36px);
+  /* Start beside the slogan, after the intro label and the flex-row gap. */
+  top: calc(2.8rem + clamp(12px, 1.8vh, 22px));
   bottom: 0;
   left: 0;
   width: 1px;
-  background: linear-gradient(
-    180deg,
-    #f4dcff 0%,
-    #c66cff 58%,
-    rgba(198, 108, 255, 0.5) 76%,
-    transparent 100%
-  );
+  /* Keep the line crisp and equally bright at every responsive scale. */
+  background: #fff;
   box-shadow:
-    0 0 5px rgba(255, 255, 255, 0.72),
-    0 0 12px rgba(198, 108, 255, 0.72);
-  -webkit-mask-image: linear-gradient(#000 0 72%, transparent 100%);
-  mask-image: linear-gradient(#000 0 72%, transparent 100%);
+    0 0 4px rgba(255, 255, 255, 0.9),
+    0 0 10px rgba(198, 108, 255, 0.82);
   content: "";
 }
 

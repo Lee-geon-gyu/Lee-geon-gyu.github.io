@@ -4456,8 +4456,10 @@ function fullPageStepScroll__init() {
           stepEasing = (t) => t;
         } else if (
           firstPhraseTime !== undefined &&
-          projectedMasterTime >= projectBackEntryTime - 0.2 &&
-          projectedMasterTime <= projectBackEntryTime + 0.3
+          projectedMasterTime >=
+            Math.min(firstPhraseTime, projectBackEntryTime) - 0.2 &&
+          projectedMasterTime <=
+            Math.max(firstPhraseTime, projectBackEntryTime) + 0.3
         ) {
           returnDirectlyToAbout = true;
           reverseDuration = 3.5;
@@ -5148,23 +5150,18 @@ function projectTabletTransition__init() {
         },
         reducedMotion ? "-=0.05" : "-=0.08",
       )
+      .set(content, {
+        autoAlpha: 1,
+        scale: 1,
+        pointerEvents: "none",
+      })
       .to(loading, {
         autoAlpha: 0,
         duration: reducedMotion ? 0.15 : 0.35,
         ease: "power2.out",
       })
       .set(loading, { pointerEvents: "none" })
-      .to(
-        content,
-        {
-          autoAlpha: 1,
-          scale: 1,
-          pointerEvents: "auto",
-          duration: reducedMotion ? 0.2 : 0.5,
-          ease: "power2.out",
-        },
-        "-=0.1",
-      );
+      .set(content, { pointerEvents: "auto" });
 
     loadingTimeline.duration(1);
   };
