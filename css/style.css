@@ -2513,7 +2513,7 @@ main .horizontal-wrap {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 10rem;
+  gap: clamp(3rem, 5vh, 6rem);
 }
 
 .sec-about
@@ -4632,7 +4632,7 @@ main .horizontal-wrap {
   flex-direction: column;
   align-items: flex-start;
   justify-content: center;
-  gap: 10rem;
+  gap: 7.2rem;
   min-width: 0;
   flex: 1 1 40%;
 }
@@ -4643,13 +4643,91 @@ main .horizontal-wrap {
   > .section-container
   > .bottom-box
   > .left-box
+  > .project-meta-wrapper {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3.8rem;
+}
+
+#sec-project-list
+  .project-list-wrapper
+  > .sec-project-item
+  > .section-container
+  > .bottom-box
+  > .left-box
   > .top-box {
-  height: 20rem;
+  position: relative;
+  height: auto;
+  padding-left: clamp(12px, 1.2vw, 20px);
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   justify-content: center;
-  gap: 3.6rem;
+  gap: clamp(12px, 1.8vh, 22px);
+}
+
+#sec-project-list
+  .project-list-wrapper
+  > .sec-project-item
+  > .section-container
+  > .bottom-box
+  > .left-box
+  > .top-box::before {
+  position: absolute;
+  top: clamp(28px, 3.6rem, 36px);
+  bottom: 0;
+  left: 0;
+  width: 1px;
+  background: linear-gradient(
+    180deg,
+    #f4dcff 0%,
+    #c66cff 58%,
+    rgba(198, 108, 255, 0.5) 76%,
+    transparent 100%
+  );
+  box-shadow:
+    0 0 5px rgba(255, 255, 255, 0.72),
+    0 0 12px rgba(198, 108, 255, 0.72);
+  -webkit-mask-image: linear-gradient(#000 0 72%, transparent 100%);
+  mask-image: linear-gradient(#000 0 72%, transparent 100%);
+  content: "";
+}
+
+.project-intro-label {
+  display: inline-flex;
+  min-height: 2.8rem;
+  padding: 0.35rem 1.4rem;
+  border: 1px solid #edc8ff;
+  border-radius: 999px;
+  align-items: center;
+  justify-content: center;
+  color: #f4dcff;
+  background: rgba(18, 3, 29, 0.58);
+  box-shadow:
+    inset 0 0 8px rgba(198, 108, 255, 0.12),
+    0 0 10px rgba(198, 108, 255, 0.48);
+  font-family: var(--font-urbanist);
+  font-size: clamp(11px, 1.15rem, 13px);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  text-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.92),
+    0 0 5px rgba(255, 255, 255, 0.52),
+    0 0 10px rgba(198, 108, 255, 0.88);
+  transform: translateX(calc(-1 * clamp(12px, 1.2vw, 20px)));
+}
+
+.project-intro-description {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: clamp(14px, 1.45vw, 18px);
+  font-weight: 400;
+  line-height: 1.75;
+  word-break: keep-all;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.48);
 }
 
 #sec-project-list
@@ -4719,6 +4797,7 @@ main .horizontal-wrap {
   > .section-container
   > .bottom-box
   > .left-box
+  > .project-meta-wrapper
   > .center-box
   > .btn-box {
   display: flex;
@@ -4731,6 +4810,7 @@ main .horizontal-wrap {
   > .section-container
   > .bottom-box
   > .left-box
+  > .project-meta-wrapper
   > .center-box
   > .btn-box
   > a {
@@ -4755,6 +4835,7 @@ main .horizontal-wrap {
   > .section-container
   > .bottom-box
   > .left-box
+  > .project-meta-wrapper
   > .center-box
   > .btn-box
   > a:hover {
@@ -4768,6 +4849,7 @@ main .horizontal-wrap {
   > .section-container
   > .bottom-box
   > .left-box
+  > .project-meta-wrapper
   > .center-box
   > .btn-box
   > a::before {
@@ -4791,6 +4873,7 @@ main .horizontal-wrap {
   > .section-container
   > .bottom-box
   > .left-box
+  > .project-meta-wrapper
   > .center-box
   > .btn-box
   > a:hover::before {
@@ -4804,6 +4887,7 @@ main .horizontal-wrap {
   > .section-container
   > .bottom-box
   > .left-box
+  > .project-meta-wrapper
   > .center-box
   > .btn-box
   > a:hover
@@ -4817,6 +4901,7 @@ main .horizontal-wrap {
   > .section-container
   > .bottom-box
   > .left-box
+  > .project-meta-wrapper
   > .center-box
   > .btn-box
   > a:hover
@@ -4831,6 +4916,7 @@ main .horizontal-wrap {
   > .section-container
   > .bottom-box
   > .left-box
+  > .project-meta-wrapper
   > .center-box
   > .btn-box
   > a
@@ -4847,6 +4933,7 @@ main .horizontal-wrap {
   > .section-container
   > .bottom-box
   > .left-box
+  > .project-meta-wrapper
   > .center-box
   > .btn-box
   > a
@@ -4863,6 +4950,7 @@ main .horizontal-wrap {
   > .section-container
   > .bottom-box
   > .left-box
+  > .project-meta-wrapper
   > .center-box
   > .btn-box
   > a:hover
@@ -4876,6 +4964,7 @@ main .horizontal-wrap {
   > .section-container
   > .bottom-box
   > .left-box
+  > .project-meta-wrapper
   > .center-box
   > .btn-box
   > a
@@ -4893,6 +4982,7 @@ main .horizontal-wrap {
   > .section-container
   > .bottom-box
   > .left-box
+  > .project-meta-wrapper
   > .bottom-box
   > .sub-wrap {
   width: 100%;
@@ -4909,6 +4999,7 @@ main .horizontal-wrap {
   > .section-container
   > .bottom-box
   > .left-box
+  > .project-meta-wrapper
   > .bottom-box
   > .sub-wrap
   > .tools-wrapper {
@@ -4921,6 +5012,7 @@ main .horizontal-wrap {
   > .section-container
   > .bottom-box
   > .left-box
+  > .project-meta-wrapper
   > .bottom-box
   > .sub-wrap
   > div {
@@ -4940,6 +5032,7 @@ main .horizontal-wrap {
   > .section-container
   > .bottom-box
   > .left-box
+  > .project-meta-wrapper
   > .bottom-box
   > .sub-wrap
   > div
@@ -4957,6 +5050,7 @@ main .horizontal-wrap {
   > .section-container
   > .bottom-box
   > .left-box
+  > .project-meta-wrapper
   > .bottom-box
   > .sub-wrap
   > div
@@ -6518,7 +6612,7 @@ header:not(.is-about, .is-project-list, .is-project-section)
   user-select: none;
 }
 
-.project-planet--06 .project-planet__image {
+.project-planet--02 .project-planet__image {
   width: 180%;
   margin-left: -40%;
 }
@@ -6679,13 +6773,13 @@ header:not(.is-about, .is-project-list, .is-project-section)
 
 .project-planet__copy small {
   margin-bottom: 0.35em;
-  font-size: clamp(14px, 0.78vw, 16px);
-  font-weight: 500;
-  opacity: 0.8;
+  font-size: clamp(14px, 1vw, 18px);
+  font-weight: 700;
+  opacity: 0.85;
 }
 
 .project-planet__copy strong {
-  font-size: clamp(24px, 1vw, 28px);
+  font-size: clamp(24px, 1.5vw, 48px);
   font-weight: 800;
   word-break: keep-all;
   white-space: nowrap;
@@ -6693,9 +6787,9 @@ header:not(.is-about, .is-project-list, .is-project-section)
 
 .project-planet__copy em {
   margin-top: 0.4em;
-  font-size: clamp(14px, 0.78vw, 68px);
+  font-size: clamp(14px, 0.85vw, 72px);
   font-style: normal;
-  opacity: 0.85;
+  opacity: 0.92;
   white-space: nowrap;
 }
 
@@ -7291,6 +7385,7 @@ header:not(.is-about, .is-project-list, .is-project-section)
     > .section-container
     > .bottom-box
     > .left-box
+    > .project-meta-wrapper
     > .bottom-box {
     display: none;
   }

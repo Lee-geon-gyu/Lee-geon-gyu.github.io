@@ -1322,13 +1322,11 @@ function introSections__init() {
           }
           previousMasterTime = currentMasterTime;
 
-          const revealStart =
-            (scrollTween.labels["circle-reveal"] ?? Infinity) / masterDuration;
-          const revealEnd =
-            (scrollTween.labels["project-ready"] ?? Infinity) / masterDuration;
+          const revealStart = scrollTween.labels["circle-reveal"] ?? Infinity;
+          const revealEnd = scrollTween.labels["project-ready"] ?? Infinity;
           projectReveal.classList.toggle(
             "is-revealing",
-            self.progress >= revealStart && self.progress < revealEnd,
+            currentMasterTime >= revealStart && currentMasterTime < revealEnd,
           );
           document
             .querySelector("header")
@@ -3050,7 +3048,7 @@ function projectBackgroundMotion__init() {
       let pointerX = 0;
       let pointerY = 0;
       let moveFrame;
-      let returnTimer;
+      let isPointerInside = false;
 
       const renderPointerMove = () => {
         moveFrame = undefined;
@@ -3059,13 +3057,25 @@ function projectBackgroundMotion__init() {
       };
 
       const returnToCenter = () => {
-        window.clearTimeout(returnTimer);
+        isPointerInside = false;
         moveX(0);
         moveY(0);
       };
 
       const handlePointerMove = (event) => {
         const rect = section.getBoundingClientRect();
+        const isInside =
+          event.clientX >= rect.left &&
+          event.clientX <= rect.right &&
+          event.clientY >= rect.top &&
+          event.clientY <= rect.bottom;
+
+        if (!isInside) {
+          if (isPointerInside) returnToCenter();
+          return;
+        }
+
+        isPointerInside = true;
         const normalizedX = (event.clientX - rect.left) / rect.width - 0.5;
         const normalizedY = (event.clientY - rect.top) / rect.height - 0.5;
         pointerX = gsap.utils.clamp(-1, 1, normalizedX * 2) * maxX;
@@ -3074,22 +3084,17 @@ function projectBackgroundMotion__init() {
         if (!moveFrame) {
           moveFrame = requestAnimationFrame(renderPointerMove);
         }
-        window.clearTimeout(returnTimer);
-        returnTimer = window.setTimeout(returnToCenter, 260);
       };
 
-      section.addEventListener("pointermove", handlePointerMove, {
-        passive: true,
-      });
-      section.addEventListener("pointerleave", returnToCenter, {
+      // The reveal wrapper intentionally ignores pointer events. Listen on the
+      // window so the empty space behind the planets still drives parallax.
+      window.addEventListener("pointermove", handlePointerMove, {
         passive: true,
       });
 
       return () => {
-        section.removeEventListener("pointermove", handlePointerMove);
-        section.removeEventListener("pointerleave", returnToCenter);
+        window.removeEventListener("pointermove", handlePointerMove);
         if (moveFrame) cancelAnimationFrame(moveFrame);
-        window.clearTimeout(returnTimer);
         floatingTween.kill();
         gsap.killTweensOf(parallaxLayer);
         gsap.set([parallaxLayer, floatingLayer], {
@@ -4178,10 +4183,10 @@ function fullPageStepScroll__init() {
             (forestTrigger.end - forestTrigger.start) *
               (projectReadyTime / masterDuration);
           if (tabletEntranceStepTrigger) {
-            requestedY = Math.min(
-              requestedY,
-              tabletEntranceStepTrigger.start - 2,
-            );
+            // Finish the same way as returning from project-list: the Project
+            // scene reaches its pinned boundary on this wheel step, while the
+            // tablet entrance itself remains queued for the next input.
+            requestedY = tabletEntranceStepTrigger.start - 2;
           }
           stepDuration = scrollTween.projectRevealStepDuration ?? 5 / 2;
           stepEasing = (t) => t;
@@ -4585,6 +4590,19 @@ function fullPageStepScroll__init() {
             }
           }
           ScrollTrigger.update();
+
+          // The first Project stop sits just before the project-list pin and
+          // synchronizes the master timeline manually. ScrollTrigger can still
+          // report the preceding scroll position here, leaving the reveal lock
+          // active until the user visits the list and comes back. Mirror the
+          // class from the synchronized timeline time after that update.
+          const projectReveal = document.querySelector(".project-reveal");
+          const revealStart = scrollTween.labels["circle-reveal"] ?? Infinity;
+          const revealEnd = scrollTween.labels["project-ready"] ?? Infinity;
+          projectReveal?.classList.toggle(
+            "is-revealing",
+            syncMasterTime >= revealStart && syncMasterTime < revealEnd,
+          );
         }
         if (syncTriggerAnimation && syncTriggerTime !== undefined) {
           syncTriggerAnimation.time(syncTriggerTime, false);
@@ -4799,7 +4817,9 @@ function scrollToMenu__init() {
             masterTrigger.start +
             (masterTrigger.end - masterTrigger.start) * progress;
           if (tabletEntranceTrigger) {
-            targetY = Math.min(targetY, tabletEntranceTrigger.start - 2);
+            // Match the one-scroll Project stop exactly: arrive with the
+            // Project scene pinned, before the tablet entrance begins.
+            targetY = tabletEntranceTrigger.start - 2;
           }
         } else {
           const mobileProjectTrigger = ScrollTrigger.getById(
@@ -4918,6 +4938,11 @@ function scrollToMenu__init() {
             }),
           );
           ScrollTrigger.update();
+          if (menu === "project" && isDesktop) {
+            document
+              .querySelector(".project-reveal")
+              ?.classList.remove("is-revealing");
+          }
           window.dispatchEvent(new Event("header-scroll-sync"));
         };
 
