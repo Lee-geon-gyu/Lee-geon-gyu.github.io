@@ -4730,6 +4730,26 @@ main .horizontal-wrap {
   text-shadow: 0 2px 12px rgba(0, 0, 0, 0.48);
 }
 
+@media screen and (min-width: 769px) and (max-width: 1280px) {
+  .project-intro-description br {
+    display: none;
+  }
+}
+
+@media screen and (max-width: 450px) {
+  .project-intro-label,
+  .project-intro-description,
+  #sec-project-list
+    .project-list-wrapper
+    > .sec-project-item
+    > .section-container
+    > .bottom-box
+    > .left-box
+    > .top-box::before {
+    display: none;
+  }
+}
+
 #sec-project-list
   .project-list-wrapper
   > .sec-project-item
@@ -7276,6 +7296,17 @@ header:not(.is-about, .is-project-list, .is-project-section)
     > .sec-project-item
     > .section-container
     > .bottom-box
+    > .left-box
+    > .project-meta-wrapper
+    > .bottom-box {
+    display: none;
+  }
+
+  #sec-project-list
+    .project-list-wrapper
+    > .sec-project-item
+    > .section-container
+    > .bottom-box
     > .right-box {
     min-height: 0;
     flex: 1 1 44%;
@@ -7377,17 +7408,6 @@ header:not(.is-about, .is-project-list, .is-project-section)
     animation: none !important;
     transform: none !important;
     will-change: auto;
-  }
-
-  #sec-project-list
-    .project-list-wrapper
-    > .sec-project-item
-    > .section-container
-    > .bottom-box
-    > .left-box
-    > .project-meta-wrapper
-    > .bottom-box {
-    display: none;
   }
 
   #sec-project-list
