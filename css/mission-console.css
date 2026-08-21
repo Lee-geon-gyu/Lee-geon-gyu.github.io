@@ -844,6 +844,8 @@ html
   list-style: none;
 }
 .sec-about .mission-modules li {
+  --skill-accent: #38bdf8;
+  --skill-accent-rgb: 56, 189, 248;
   font-family: "Pretendard";
   position: relative;
   box-sizing: border-box;
@@ -852,21 +854,67 @@ html
   min-height: 0;
   height: auto;
   padding: 4px 4px 4px 4px;
-  grid-template-columns: 28px minmax(0, 1fr);
-  gap: 5px;
+  grid-template-columns: 26px minmax(0, 1fr);
+  gap: 6px;
   align-items: center;
-  border: 1px solid rgba(91, 181, 236, 0.34);
+  border: 1px solid rgba(91, 181, 236, 0.48);
   border-radius: 4px;
   background: linear-gradient(135deg, #191919 0%, #0b0b0b 48%, #000 100%);
   box-shadow:
-    inset 0 0 9px rgba(53, 200, 255, 0.04),
-    0 0 6px rgba(31, 161, 224, 0.02);
+    inset 0 0 14px rgba(53, 200, 255, 0.055),
+    0 0 7px rgba(31, 161, 224, 0.06);
   color: #fff;
   font-size: clamp(11px, 1vw, 1.3rem);
   line-height: 1.3;
   font-weight: 400;
   word-break: keep-all;
   text-align: center;
+}
+.sec-about .mission-modules .skill-card--PS {
+  --skill-accent: #31a8ff;
+  --skill-accent-rgb: 49, 168, 255;
+}
+.sec-about .mission-modules .skill-card--AI {
+  --skill-accent: #ff9a00;
+  --skill-accent-rgb: 255, 154, 0;
+}
+.sec-about .mission-modules .skill-card--figma {
+  --skill-accent: #a259ff;
+  --skill-accent-rgb: 162, 89, 255;
+}
+.sec-about .mission-modules .skill-card--Gsap {
+  --skill-accent: #9ee856;
+  --skill-accent-rgb: 158, 232, 86;
+}
+.sec-about .mission-modules .skill-card--swiper,
+.sec-about .mission-modules .skill-card--VS,
+.sec-about .mission-modules .skill-card--CSS3,
+.sec-about .mission-modules .skill-card--TS {
+  --skill-accent: #27a9ff;
+  --skill-accent-rgb: 39, 169, 255;
+}
+.sec-about .mission-modules .skill-card--HTML5,
+.sec-about .mission-modules .skill-card--PPT {
+  --skill-accent: #ff5b2b;
+  --skill-accent-rgb: 255, 91, 43;
+}
+.sec-about .mission-modules .skill-card--Sass {
+  --skill-accent: #f06aa7;
+  --skill-accent-rgb: 240, 106, 167;
+}
+.sec-about .mission-modules .skill-card--JS {
+  --skill-accent: #ffe100;
+  --skill-accent-rgb: 255, 225, 0;
+}
+.sec-about .mission-modules .skill-card--Github,
+.sec-about .mission-modules .skill-card--CodePen,
+.sec-about .mission-modules .skill-card--Codex {
+  --skill-accent: #b9d8ea;
+  --skill-accent-rgb: 185, 216, 234;
+}
+.sec-about .mission-modules .skill-card--React {
+  --skill-accent: #31e6f4;
+  --skill-accent-rgb: 49, 230, 244;
 }
 .sec-about .mission-modules li::after {
   content: none;
@@ -880,19 +928,38 @@ html
 .sec-about .mission-modules .skill-card__logo {
   box-sizing: border-box;
   display: grid;
-  width: 28px;
-  height: 28px;
+  width: 26px;
+  height: 26px;
+  padding: 3px;
   overflow: hidden;
   place-items: center;
-  border: 0;
-  border-radius: 0;
-  background: transparent;
+  border: 1px solid var(--skill-accent);
+  border-radius: 4px;
+  background: rgba(var(--skill-accent-rgb), 0.035);
+  box-shadow:
+    inset 0 0 7px rgba(var(--skill-accent-rgb), 0.08),
+    0 0 4px rgba(var(--skill-accent-rgb), 0.22),
+    0 0 8px rgba(var(--skill-accent-rgb), 0.07);
+}
+.sec-about .mission-modules .skill-card--PS .skill-card__logo,
+.sec-about .mission-modules .skill-card--AI .skill-card__logo,
+.sec-about .mission-modules .skill-card--Sass .skill-card__logo,
+.sec-about .mission-modules .skill-card--JS .skill-card__logo,
+.sec-about .mission-modules .skill-card--TS .skill-card__logo {
+  padding: 0;
 }
 .sec-about .mission-modules .skill-card__logo img {
   display: block;
   width: 100%;
   height: 100%;
   object-fit: contain;
+  filter: saturate(1.16) brightness(1.07)
+    drop-shadow(0 0 2px rgba(var(--skill-accent-rgb), 0.42));
+}
+.sec-about .mission-modules .skill-card--Sass .skill-card__logo img,
+.sec-about .mission-modules .skill-card--JS .skill-card__logo img,
+.sec-about .mission-modules .skill-card--TS .skill-card__logo img {
+  transform: scale(1.01);
 }
 .sec-about .mission-modules .skill-card__text {
   align-items: flex-start;
@@ -1248,19 +1315,23 @@ html
 }
 @media (min-width: 1025px) and (max-width: 1620px) {
   .sec-about .mission-modules li {
-    display: flex;
+    display: grid;
+    grid-template-columns: 23px minmax(0, 1fr);
+    gap: 5px;
     align-items: center;
-    justify-content: center;
   }
   .sec-about .mission-modules .skill-card__logo {
-    display: none;
+    display: grid;
+    width: 23px;
+    height: 23px;
+    padding: 2px;
   }
   .sec-about .mission-modules .skill-card__text {
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     width: 100%;
-    text-align: center;
+    text-align: left;
   }
 }
 @media (min-width: 768px) and (max-width: 1024px) {
