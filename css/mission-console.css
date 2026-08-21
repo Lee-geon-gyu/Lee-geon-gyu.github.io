@@ -555,17 +555,31 @@ html
   content: "";
   vertical-align: -3px;
 }
+.sec-about .mission-identity .mission-panel__title::before,
+.sec-about .mission-modules .mission-panel__title::before {
+  width: 7px;
+  height: 7px;
+  margin-right: 8px;
+  border-color: #f2de01;
+  background: #f2de01;
+  box-shadow:
+    0 0 5px rgba(242, 222, 1, 0.95),
+    0 0 12px rgba(242, 222, 1, 0.58);
+  vertical-align: middle;
+}
 .sec-about .mission-log .mission-panel__title::before,
 .sec-about .mission-certification .mission-panel__title::before,
 .sec-about .mission-achievement .mission-panel__title::before {
-  width: 11px;
-  height: 11px;
+  width: 9px;
+  height: 9px;
+  margin-right: 9px;
   border: 0;
   background: #43d0ff;
   box-shadow:
     0 0 5px #35c8ff,
     0 0 12px rgba(53, 200, 255, 0.82),
     0 0 22px rgba(38, 170, 255, 0.42);
+  vertical-align: middle;
   animation: mission-glow-breathe 2.8s ease-in-out infinite;
 }
 
@@ -630,11 +644,12 @@ html
   padding-left: clamp(12px, 0.9vw, 17px);
 }
 .sec-about .mission-identity__data .status dd {
-  color: rgba(255, 255, 255, 0.78);
+  color: rgba(255, 255, 255, 0.82);
   display: flex;
   align-items: center;
   justify-content: flex-start;
   gap: 0.4rem;
+  font-size: 12px;
 }
 .sec-about .mission-identity__data .Id {
   display: flex;
@@ -733,7 +748,7 @@ html
   order: 3;
 }
 .sec-about .mission-operational-data dd {
-  color: rgba(255, 255, 255, 0.92);
+  color: rgba(255, 255, 255, 0.96);
   margin-top: 2px;
   white-space: nowrap;
 }
