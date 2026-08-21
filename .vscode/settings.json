@@ -1,3 +1,20 @@
 {
-  "liveServer.settings.port": 5501
+  "liveServer.settings.port": 5501,
+  "editor.tokenColorCustomizations": {
+    "textMateRules": [
+      {
+        "scope": [
+          "entity.name.tag.html",
+          "entity.name.tag.xml",
+          "punctuation.definition.tag.begin.html",
+          "punctuation.definition.tag.end.html",
+          "punctuation.definition.tag.begin.xml",
+          "punctuation.definition.tag.end.xml"
+        ],
+        "settings": {
+          "foreground": "#569CD6"
+        }
+      }
+    ]
+  }
 }
