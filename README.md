@@ -7,7 +7,7 @@ UI/UX 웹 디자인 및 퍼블리싱 포트폴리오. 오후의 공방, 수영�
 공개 주소: https://lee-geon-gyu.github.io/
 
 `main`에 푸시하면 `.github/workflows/deploy-pages.yml`이 의존성 설치,
-테스트, React/Vite 빌드를 실행하고 `dist/client`를 GitHub Pages에 배포합니다.
+React/Vite 빌드, 테스트를 실행하고 `dist/client`를 GitHub Pages에 배포합니다.
 저장소 Settings → Pages의 Source는 **GitHub Actions**를 사용합니다.
 소스의 `index.html` 대신 빌드된 HTML·JS·에셋이 제공됩니다.
 
