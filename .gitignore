@@ -1,0 +1,6 @@
+node_modules/
+dist/
+.vite/
+*.log
+tools/generated/
+tools/source-assets/

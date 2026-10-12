@@ -1,0 +1,329 @@
+{
+  "sourceBranch": "Interaction-fix",
+  "sourceIndexSha256": "a1597713ad84cd918ae87ab17e65cee0946bcce52701a45bbf3a1d6c9a11d625",
+  "profile": {
+    "id": "profile",
+    "name": "이건규 / Lee Geon - gyu",
+    "email": "gungyu0203@naver.com",
+    "phone": "010-8739-7139",
+    "role": "UI/UX 웹 디자인 및 퍼블리싱",
+    "introduction": "사용자의 시선에서 생각하고, 더 나은 경험을 만들기 위해 끊임없이 연구합니다.",
+    "portrait": "images/My-profile-img.png",
+    "sections": [
+      {
+        "key": "mission-identity",
+        "originalHtml": "<section class=\"mission-panel mission-panel--identity mission-identity\" data-ani=\"\">\n<h3 class=\"mission-panel__title\">IDENTITY</h3>\n<div class=\"mission-identity__body\">\n<figure class=\"mission-profile\">\n<img alt=\"이건규 프로필 사진\" src=\"images/My-profile-img.png\"/>\n</figure>\n<div class=\"mission-identity__data\">\n<dl>\n<div class=\"status\">\n<dt>Profile</dt>\n<dd>\n<i class=\"mission-status-dot\"></i>NAME\n                                        </dd>\n</div>\n<div class=\"mission-name\">\n<dd>\n<strong>이건규</strong>\n<span class=\"Slash\">/</span><span>Lee Geon - gyu</span>\n</dd>\n</div>\n<div class=\"mission-operational-data\">\n<div>\n<dt>Mail</dt>\n<dd>gungyu0203@naver.com</dd>\n</div>\n<div>\n<dt>Phone</dt>\n<dd>010-8739-7139</dd>\n</div>\n</div>\n</dl>\n</div>\n</div>\n</section>",
+        "sourceText": "IDENTITY Profile NAME 이건규 / Lee Geon - gyu Mail gungyu0203@naver.com Phone 010-8739-7139"
+      },
+      {
+        "key": "mission-modules",
+        "originalHtml": "<section class=\"mission-panel mission-panel--module mission-modules\" data-ani=\"\">\n<h3 class=\"mission-panel__title\">\n                                  SKILL MATRIX\n                                </h3>\n<div class=\"mission-modules__columns\">\n<ul>\n<li class=\"skill-card skill-card--PS\">\n<span aria-hidden=\"true\" class=\"skill-card__logo\">\n<img alt=\"PS_logo\" src=\"images/PS_logo.png\"/>\n</span>\n<span class=\"skill-card__text\">Photoshop</span>\n</li>\n<li class=\"skill-card skill-card--AI\">\n<span aria-hidden=\"true\" class=\"skill-card__logo\">\n<img alt=\"AI_logo\" src=\"images/AI_logo.png\"/>\n</span>\n<span class=\"skill-card__text\">Illustrator</span>\n</li>\n<li class=\"skill-card skill-card--figma\">\n<span aria-hidden=\"true\" class=\"skill-card__logo\">\n<img alt=\"figma_logo\" src=\"images/figma_logo.png\"/>\n</span>\n<span class=\"skill-card__text\">Figma</span>\n</li>\n<li class=\"skill-card skill-card--Gsap\">\n<span aria-hidden=\"true\" class=\"skill-card__logo\">\n<img alt=\"gsap_logo\" src=\"images/gsap.svg\"/>\n</span>\n<span class=\"skill-card__text\">GSAP</span>\n</li>\n<li class=\"skill-card skill-card--swiper\">\n<span aria-hidden=\"true\" class=\"skill-card__logo\">\n<img alt=\"Swiper_logo\" src=\"images/swiper_logo.png\"/>\n</span>\n<span class=\"skill-card__text\">Swiper</span>\n</li>\n<li class=\"skill-card skill-card--VS Code\">\n<span aria-hidden=\"true\" class=\"skill-card__logo\">\n<img alt=\"VS Code_logo\" src=\"images/vscode_logo.png\"/>\n</span>\n<span class=\"skill-card__text\">VS Code</span>\n</li>\n<li class=\"skill-card skill-card--HTML5\">\n<span aria-hidden=\"true\" class=\"skill-card__logo\">\n<img alt=\"HTML5_logo\" src=\"images/html5_logo.png\"/>\n</span>\n<span class=\"skill-card__text\">HTML5</span>\n</li>\n<li class=\"skill-card skill-card--CSS3\">\n<span aria-hidden=\"true\" class=\"skill-card__logo\">\n<img alt=\"CSS3_logo\" src=\"images/css3_logo.png\"/>\n</span>\n<span class=\"skill-card__text\">CSS3</span>\n</li>\n<li class=\"skill-card skill-card--Sass\">\n<span aria-hidden=\"true\" class=\"skill-card__logo\">\n<img alt=\"Sass_logo\" src=\"images/sass_logo.png\"/>\n</span>\n<span class=\"skill-card__text\">Sass</span>\n</li>\n<li class=\"skill-card skill-card--JS\">\n<span aria-hidden=\"true\" class=\"skill-card__logo\">\n<img alt=\"JS_logo\" src=\"images/javascript_logo.png\"/>\n</span>\n<span class=\"skill-card__text\">Javascript</span>\n</li>\n<li class=\"skill-card skill-card--TS\">\n<span aria-hidden=\"true\" class=\"skill-card__logo\">\n<img alt=\"TS_logo\" src=\"images/typescript_logo.png\"/>\n</span>\n<span class=\"skill-card__text\">Typescript</span>\n</li>\n<li class=\"skill-card skill-card--Github\">\n<span aria-hidden=\"true\" class=\"skill-card__logo\">\n<img alt=\"github_logo\" src=\"images/github_logo.png\"/>\n</span>\n<span class=\"skill-card__text\">GitHub</span>\n</li>\n<li class=\"skill-card skill-card--CodePen\">\n<span aria-hidden=\"true\" class=\"skill-card__logo\">\n<img alt=\"CodePen_logo\" src=\"images/codepen_logo.png\"/>\n</span>\n<span class=\"skill-card__text\">CodePen</span>\n</li>\n<li class=\"skill-card skill-card--Codex\">\n<span aria-hidden=\"true\" class=\"skill-card__logo\">\n<img alt=\"Codex_logo\" src=\"images/gpt_logo.png\"/>\n</span>\n<span class=\"skill-card__text\">Codex</span>\n</li>\n<li class=\"skill-card skill-card--React\">\n<span aria-hidden=\"true\" class=\"skill-card__logo\">\n<img alt=\"React_logo\" src=\"images/React_logo.png\"/>\n</span>\n<span class=\"skill-card__text\">React</span>\n</li>\n<li class=\"skill-card skill-card--PPT\">\n<span aria-hidden=\"true\" class=\"skill-card__logo\">\n<img alt=\"PPT_logo\" src=\"images/PPT_logo.png\"/>\n</span>\n<span class=\"skill-card__text\">PPT</span>\n</li>\n</ul>\n</div>\n</section>",
+        "sourceText": "SKILL MATRIX Photoshop Illustrator Figma GSAP Swiper VS Code HTML5 CSS3 Sass Javascript Typescript GitHub CodePen Codex React PPT"
+      },
+      {
+        "key": "mission-log",
+        "originalHtml": "<section class=\"mission-panel mission-panel--log mission-log\" data-ani=\"\">\n<h3 class=\"mission-panel__title\">EDUCATION</h3>\n<div class=\"mission-log__content\">\n<ol>\n<li>\n<time>2025. 05 ~ 2025. 12</time><strong>UI/UX 웹퍼블리셔 양성과정</strong>\n</li>\n<li>\n<time>2018. 03 ~ 2026. 02</time><strong>선문대학교 졸업</strong>\n</li>\n<li>\n<time>2015. 02 ~ 2018. 02</time><strong>세교고등학교 졸업</strong>\n</li>\n</ol>\n</div>\n</section>",
+        "sourceText": "EDUCATION 2025. 05 ~ 2025. 12 UI/UX 웹퍼블리셔 양성과정 2018. 03 ~ 2026. 02 선문대학교 졸업 2015. 02 ~ 2018. 02 세교고등학교 졸업"
+      },
+      {
+        "key": "mission-certification",
+        "originalHtml": "<section class=\"mission-panel mission-panel--cert mission-certification\" data-ani=\"\">\n<h3 class=\"mission-panel__title\">LICENSE</h3>\n<div class=\"mission-certification__body mission-panel__body\">\n<ul class=\"mission-cert-list\">\n<li>\n<time>2025</time><span>웹디자인개발기능사</span>\n</li>\n<li>\n<time>2025</time><span>ACP Photoshop</span>\n</li>\n<li>\n<time>2025</time><span>ACP Illustrator</span>\n</li>\n<li>\n<time>2024</time><span>자동차운전면허 1종보통</span>\n</li>\n</ul>\n</div>\n</section>",
+        "sourceText": "LICENSE 2025 웹디자인개발기능사 2025 ACP Photoshop 2025 ACP Illustrator 2024 자동차운전면허 1종보통"
+      },
+      {
+        "key": "mission-achievement",
+        "originalHtml": "<section class=\"mission-panel mission-panel--achievement mission-achievement\" data-ani=\"\">\n<h3 class=\"mission-panel__title\">\n                                  ACHIEVEMENT\n                                </h3>\n<div class=\"mission-achievement__body mission-panel__body\">\n<ul>\n<li>\n<time>2023.08</time><span>학과성적 우수 장학금</span>\n</li>\n<li>\n<time>2023.02</time><span>학과성적 수석 장학금</span>\n</li>\n</ul>\n</div>\n</section>",
+        "sourceText": "ACHIEVEMENT 2023.08 학과성적 우수 장학금 2023.02 학과성적 수석 장학금"
+      }
+    ]
+  },
+  "projects": [
+    {
+      "id": "project-01",
+      "sourceId": "project-item-1",
+      "title": "SWEATIE",
+      "category": "Web Branding",
+      "categoryKorean": "웹 브랜딩 프로젝트",
+      "tagline": "런닝과 함께 성장하는 즐거움",
+      "description": "SWEATIE는 런닝을 통해 함께 성장하고 즐거움을\n                                나누는 반응형 런닝 커뮤니티 플랫폼입니다.",
+      "metadata": [
+        {
+          "label": "Participants",
+          "value": "Team • 2 member"
+        },
+        {
+          "label": "Contribution",
+          "value": "50%"
+        },
+        {
+          "label": "Tools",
+          "value": "Figma  /  Ps  /  Ai\n                                       /  Pr  /  Blender\n                                       /  HTML  /  CSS\n                                       /  JS"
+        }
+      ],
+      "links": [
+        {
+          "label": "Process",
+          "href": "https://r00neyj.github.io/sweatie_process_page/"
+        },
+        {
+          "label": "Web",
+          "href": "https://r00neyj.github.io/Sweatie_Brand_Web/"
+        }
+      ],
+      "logo": "images/SWEATIE_logo.png",
+      "representativeImage": "images/SWEATIE_Project-list_Mockup.png",
+      "originalHtml": "<section class=\"sec-project-item sec-project-item-1 section vertical-section\" id=\"project-item-1\">\n<div class=\"section-container item-body\">\n<div class=\"top-box\">\n<span class=\"box-item-1\">Web Branding</span>\n<span class=\"box-item-2\">웹 브랜딩 프로젝트</span>\n</div>\n<div class=\"bottom-box\">\n<div class=\"left-box\">\n<div class=\"top-box\">\n<span class=\"project-intro-label\">PROJECT INTRO</span>\n<div class=\"slogun-box\">\n<i>런닝과 함께 성장하는 즐거움</i>\n</div>\n<div class=\"name-box\">\n<span class=\"name-wrapper\"><img alt=\"SWEATIE_logo\" src=\"images/SWEATIE_logo.png\"/></span>\n</div>\n<p class=\"project-intro-description\">\n                                SWEATIE는 런닝을 통해 함께 성장하고 즐거움을\n                                나누는<br/>\n                                반응형 런닝 커뮤니티 플랫폼입니다.\n                              </p>\n</div>\n<div class=\"project-meta-wrapper\">\n<div class=\"center-box\">\n<div class=\"btn-box\">\n<a class=\"process-btn\" href=\"https://r00neyj.github.io/sweatie_process_page/\" rel=\"noopener noreferrer\" target=\"_blank\"><span>Process</span>\n<div class=\"arrow-wrapper\">\n<img alt=\"Vector-arrow\" src=\"images/Vector-arrow.png\"/>\n</div>\n</a>\n<a class=\"proto-btn\" href=\"https://r00neyj.github.io/Sweatie_Brand_Web/\" rel=\"noopener noreferrer\" target=\"_blank\"><span>Web</span>\n<div class=\"arrow-wrapper\">\n<img alt=\"Vector-arrow\" src=\"images/Vector-arrow.png\"/>\n</div>\n</a>\n</div>\n</div>\n<div class=\"bottom-box\">\n<div class=\"sub-wrap\">\n<div class=\"team-box\">\n<span class=\"tag\">Participants</span>\n<span class=\"roll\">Team • 2 member</span>\n</div>\n<div class=\"contribution-wrapper\">\n<span class=\"tag\">Contribution</span>\n<span class=\"roll\">50%</span>\n</div>\n<div class=\"tools-wrapper\">\n<span class=\"tag\">Tools</span>\n<span class=\"roll\">Figma  /  Ps  /  Ai\n                                       /  Pr  /  Blender\n                                       /  HTML  /  CSS\n                                       /  JS</span>\n</div>\n</div>\n</div>\n</div>\n</div>\n<div class=\"right-box\">\n<div class=\"img-box\">\n<img alt=\"SWEATIE_Project-list_Mockup\" src=\"images/SWEATIE_Project-list_Mockup.png\"/>\n</div>\n</div>\n</div>\n</div>\n</section>",
+      "sourceText": "Web Branding 웹 브랜딩 프로젝트 PROJECT INTRO 런닝과 함께 성장하는 즐거움 SWEATIE는 런닝을 통해 함께 성장하고 즐거움을\n                                나누는 반응형 런닝 커뮤니티 플랫폼입니다. Process Web Participants Team • 2 member Contribution 50% Tools Figma  /  Ps  /  Ai\n                                       /  Pr  /  Blender\n                                       /  HTML  /  CSS\n                                       /  JS"
+    },
+    {
+      "id": "project-02",
+      "sourceId": "project-item-2",
+      "title": "DIVE",
+      "category": "Web Guidance",
+      "categoryKorean": "웹 가이드 프로젝트",
+      "tagline": "더 많은 경험 속으로, 더 깊이 탐색하다",
+      "description": "DIVE는 정보를 더 깊이 탐색하고 한눈에\n                                확인하는 반응형 퍼블리싱 & 디자인 가이드 웹 플랫폼입니다.",
+      "metadata": [
+        {
+          "label": "Participants",
+          "value": "Personal"
+        },
+        {
+          "label": "Contribution",
+          "value": "100%"
+        },
+        {
+          "label": "Tools",
+          "value": "Figma   / Ps  / \n                                      React(Type-Script)  / \n                                      Codex"
+        }
+      ],
+      "links": [
+        {
+          "label": "Process",
+          "href": "https://lee-geon-gyu.github.io/DIVE_Web_Process/"
+        },
+        {
+          "label": "Web",
+          "href": "https://lee-geon-gyu.github.io/DIVE_Web_React_Ts/"
+        }
+      ],
+      "logo": "images/DIVE-logo.png",
+      "representativeImage": "images/DIVE_Project-list_Mockup.png",
+      "originalHtml": "<section class=\"sec-project-item sec-project-item-2 section vertical-section\" id=\"project-item-2\">\n<div class=\"section-container item-body\">\n<div class=\"top-box\">\n<span class=\"box-item-1\">Web Guidance</span>\n<span class=\"box-item-2\">웹 가이드 프로젝트</span>\n</div>\n<div class=\"bottom-box\">\n<div class=\"left-box\">\n<div class=\"top-box\">\n<span class=\"project-intro-label\">PROJECT INTRO</span>\n<div class=\"slogun-box\">\n<i>더 많은 경험 속으로, 더 깊이 탐색하다</i>\n</div>\n<div class=\"name-box\">\n<span class=\"name-wrapper\"><img alt=\"DIVE-logo\" src=\"images/DIVE-logo.png\"/></span>\n</div>\n<p class=\"project-intro-description\">\n                                DIVE는 정보를 더 깊이 탐색하고 한눈에\n                                확인하는<br/>\n                                반응형 퍼블리싱 &amp; 디자인 가이드 웹 플랫폼입니다.\n                              </p>\n</div>\n<div class=\"project-meta-wrapper\">\n<div class=\"center-box\">\n<div class=\"btn-box\">\n<a class=\"process-btn\" href=\"https://lee-geon-gyu.github.io/DIVE_Web_Process/\" rel=\"noopener noreferrer\" target=\"_blank\"><span>Process</span>\n<div class=\"arrow-wrapper\">\n<img alt=\"Vector-arrow\" src=\"images/Vector-arrow.png\"/>\n</div>\n</a>\n<a class=\"proto-btn\" href=\"https://lee-geon-gyu.github.io/DIVE_Web_React_Ts/\" rel=\"noopener noreferrer\" target=\"_blank\"><span>Web</span>\n<div class=\"arrow-wrapper\">\n<img alt=\"Vector-arrow\" src=\"images/Vector-arrow.png\"/>\n</div>\n</a>\n</div>\n</div>\n<div class=\"bottom-box\">\n<div class=\"sub-wrap\">\n<div class=\"team-box\">\n<span class=\"tag\">Participants</span>\n<span class=\"roll\">Personal</span>\n</div>\n<div class=\"contribution-wrapper\">\n<span class=\"tag\">Contribution</span>\n<span class=\"roll\">100%</span>\n</div>\n<div class=\"tools-wrapper\">\n<span class=\"tag\">Tools</span>\n<span class=\"roll\">Figma   / Ps  / \n                                      React(Type-Script)  / \n                                      Codex</span>\n</div>\n</div>\n</div>\n</div>\n</div>\n<div class=\"right-box\">\n<div class=\"img-box\">\n<img alt=\"DIVE_Project-list_Mockup\" src=\"images/DIVE_Project-list_Mockup.png\"/>\n</div>\n</div>\n</div>\n</div>\n</section>",
+      "sourceText": "Web Guidance 웹 가이드 프로젝트 PROJECT INTRO 더 많은 경험 속으로, 더 깊이 탐색하다 DIVE는 정보를 더 깊이 탐색하고 한눈에\n                                확인하는 반응형 퍼블리싱 & 디자인 가이드 웹 플랫폼입니다. Process Web Participants Personal Contribution 100% Tools Figma   / Ps  / \n                                      React(Type-Script)  / \n                                      Codex"
+    },
+    {
+      "id": "project-03",
+      "sourceId": "project-item-3",
+      "title": "EATGO",
+      "category": "App Branding",
+      "categoryKorean": "앱 브랜딩 프로젝트",
+      "tagline": "즐거운 다이어트를 향한 여정",
+      "description": "EATGO는 자동화 식단 기록 시스템을 기반으로\n                                하는 다이어트 보조 모바일 애플리케이션입니다.",
+      "metadata": [
+        {
+          "label": "Participants",
+          "value": "Team • 3 member"
+        },
+        {
+          "label": "Contribution",
+          "value": "33%"
+        },
+        {
+          "label": "Tools",
+          "value": "Figma  /  Ps  /  Ai\n                                       /  HTML  /  CSS\n                                       /  JS"
+        }
+      ],
+      "links": [
+        {
+          "label": "Process",
+          "href": "https://r00neyj.github.io/Eatgo_Process/"
+        },
+        {
+          "label": "Proto_Type",
+          "href": "https://www.figma.com/proto/f88bQ5bLXsdoVSUGy9bcFn/-Prototype--EAT-GO?node-id=1-1827&t=piW8miacosWSK1rs-1&scaling=min-zoom&content-scaling=fixed&page-id=0%3A1&starting-point-node-id=1%3A1754&show-proto-sidebar=1"
+        }
+      ],
+      "logo": "images/EATGO_logo.png",
+      "representativeImage": "images/Eg_Project-list_Mockup.png",
+      "originalHtml": "<section class=\"sec-project-item sec-project-item-3 section vertical-section\" id=\"project-item-3\">\n<div class=\"section-container item-body\">\n<div class=\"top-box\">\n<span class=\"box-item-1\">App Branding</span>\n<span class=\"box-item-2\">앱 브랜딩 프로젝트</span>\n</div>\n<div class=\"bottom-box\">\n<div class=\"left-box\">\n<div class=\"top-box\">\n<span class=\"project-intro-label\">PROJECT INTRO</span>\n<div class=\"slogun-box\">\n<i>즐거운 다이어트를 향한 여정</i>\n</div>\n<div class=\"name-box\">\n<span class=\"name-wrapper\"><img alt=\"EATGO_logo\" src=\"images/EATGO_logo.png\"/></span>\n</div>\n<p class=\"project-intro-description\">\n                                EATGO는 자동화 식단 기록 시스템을 기반으로\n                                하는<br/>\n                                다이어트 보조 모바일 애플리케이션입니다.\n                              </p>\n</div>\n<div class=\"project-meta-wrapper\">\n<div class=\"center-box\">\n<div class=\"btn-box\">\n<a class=\"process-btn\" href=\"https://r00neyj.github.io/Eatgo_Process/\" rel=\"noopener noreferrer\" target=\"_blank\"><span>Process</span>\n<div class=\"arrow-wrapper\">\n<img alt=\"Vector-arrow\" src=\"images/Vector-arrow.png\"/>\n</div>\n</a>\n<a class=\"proto-btn\" href=\"https://www.figma.com/proto/f88bQ5bLXsdoVSUGy9bcFn/-Prototype--EAT-GO?node-id=1-1827&amp;t=piW8miacosWSK1rs-1&amp;scaling=min-zoom&amp;content-scaling=fixed&amp;page-id=0%3A1&amp;starting-point-node-id=1%3A1754&amp;show-proto-sidebar=1\" rel=\"noopener noreferrer\" target=\"_blank\"><span>Proto_Type</span>\n<div class=\"arrow-wrapper\">\n<img alt=\"Vector-arrow\" src=\"images/Vector-arrow.png\"/>\n</div>\n</a>\n</div>\n</div>\n<div class=\"bottom-box\">\n<div class=\"sub-wrap\">\n<div class=\"team-box\">\n<span class=\"tag\">Participants</span>\n<span class=\"roll\">Team • 3 member</span>\n</div>\n<div class=\"contribution-wrapper\">\n<span class=\"tag\">Contribution</span>\n<span class=\"roll\">33%</span>\n</div>\n<div class=\"tools-wrapper\">\n<span class=\"tag\">Tools</span>\n<span class=\"roll\">Figma  /  Ps  /  Ai\n                                       /  HTML  /  CSS\n                                       /  JS</span>\n</div>\n</div>\n</div>\n</div>\n</div>\n<div class=\"right-box\">\n<div class=\"img-box\">\n<img alt=\"Eg_Project-list_Mockup\" src=\"images/Eg_Project-list_Mockup.png\"/>\n</div>\n</div>\n</div>\n</div>\n</section>",
+      "sourceText": "App Branding 앱 브랜딩 프로젝트 PROJECT INTRO 즐거운 다이어트를 향한 여정 EATGO는 자동화 식단 기록 시스템을 기반으로\n                                하는 다이어트 보조 모바일 애플리케이션입니다. Process Proto_Type Participants Team • 3 member Contribution 33% Tools Figma  /  Ps  /  Ai\n                                       /  HTML  /  CSS\n                                       /  JS"
+    },
+    {
+      "id": "project-04",
+      "sourceId": "project-item-4",
+      "title": "JW중외제약",
+      "category": "Web UI/UX Redesign 01",
+      "categoryKorean": "웹 리디자인 프로젝트",
+      "tagline": "인류의 건강과 미래를 지켜가는",
+      "description": "JW중외제약의 기업 정보를 명확하게 전달하고\n                                접근성을 개선한 반응형 웹사이트 리디자인 프로젝트입니다.",
+      "metadata": [
+        {
+          "label": "Participants",
+          "value": "Personal"
+        },
+        {
+          "label": "Contribution",
+          "value": "100%"
+        },
+        {
+          "label": "Tools",
+          "value": "Figma  /  Ps  /  HTML\n                                       /  CSS  /  JS"
+        }
+      ],
+      "links": [
+        {
+          "label": "Process",
+          "href": "https://lee-geon-gyu.github.io/JW_Redesign_Process/"
+        },
+        {
+          "label": "Web",
+          "href": "https://lee-geon-gyu.github.io/JW_Redesign/"
+        }
+      ],
+      "logo": "images/JW-logo.png",
+      "representativeImage": "images/Jw_Project-list_Mockup.png",
+      "originalHtml": "<section class=\"sec-project-item sec-project-item-4 section vertical-section\" id=\"project-item-4\">\n<div class=\"section-container item-body\">\n<div class=\"top-box\">\n<span class=\"box-item-1\">Web UI/UX Redesign 01</span>\n<span class=\"box-item-2\">웹 리디자인 프로젝트</span>\n</div>\n<div class=\"bottom-box\">\n<div class=\"left-box\">\n<div class=\"top-box\">\n<span class=\"project-intro-label\">PROJECT INTRO</span>\n<div class=\"slogun-box\">\n<i>인류의 건강과 미래를 지켜가는</i>\n</div>\n<div class=\"name-box\">\n<span class=\"name-wrapper\"><img alt=\"JW_logo\" src=\"images/JW-logo.png\"/></span>\n</div>\n<p class=\"project-intro-description\">\n                                JW중외제약의 기업 정보를 명확하게 전달하고\n                                접근성을<br/>\n                                개선한 반응형 웹사이트 리디자인 프로젝트입니다.\n                              </p>\n</div>\n<div class=\"project-meta-wrapper\">\n<div class=\"center-box\">\n<div class=\"btn-box\">\n<a class=\"process-btn\" href=\"https://lee-geon-gyu.github.io/JW_Redesign_Process/\" rel=\"noopener noreferrer\" target=\"_blank\"><span>Process</span>\n<div class=\"arrow-wrapper\">\n<img alt=\"Vector-arrow\" src=\"images/Vector-arrow.png\"/>\n</div>\n</a>\n<a class=\"web-btn\" href=\"https://lee-geon-gyu.github.io/JW_Redesign/\" rel=\"noopener noreferrer\" target=\"_blank\"><span>Web</span>\n<div class=\"arrow-wrapper\">\n<img alt=\"Vector-arrow\" src=\"images/Vector-arrow.png\"/>\n</div>\n</a>\n</div>\n</div>\n<div class=\"bottom-box\">\n<div class=\"sub-wrap\">\n<div class=\"team-box\">\n<span class=\"tag\">Participants</span>\n<span class=\"roll\">Personal</span>\n</div>\n<div class=\"contribution-wrapper\">\n<span class=\"tag\">Contribution</span>\n<span class=\"roll\">100%</span>\n</div>\n<div class=\"tools-wrapper\">\n<span class=\"tag\">Tools</span>\n<span class=\"roll\">Figma  /  Ps  /  HTML\n                                       /  CSS  /  JS</span>\n</div>\n</div>\n</div>\n</div>\n</div>\n<div class=\"right-box\">\n<div class=\"img-box\">\n<img alt=\"Jw_Project-list_Mockup\" src=\"images/Jw_Project-list_Mockup.png\"/>\n</div>\n</div>\n</div>\n</div>\n</section>",
+      "sourceText": "Web UI/UX Redesign 01 웹 리디자인 프로젝트 PROJECT INTRO 인류의 건강과 미래를 지켜가는 JW중외제약의 기업 정보를 명확하게 전달하고\n                                접근성을 개선한 반응형 웹사이트 리디자인 프로젝트입니다. Process Web Participants Personal Contribution 100% Tools Figma  /  Ps  /  HTML\n                                       /  CSS  /  JS"
+    },
+    {
+      "id": "project-05",
+      "sourceId": "project-item-5",
+      "title": "CJ올리브영",
+      "category": "Web UI/UX Redesign 02",
+      "categoryKorean": "웹 리디자인 프로젝트",
+      "tagline": "매일 마주하는 일상을 더 아름답게",
+      "description": "CJ올리브영의 브랜드 감성과 제품 경험을\n                                재해석한 웹사이트 리디자인 프로젝트입니다.",
+      "metadata": [
+        {
+          "label": "Participants",
+          "value": "Personal"
+        },
+        {
+          "label": "Contribution",
+          "value": "100%"
+        },
+        {
+          "label": "Tools",
+          "value": "Figma  /  Ps  /  HTML\n                                       /  CSS  /  JS"
+        }
+      ],
+      "links": [
+        {
+          "label": "Process",
+          "href": "https://lee-geon-gyu.github.io/OY_Redesign_Process/"
+        },
+        {
+          "label": "Web",
+          "href": "https://lee-geon-gyu.github.io/OY_Redesign/"
+        }
+      ],
+      "logo": "images/OY_logo.png",
+      "representativeImage": "images/Oy_Project-list_Mockup.png",
+      "originalHtml": "<section class=\"sec-project-item sec-project-item-5 section vertical-section\" id=\"project-item-5\">\n<div class=\"section-container item-body\">\n<div class=\"top-box\">\n<span class=\"box-item-1\">Web UI/UX Redesign 02</span>\n<span class=\"box-item-2\">웹 리디자인 프로젝트</span>\n</div>\n<div class=\"bottom-box\">\n<div class=\"left-box\">\n<div class=\"top-box\">\n<span class=\"project-intro-label\">PROJECT INTRO</span>\n<div class=\"slogun-box\">\n<i>매일 마주하는 일상을 더 아름답게</i>\n</div>\n<div class=\"name-box\">\n<span class=\"name-wrapper\"><img alt=\"OY_logo\" src=\"images/OY_logo.png\"/></span>\n</div>\n<p class=\"project-intro-description\">\n                                CJ올리브영의 브랜드 감성과 제품 경험을\n                                재해석한<br/>\n                                웹사이트 리디자인 프로젝트입니다.\n                              </p>\n</div>\n<div class=\"project-meta-wrapper\">\n<div class=\"center-box\">\n<div class=\"btn-box\">\n<a class=\"process-btn\" href=\"https://lee-geon-gyu.github.io/OY_Redesign_Process/\" rel=\"noopener noreferrer\" target=\"_blank\"><span>Process</span>\n<div class=\"arrow-wrapper\">\n<img alt=\"Vector-arrow\" src=\"images/Vector-arrow.png\"/>\n</div>\n</a>\n<a class=\"web-btn\" href=\"https://lee-geon-gyu.github.io/OY_Redesign/\" rel=\"noopener noreferrer\" target=\"_blank\"><span>Web</span>\n<div class=\"arrow-wrapper\">\n<img alt=\"Vector-arrow\" src=\"images/Vector-arrow.png\"/>\n</div>\n</a>\n</div>\n</div>\n<div class=\"bottom-box\">\n<div class=\"sub-wrap\">\n<div class=\"team-box\">\n<span class=\"tag\">Participants</span>\n<span class=\"roll\">Personal</span>\n</div>\n<div class=\"contribution-wrapper\">\n<span class=\"tag\">Contribution</span>\n<span class=\"roll\">100%</span>\n</div>\n<div class=\"tools-wrapper\">\n<span class=\"tag\">Tools</span>\n<span class=\"roll\">Figma  /  Ps  /  HTML\n                                       /  CSS  /  JS</span>\n</div>\n</div>\n</div>\n</div>\n</div>\n<div class=\"right-box\">\n<div class=\"img-box\">\n<img alt=\"Oy_Project-list_Mockup\" src=\"images/Oy_Project-list_Mockup.png\"/>\n</div>\n</div>\n</div>\n</div>\n</section>",
+      "sourceText": "Web UI/UX Redesign 02 웹 리디자인 프로젝트 PROJECT INTRO 매일 마주하는 일상을 더 아름답게 CJ올리브영의 브랜드 감성과 제품 경험을\n                                재해석한 웹사이트 리디자인 프로젝트입니다. Process Web Participants Personal Contribution 100% Tools Figma  /  Ps  /  HTML\n                                       /  CSS  /  JS"
+    },
+    {
+      "id": "project-06",
+      "sourceId": "project-item-6",
+      "title": "E1오렌지카드",
+      "category": "Clone Coding",
+      "categoryKorean": "코딩 모작 프로젝트",
+      "tagline": "오직 고객을 위한 특권",
+      "description": "E1오렌지카드 웹사이트의 레이아웃과 인터랙션을 분석하고 구현한 클론 코딩 프로젝트입니다.",
+      "metadata": [
+        {
+          "label": "Participants",
+          "value": "Personal"
+        },
+        {
+          "label": "Contribution",
+          "value": "100%"
+        },
+        {
+          "label": "Tools",
+          "value": "HTML  /  CSS  / \n                                      JS"
+        }
+      ],
+      "links": [
+        {
+          "label": "Web",
+          "href": "https://lee-geon-gyu.github.io/OC_Clone_Coding/"
+        }
+      ],
+      "logo": "images/OC_logo.png",
+      "representativeImage": "images/OC_Project-list_Mockup.png",
+      "originalHtml": "<section class=\"sec-project-item sec-project-item-6 section vertical-section\" id=\"project-item-6\">\n<div class=\"section-container item-body\">\n<div class=\"top-box\">\n<span class=\"box-item-1\">Clone Coding</span>\n<span class=\"box-item-2\">코딩 모작 프로젝트</span>\n</div>\n<div class=\"bottom-box\">\n<div class=\"left-box\">\n<div class=\"top-box\">\n<span class=\"project-intro-label\">PROJECT INTRO</span>\n<div class=\"slogun-box\">\n<i>오직 고객을 위한 특권</i>\n</div>\n<div class=\"name-box\">\n<span class=\"name-wrapper\"><img alt=\"OC_logo\" src=\"images/OC_logo.png\"/></span>\n</div>\n<p class=\"project-intro-description\">\n                                E1오렌지카드 웹사이트의 레이아웃과 인터랙션을<br/>\n                                분석하고 구현한 클론 코딩 프로젝트입니다.\n                              </p>\n</div>\n<div class=\"project-meta-wrapper\">\n<div class=\"center-box\">\n<div class=\"btn-box\">\n<a class=\"web-btn\" href=\"https://lee-geon-gyu.github.io/OC_Clone_Coding/\" rel=\"noopener noreferrer\" target=\"_blank\"><span>Web</span>\n<div class=\"arrow-wrapper\">\n<img alt=\"Vector-arrow\" src=\"images/Vector-arrow.png\"/>\n</div>\n</a>\n</div>\n</div>\n<div class=\"bottom-box\">\n<div class=\"sub-wrap\">\n<div class=\"team-box\">\n<span class=\"tag\">Participants</span>\n<span class=\"roll\">Personal</span>\n</div>\n<div class=\"contribution-wrapper\">\n<span class=\"tag\">Contribution</span>\n<span class=\"roll\">100%</span>\n</div>\n<div class=\"tools-wrapper\">\n<span class=\"tag\">Tools</span>\n<span class=\"roll\">HTML  /  CSS  / \n                                      JS</span>\n</div>\n</div>\n</div>\n</div>\n</div>\n<div class=\"right-box\">\n<div class=\"img-box\">\n<img alt=\"OC_Project-list_Mockup\" src=\"images/OC_Project-list_Mockup.png\"/>\n</div>\n</div>\n</div>\n</div>\n</section>",
+      "sourceText": "Clone Coding 코딩 모작 프로젝트 PROJECT INTRO 오직 고객을 위한 특권 E1오렌지카드 웹사이트의 레이아웃과 인터랙션을 분석하고 구현한 클론 코딩 프로젝트입니다. Web Participants Personal Contribution 100% Tools HTML  /  CSS  / \n                                      JS"
+    }
+  ],
+  "contact": {
+    "id": "contact",
+    "originalHtml": "<footer class=\"footer-blackhole\" id=\"footer\">\n<div class=\"footer-blackhole__stage\">\n<div aria-hidden=\"true\" class=\"footer-blackhole__visual\">\n<div class=\"footer-blackhole__position\">\n<div class=\"footer-blackhole__motion\"></div>\n</div>\n<div class=\"footer-blackhole__shade\"></div>\n</div>\n<div class=\"footer-blackhole__content\">\n<div class=\"footer-thankyou-position\">\n<div class=\"footer-thankyou-motion\">\n<h2 aria-hidden=\"true\" class=\"footer-thankyou__title\">\n                FOOTER MESSAGE\n              </h2>\n<div class=\"footer-thankyou__messages\">\n<p class=\"footer-thankyou__message footer-thankyou__message--01\">\n<strong class=\"footer-thankyou__message-main\">모든 경험과 시작은,</strong>\n<span class=\"footer-thankyou__message-sub\">All experiences and beginnings,</span>\n</p>\n<p class=\"footer-thankyou__message footer-thankyou__message--02\">\n<strong class=\"footer-thankyou__message-main\">함께할 때 더 큰 가치가 됩니다.</strong>\n<span class=\"footer-thankyou__message-sub\">It creates greater value when we are together.</span>\n</p>\n</div>\n</div>\n</div>\n<div class=\"footer-contact\">\n<div class=\"footer-contact__panel\">\n<div class=\"footer-contact-title-position\">\n<div class=\"footer-contact-title-motion\">\n<h2 class=\"footer-contact__title\">CONTACT</h2>\n</div>\n</div>\n<div class=\"footer-contact__details\">\n<div class=\"footer-contact__info\">\n<a class=\"footer-contact__item\" href=\"#\">\n<img alt=\"\" aria-hidden=\"true\" class=\"footer-contact__icon\" src=\"images/mobile.png\"/>\n<span class=\"footer-contact__label\">Mobile</span>\n<span class=\"footer-contact__value\">010-8739-7139</span>\n</a>\n<a class=\"footer-contact__item\" href=\"#\">\n<img alt=\"\" aria-hidden=\"true\" class=\"footer-contact__icon\" src=\"images/mail.png\"/>\n<span class=\"footer-contact__label\">E-mail</span>\n<span class=\"footer-contact__value\">gungyu0203@naver.com</span>\n</a>\n</div>\n<div class=\"footer-contact__links\">\n<a class=\"footer-contact__link\" href=\"https://github.com/Lee-geon-gyu\" rel=\"noopener noreferrer\" target=\"_blank\">\n<img alt=\"\" aria-hidden=\"true\" class=\"footer-contact__link-icon\" src=\"images/github.svg\"/><span>GitHub</span>\n</a>\n<a class=\"footer-contact__link\" href=\"https://velog.io/@gungyu0203/posts\" rel=\"noopener noreferrer\" target=\"_blank\">\n<img alt=\"\" aria-hidden=\"true\" class=\"footer-contact__link-icon\" src=\"images/velog.svg\"/><span>Velog</span>\n</a>\n</div>\n<div class=\"footer-contact__legal\">\n<p>\n                    상업적 목적이 아닌 개인 포트폴리오용으로 제작된\n                    사이트입니다.\n                  </p>\n<p>© 2026 Lee geon-gyu Portfolio. All Rights Reserved.</p>\n</div>\n</div>\n</div>\n</div>\n</div>\n</div>\n</footer>",
+    "sourceText": "FOOTER MESSAGE 모든 경험과 시작은, All experiences and beginnings, 함께할 때 더 큰 가치가 됩니다. It creates greater value when we are together. CONTACT Mobile 010-8739-7139 E-mail gungyu0203@naver.com GitHub Velog 상업적 목적이 아닌 개인 포트폴리오용으로 제작된\n                    사이트입니다. © 2026 Lee geon-gyu Portfolio. All Rights Reserved.",
+    "links": [
+      {
+        "label": "Mobile 010-8739-7139",
+        "href": "#"
+      },
+      {
+        "label": "E-mail gungyu0203@naver.com",
+        "href": "#"
+      },
+      {
+        "label": "GitHub",
+        "href": "https://github.com/Lee-geon-gyu"
+      },
+      {
+        "label": "Velog",
+        "href": "https://velog.io/@gungyu0203/posts"
+      }
+    ],
+    "email": "gungyu0203@naver.com",
+    "phone": "010-8739-7139",
+    "statement": [
+      "모든 경험과 시작은,",
+      "함께할 때 더 큰 가치가 됩니다."
+    ],
+    "statementEnglish": [
+      "All experiences and beginnings,",
+      "It creates greater value when we are together."
+    ]
+  },
+  "assets": [
+    "images/AI_logo.png",
+    "images/DIVE-logo.png",
+    "images/DIVE_Project-list_Mockup.png",
+    "images/EATGO_logo.png",
+    "images/Eg_Project-list_Mockup.png",
+    "images/JW-logo.png",
+    "images/Jw_Project-list_Mockup.png",
+    "images/My-profile-img.png",
+    "images/OC_Project-list_Mockup.png",
+    "images/OC_logo.png",
+    "images/OY_logo.png",
+    "images/Oy_Project-list_Mockup.png",
+    "images/PPT_logo.png",
+    "images/PS_logo.png",
+    "images/React_logo.png",
+    "images/SWEATIE_Project-list_Mockup.png",
+    "images/SWEATIE_logo.png",
+    "images/Vector-arrow.png",
+    "images/codepen_logo.png",
+    "images/css3_logo.png",
+    "images/figma_logo.png",
+    "images/github.svg",
+    "images/github_logo.png",
+    "images/gpt_logo.png",
+    "images/gsap.svg",
+    "images/html5_logo.png",
+    "images/javascript_logo.png",
+    "images/mail.png",
+    "images/mobile.png",
+    "images/sass_logo.png",
+    "images/swiper_logo.png",
+    "images/typescript_logo.png",
+    "images/velog.svg",
+    "images/vscode_logo.png"
+  ]
+}

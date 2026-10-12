@@ -1,0 +1,143 @@
+{
+  "contentAssets": [
+    {
+      "file": "images/AI_logo.png",
+      "sha256": "aaecb30905d49aa5543b1baac87154b977b31efcab9b240d38fe4a6c95b152c8"
+    },
+    {
+      "file": "images/DIVE-logo.png",
+      "sha256": "8a4a70a22be0ebc7c9ea2327512a9daaeada7f9249ccc817136aa4e90715572f"
+    },
+    {
+      "file": "images/DIVE_Project-list_Mockup.png",
+      "sha256": "052fac1d090f587cf48c70ea6d37a80586ae50dcae932eead6d45267e2a88a17"
+    },
+    {
+      "file": "images/EATGO_logo.png",
+      "sha256": "818e449173bda7e12e9d21405ab1a3abf27adae374bd72035acad9d10de62277"
+    },
+    {
+      "file": "images/Eg_Project-list_Mockup.png",
+      "sha256": "fab41b3224cc446ca3f44a2c187a18ae69f38f5c13e9085bcd70b6a94a692cde"
+    },
+    {
+      "file": "images/JW-logo.png",
+      "sha256": "58184e2e7b877baca373cc87e840b8a3d43fb34805430acaa68fe1f4eb5865df"
+    },
+    {
+      "file": "images/Jw_Project-list_Mockup.png",
+      "sha256": "2cbd3876ce00def98ce004808c8a21088347863f154ed70ef98eb501f1948706"
+    },
+    {
+      "file": "images/My-profile-img.png",
+      "sha256": "022c07783c3b688573dd16cacdf5e02d03c9a5d9d453913773fb2f7dc1b17dd7"
+    },
+    {
+      "file": "images/OC_Project-list_Mockup.png",
+      "sha256": "485c0de2353da11c67bcb31886e1ccef9ede3d90b261fc26cf5f7628bac71d55"
+    },
+    {
+      "file": "images/OC_logo.png",
+      "sha256": "65000e746886efad07b03ce5addd3c1210bac1d4146f0e9d8551cc2f927c27e4"
+    },
+    {
+      "file": "images/OY_logo.png",
+      "sha256": "2ecb0aa488d01167fe77e53f63fdf2e39386132c1e5e341a5dd783fb757e2891"
+    },
+    {
+      "file": "images/Oy_Project-list_Mockup.png",
+      "sha256": "afc6efefa973f6fdd65b9666ca423c81f9a76fe777fb8f317d9a122d85ad1c22"
+    },
+    {
+      "file": "images/PPT_logo.png",
+      "sha256": "e7c79b0f990e1b518d801684edb6ad6329091d4478b367787b9dc1170e36271c"
+    },
+    {
+      "file": "images/PS_logo.png",
+      "sha256": "a70ca46bdcb7b2e69bc59bd131de8e77fda62a52758a90c5ee0957e314ad5e7e"
+    },
+    {
+      "file": "images/React_logo.png",
+      "sha256": "46033af0d0d68b5262fe5bb5eebfe886eaa12ca1b745c70a0d8dacf74c002cf1"
+    },
+    {
+      "file": "images/SWEATIE_Project-list_Mockup.png",
+      "sha256": "01627eea36d0afe675b99e154b43c4cda2102cd977f407e2a7c3ac710fae3702"
+    },
+    {
+      "file": "images/SWEATIE_logo.png",
+      "sha256": "3292c7efe196f8ed78a8656e886617431cda4dbe52b7c53bf125690d279e7841"
+    },
+    {
+      "file": "images/Vector-arrow.png",
+      "sha256": "0a2d97562a858b8768cd108d947cce44d146e855267048033be898a88c0dc4d6"
+    },
+    {
+      "file": "images/codepen_logo.png",
+      "sha256": "bac39b860f4f3e7602393a1e887bc27c46f3d9d07f244c0320f014e788a38603"
+    },
+    {
+      "file": "images/css3_logo.png",
+      "sha256": "e250539223b481d24ffbcf34f935799016d7cdaf09d3f55610a1dc180cfc9178"
+    },
+    {
+      "file": "images/figma_logo.png",
+      "sha256": "476dbdfc13b7a3337e8aa90fafff19b7650c9eab6f235c343d2d3ad8fbcea286"
+    },
+    {
+      "file": "images/github.svg",
+      "sha256": "3bf8cceead820aec50d4ee825a3fd02c5a1cd6665cc9cf4cbf3d9c8861a204bb"
+    },
+    {
+      "file": "images/github_logo.png",
+      "sha256": "fe4b53008f3cac2c225d8cd045fb95d492872549c439c6014e79b78cb2ea2da5"
+    },
+    {
+      "file": "images/gpt_logo.png",
+      "sha256": "53b63b4f8b44d48a62c3baec29aab232e63787e77a13c93c5bc729cb814063f2"
+    },
+    {
+      "file": "images/gsap.svg",
+      "sha256": "b999f912e81a796bad8b562d1dfef039027e7ea768eca63776efbccd150da223"
+    },
+    {
+      "file": "images/html5_logo.png",
+      "sha256": "352824e2e73f550a340c4967dea9274f74f7affdf55e833111e3335528db470d"
+    },
+    {
+      "file": "images/javascript_logo.png",
+      "sha256": "f1847a7833042dd1b5893b8400a5310e6d4a28fa3b216e46451cede5c55d7d21"
+    },
+    {
+      "file": "images/mail.png",
+      "sha256": "8266519ab1b57439f7988413d308b450bce3c770321c29b7235b286fd8ac86f0"
+    },
+    {
+      "file": "images/mobile.png",
+      "sha256": "003c04339fbf68f3e501b85097af909ec20f3a708116beaa4e159ccba3a058f4"
+    },
+    {
+      "file": "images/sass_logo.png",
+      "sha256": "232d566534dc7006c127b3a64c3b55e8254af285c6c870a45d2441283c2d7863"
+    },
+    {
+      "file": "images/swiper_logo.png",
+      "sha256": "7f14bad325a2dde5a8b508038cf0aa4b641496d723b221a9ade5593f1efa8378"
+    },
+    {
+      "file": "images/typescript_logo.png",
+      "sha256": "88c07e94de5b2343c758d683770ca7aafdce40d1b811bb6580ffe0d3897078d8"
+    },
+    {
+      "file": "images/velog.svg",
+      "sha256": "ee96be6edf6d5d698b14652d9f8b8efc11fa8c2910181f7cc687dd9fe692c249"
+    },
+    {
+      "file": "images/vscode_logo.png",
+      "sha256": "5733bce08e1453299cb2da6fa684c1669bd4c4d7b0d01ba29598a50b77730600"
+    }
+  ],
+  "profileSections": 5,
+  "projects": 6,
+  "projectLinkCount": 11
+}

@@ -1,0 +1,19 @@
+{
+  "previews": {
+    "images/SWEATIE_Project-list_Mockup.png": "assets/runtime/project-01.webp",
+    "images/DIVE_Project-list_Mockup.png": "assets/runtime/project-02.webp",
+    "images/Eg_Project-list_Mockup.png": "assets/runtime/project-03.webp",
+    "images/Jw_Project-list_Mockup.png": "assets/runtime/project-04.webp",
+    "images/Oy_Project-list_Mockup.png": "assets/runtime/project-05.webp",
+    "images/OC_Project-list_Mockup.png": "assets/runtime/project-06.webp",
+    "images/My-profile-img.png": "assets/runtime/portrait.webp"
+  },
+  "textures": {
+    "afternoon-sky.png": "assets/runtime/afternoon-sky.webp",
+    "jute-rug.png": "assets/runtime/jute-rug.webp",
+    "ivory-marble.png": "assets/runtime/ivory-marble.webp",
+    "book-spines.png": "assets/runtime/book-spines.webp",
+    "pool-caustics.png": "assets/runtime/pool-caustics.webp",
+    "foliage-light-mask.png": "assets/runtime/foliage-light-mask.webp"
+  }
+}
