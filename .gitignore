@@ -4,3 +4,5 @@ dist/
 *.log
 tools/generated/
 tools/source-assets/
+__pycache__/
+*.py[cod]
