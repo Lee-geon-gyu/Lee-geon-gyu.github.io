@@ -2,6 +2,24 @@
   "groundCeiling": 3.6,
   "upperFloor": 3.8,
   "upperCeiling": 6.75,
+  "upperRoofThickness": 0.3,
+  "upperRoof": {
+    "back": -3.54,
+    "eastOverhang": 0.15,
+    "frontOverhang": 0.17,
+    "fasciaWidth": 0.065,
+    "frameInset": 0.07,
+    "frameWidth": 0.18,
+    "frameDrop": 0.035,
+    "ribs": {
+      "x": [-3.4, -0.8],
+      "z": [-1.55, 0.25],
+      "width": 0.12,
+      "drop": 0.018,
+      "inset": 0.32,
+      "channelHalfGap": 0.055
+    }
+  },
   "courtyardHeight": 6.75,
   "courtyard": [
     -5.37,
@@ -75,7 +93,7 @@
   ],
   "upperOutline": [
     [
-      -5.3,
+      -5.37,
       -3.3
     ],
     [
@@ -95,7 +113,7 @@
       1.4922630129894185
     ],
     [
-      -5.3,
+      -5.37,
       2.5
     ]
   ],
@@ -466,5 +484,33 @@
     "crouchSpeed": 0.85
   },
   "poolWaterInset": 0.115,
-  "stairWallOffset": 0.46
+  "stairWallOffset": 0.46,
+  "westFacade": {
+    "wallCenterX": -5.48,
+    "wallThickness": 0.22,
+    "lowerColumnSize": 0.21,
+    "upperColumnSize": 0.17,
+    "lowerColumnInset": 0.32
+  },
+  "stairFacadeTrim": {
+    "width": 0.21,
+    "depth": 0.21,
+    "offset": [
+      -0.06618179163852958,
+      -0.26
+    ],
+    "base": 0.006,
+    "top": 3.43,
+    "inset": 0.26
+  },
+  "lowerColumnBase": {
+    "bottom": 0.006,
+    "height": 0.14,
+    "border": 0.03
+  },
+  "upperColumnBase": {
+    "bottom": 0.006,
+    "height": 0.14,
+    "border": 0.03
+  }
 }

@@ -23,6 +23,6 @@ export function AmbientMusic(){
   const label=playing?'오후의 피아노 음악 끄기':failed?'오후의 피아노 음악 다시 켜기':'오후의 피아노 음악 켜기';
   return <>
     <audio ref={audioRef} preload="none" loop aria-label="나른한 오후 · 오리지널 피아노 BGM" onPlay={()=>setPlaying(true)} onPause={()=>setPlaying(false)}/>
-    <button className={`music-button${playing?' is-playing':''}`} onClick={toggle} aria-label={label} aria-pressed={playing} title={label}>{playing?<Music2 size={19}/>:<VolumeX size={19}/>}<span>BGM</span></button>
+    <button className={`music-button${playing?' is-playing':''}`} onClick={toggle} aria-label={label} aria-pressed={playing} title={label}>{playing?<Music2 size={19}/>:<VolumeX size={19}/>}<span className="control-caption">BGM</span></button>
   </>;
 }

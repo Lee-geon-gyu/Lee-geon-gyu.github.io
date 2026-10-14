@@ -1,48 +1,69 @@
 import * as THREE from 'three';
+import garden from './garden-layout.json' with {type:'json'};
+import {tabletWakeState} from './tabletWake.js';
 
-function paper(draw,width=1024,height=1280){
-  const canvas=document.createElement('canvas');canvas.width=width;canvas.height=height;
-  const ctx=canvas.getContext('2d');ctx.fillStyle='#f8f5ed';ctx.fillRect(0,0,width,height);draw(ctx,width,height);
-  const texture=new THREE.CanvasTexture(canvas);texture.colorSpace=THREE.SRGBColorSpace;return texture;
+// Captured from the actual DetailView, including its locally hosted font.
+export const deskFaces={profile:'assets/desk/profile-screen.png',contact:'assets/desk/contact-face.png'};
+const tabletSize={width:.91,depth:.516,thickness:.018,radius:.028};
+
+function roundedShape(width,height,radius){
+  const shape=new THREE.Shape(),x=-width/2,y=-height/2;
+  shape.moveTo(x+radius,y);shape.lineTo(x+width-radius,y);
+  shape.quadraticCurveTo(x+width,y,x+width,y+radius);shape.lineTo(x+width,y+height-radius);
+  shape.quadraticCurveTo(x+width,y+height,x+width-radius,y+height);shape.lineTo(x+radius,y+height);
+  shape.quadraticCurveTo(x,y+height,x,y+height-radius);shape.lineTo(x,y+radius);
+  shape.quadraticCurveTo(x,y,x+radius,y);return shape;
 }
-function wrap(ctx,text,x,y,width,lineHeight){let line='';for(const char of text){if(ctx.measureText(line+char).width>width){ctx.fillText(line,x,y);y+=lineHeight;line='';}line+=char;}ctx.fillText(line,x,y);}
-function surface(texture,width,depth,y,up=true){
-  const mesh=new THREE.Mesh(new THREE.PlaneGeometry(width,depth),new THREE.MeshStandardMaterial({map:texture,roughness:.92,metalness:0,emissive:0xffffff,emissiveMap:texture,emissiveIntensity:.12}));
-  mesh.rotation.x=up?-Math.PI/2:Math.PI/2;mesh.position.y=y;mesh.receiveShadow=true;return mesh;
+function roundedBody(width,depth,thickness,radius,material){
+  const geometry=new THREE.ExtrudeGeometry(roundedShape(width,depth,radius),{depth:thickness,bevelEnabled:false,curveSegments:6});
+  const mesh=new THREE.Mesh(geometry,material);mesh.rotation.x=-Math.PI/2;mesh.castShadow=true;mesh.receiveShadow=true;return mesh;
 }
-function box(w,h,d,material,x=0,y=0,z=0){const mesh=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),material);mesh.position.set(x,y,z);mesh.castShadow=true;mesh.receiveShadow=true;return mesh;}
+function face(texture,width,depth,y,radius=0){
+  texture.colorSpace=THREE.SRGBColorSpace;texture.anisotropy=8;
+  const geometry=radius?new THREE.ShapeGeometry(roundedShape(width,depth,radius),6):new THREE.PlaneGeometry(width,depth);
+  // ShapeGeometry uses world-space UVs; normalize them to the captured screen.
+  if(radius){const uv=geometry.attributes.uv;for(let i=0;i<uv.count;i++)uv.setXY(i,uv.getX(i)/width+.5,uv.getY(i)/depth+.5);}
+  const material=new THREE.MeshBasicMaterial({map:texture,toneMapped:false});
+  const mesh=new THREE.Mesh(geometry,material);mesh.rotation.x=-Math.PI/2;mesh.position.y=y;return mesh;
+}
 function outline(parent,width,depth,y){
   const group=new THREE.Group(),material=new THREE.MeshBasicMaterial({color:new THREE.Color().setRGB(0,.4,3.2),toneMapped:false});
-  for(const [x,z,w,d] of [[-width/2,0,.008,depth],[width/2,0,.008,depth],[0,-depth/2,width,.008],[0,depth/2,width,.008]])group.add(box(w,.002,d,material,x,y,z));
+  for(const [x,z,w,d] of [[-width/2,0,.006,depth],[width/2,0,.006,depth],[0,-depth/2,width,.006],[0,depth/2,width,.006]]){
+    const mesh=new THREE.Mesh(new THREE.BoxGeometry(w,.002,d),material);mesh.position.set(x,y,z);group.add(mesh);
+  }
   parent.add(group);return {group,material};
 }
-export function createDeskObjects(content,portrait,upperFloor){
-  const leather=new THREE.MeshStandardMaterial({color:0x222832,roughness:.56}),pages=new THREE.MeshStandardMaterial({color:0xf5efde,roughness:.94});
-  const book=new THREE.Group();book.name='Interactive_Profile_Book';book.position.set(-3.70,.912,-2.0);
-  book.add(box(.62,.014,.70,leather,0,.009));
-  book.add(box(.586,.049,.666,pages,0,.04));
-  for(let i=0;i<6;i++)book.add(box(.588,.001,.668,new THREE.MeshStandardMaterial({color:0xd5cebf,roughness:1}),0,.020+i*.007));
-  const inside=paper(ctx=>{
-    ctx.fillStyle='#78715f';ctx.font='25px sans-serif';ctx.fillText('01  /  ABOUT THE DESIGNER',75,100);
-    const s=Math.min(300/portrait.width,365/portrait.height);ctx.drawImage(portrait,75,170,portrait.width*s,portrait.height*s);
-    ctx.fillStyle='#222831';ctx.font='bold 55px sans-serif';ctx.fillText('이건규',75,640);ctx.font='29px sans-serif';ctx.fillText(content.profile.role,75,710);
-    ctx.font='30px sans-serif';wrap(ctx,content.profile.introduction,75,810,860,49);
-    ctx.font='23px sans-serif';ctx.fillText('LEE GEON-GYU / PROFILE',75,1190);
-  });
-  book.add(surface(inside,.574,.654,.066));
-  const hinge=new THREE.Group();hinge.position.set(-.31,.074,0);book.add(hinge);
-  hinge.add(box(.62,.014,.70,leather,.31));
-  const cover=paper(ctx=>{ctx.fillStyle='#202630';ctx.fillRect(0,0,1024,1280);ctx.strokeStyle='#bbac8e';ctx.lineWidth=2;ctx.strokeRect(65,65,894,1150);ctx.fillStyle='#e9deca';ctx.font='25px sans-serif';ctx.fillText('AFTERNOON ATELIER',95,160);ctx.font='78px Georgia,serif';ctx.fillText('Profile',95,660);ctx.font='30px sans-serif';ctx.fillText('LEE GEON-GYU',95,1100);});
-  const outside=surface(cover,.608,.688,.0075);outside.position.x=.31;hinge.add(outside);
-  const insideCover=paper(ctx=>{ctx.fillStyle='#222831';ctx.font='54px Georgia,serif';ctx.fillText('A little',75,210);ctx.fillText('about me.',75,285);ctx.font='29px sans-serif';wrap(ctx,content.profile.introduction,75,410,850,51);ctx.font='24px sans-serif';ctx.fillText('DESIGN · EXPERIENCE · PUBLISHING',75,1120);});
-  const leftPage=surface(insideCover,.608,.688,-.0075,false);leftPage.position.x=.31;hinge.add(leftPage);
-  const bookCue=outline(hinge,.63,.71,.010);bookCue.group.position.x=.31;
-  const card=new THREE.Group();card.name='Interactive_Contact_Card';card.position.set(-2.8,upperFloor+.846,-1.45);card.rotation.y=.08;
-  card.add(box(.44,.006,.27,pages));
-  const cardPrint=paper((ctx,w,h)=>{ctx.fillStyle='#202630';ctx.fillRect(0,0,24,h);ctx.font='bold 69px sans-serif';ctx.fillText('이건규',80,160);ctx.font='27px sans-serif';ctx.fillStyle='#686c72';ctx.fillText('UI/UX DESIGNER & WEB PUBLISHER',80,215);ctx.strokeStyle='#bbb9b2';ctx.beginPath();ctx.moveTo(80,280);ctx.lineTo(940,280);ctx.stroke();ctx.fillStyle='#202630';ctx.font='33px sans-serif';ctx.fillText(content.profile.email,80,365);ctx.fillText(content.profile.phone,80,420);ctx.font='25px sans-serif';ctx.fillText('LEE GEON-GYU / AFTERNOON ATELIER',80,535);},1024,628);
-  card.add(surface(cardPrint,.434,.264,.0032));
-  const cardCue=outline(card,.452,.282,.004);
-  const entries=[{id:'profile',kind:'book',root:book,floor:0,focus:new THREE.Vector3(-.31,.07,0),hinge,cue:bookCue},{id:'contact',kind:'card',root:card,floor:upperFloor,focus:new THREE.Vector3(0,0,0),cue:cardCue}];
+export function createDeskObjects({profileScreen,contactFace},upperFloor){
+  // Crop in UV space to the actual screen/card bounds of the 1280x720 capture.
+  profileScreen.offset.set(18/1280,18/720);profileScreen.repeat.set(1244/1280,684/720);
+  contactFace.offset.set(260/1280,91.15625/720);contactFace.repeat.set(760/1280,537.6875/720);
+  const graphite=new THREE.MeshStandardMaterial({color:0x151515,roughness:.3,metalness:.42});
+  const tablet=new THREE.Group();tablet.name='Interactive_Profile_Tablet';tablet.position.set(-3.70,.912,-2.0);
+  tablet.add(roundedBody(tabletSize.width,tabletSize.depth,tabletSize.thickness,tabletSize.radius,graphite));
+  const screen=face(profileScreen,.884,.486,.0182,.016);screen.name='Profile_Tablet_Screen';screen.material.color.setScalar(0);tablet.add(screen);
+  const wake=new THREE.Vector3(0,0,1);
+  screen.material.onBeforeCompile=shader=>{
+    shader.uniforms.tabletWake={value:wake};
+    shader.vertexShader='varying vec2 vTabletUv;\n'+shader.vertexShader.replace('#include <uv_vertex>','#include <uv_vertex>\nvTabletUv=uv;');
+    shader.fragmentShader='varying vec2 vTabletUv;\nuniform vec3 tabletWake;\n'+shader.fragmentShader.replace('#include <map_fragment>',`#include <map_fragment>
+      vec2 edge=abs(vTabletUv-vec2(.5));
+      float mask=step(.0001,tabletWake.x)*(1.0-smoothstep(tabletWake.x*.5-.001,tabletWake.x*.5+.001,edge.x))*(1.0-smoothstep(tabletWake.y*.5-.001,tabletWake.y*.5+.001,edge.y));
+      diffuseColor.rgb=mix(diffuseColor.rgb,vec3(1.0),tabletWake.z)*mask;
+    `);
+  };
+  screen.material.customProgramCacheKey=()=> 'tablet-center-line-v1';
+  const lens=new THREE.Mesh(new THREE.CircleGeometry(.0032,12),new THREE.MeshBasicMaterial({color:0x3c4146}));
+  lens.rotation.x=-Math.PI/2;lens.position.set(0,.0183,-.25);tablet.add(lens);
+  const tabletCue=outline(tablet,.922,.528,.019);
+  const card=new THREE.Group();card.name='Interactive_Contact_Card';card.position.set(-2.8+garden.library.deskShift[0],upperFloor+.846,-1.45+garden.library.deskShift[1]);card.rotation.y=.08;
+  const cardDepth=.44*538/760;
+  card.add(roundedBody(.44,cardDepth,.006,.008,new THREE.MeshStandardMaterial({color:0x090909,roughness:.7})));
+  const printedCard=face(contactFace,.438,cardDepth-.002,.0062,.007);printedCard.name='Contact_Card_Face';card.add(printedCard);
+  const cardCue=outline(card,.452,cardDepth+.012,.007);
+  const entries=[
+    {id:'profile',kind:'tablet',root:tablet,floor:0,focus:new THREE.Vector3(0,.018,0),size:tabletSize,cue:tabletCue,setPower:value=>{const state=tabletWakeState(value);screen.material.color.setScalar(state.power);wake.set(state.width,state.height,state.line);}},
+    {id:'contact',kind:'card',root:card,floor:upperFloor,focus:new THREE.Vector3(0,.006,0),cue:cardCue},
+  ];
   for(const entry of entries){entry.meshes=[];entry.root.traverse(mesh=>{if(mesh.isMesh&&mesh.material!==entry.cue.material){mesh.userData.contentId=entry.id;entry.meshes.push(mesh);}});}
   return entries;
 }

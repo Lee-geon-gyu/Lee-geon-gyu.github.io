@@ -1,0 +1,6 @@
+@media(any-hover:hover) and (any-pointer:fine){
+ :root{--world-cursor-image:url('./cursors/ring.svg') 24 24,auto}
+ html,body,#root,#root *{cursor:var(--world-cursor-image)!important}
+ #root input,#root textarea,#root [contenteditable="true"]{cursor:text!important}
+}
+@media(forced-colors:active){html,body,#root,#root *{cursor:auto!important}}

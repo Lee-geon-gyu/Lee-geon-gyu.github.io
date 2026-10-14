@@ -1,0 +1,101 @@
+/* Monochrome controls sit lightly over the architecture. */
+@font-face{font-family:AtelierSans;src:url('/fonts/AtelierSans-Variable.woff2') format('woff2');font-weight:300 750;font-style:normal;font-display:swap}
+:root{--ui-font:AtelierSans,'Apple SD Gothic Neo','Malgun Gothic',sans-serif;--ui-copy:var(--ui-font);--ui-white:#fff;--ui-black:#111;--ui-border:#ffffff70;--ui-surface:#111111b8;--blue:#fff;font-family:var(--ui-font)}
+.portfolio-world button{border-radius:50%;font-family:var(--ui-font);font-weight:400}
+.world-controls button,.world-controls .restart-button,.world-controls .music-button,.space-navigation .space-button,
+.controls-toggle,.touch-navigation button,.touch-actions button,.interaction-prompt,.water-instructions button,.exhibition-pages button{
+ position:relative;display:flex;align-items:center;justify-content:center;flex-shrink:0;
+ width:48px;height:48px;min-width:0;min-height:0;padding:0;gap:0;aspect-ratio:1;
+ border:1px solid var(--ui-border);border-radius:50%;background:var(--ui-surface);color:#fff;
+ -webkit-backdrop-filter:none;backdrop-filter:none;text-shadow:none;
+ box-shadow:inset 0 1px 0 #ffffff16,0 3px 12px #00000018;
+ transition:background-color .2s,color .2s,border-color .2s,transform .2s;
+}
+.world-controls button:hover,.controls-toggle:hover,.touch-navigation button:hover,.touch-actions button:hover,
+.interaction-prompt:hover,.water-instructions button:hover,.exhibition-pages button:hover{
+ background:#fff;color:#111;border-color:#fff;box-shadow:0 3px 12px #00000018;
+}
+.world-controls button:active,.controls-toggle:active,.touch-navigation button:active,.touch-actions button:active,
+.interaction-prompt:active,.water-instructions button:active,.exhibition-pages button:active{transform:scale(.94)}
+.space-navigation .space-button[aria-pressed=true],.world-controls .music-button.is-playing{background:#fff;color:#111;border-color:#fff}
+.portfolio-world button:disabled{opacity:.45;cursor:default}
+.world-controls button svg,.controls-toggle svg,.touch-navigation svg,.touch-actions svg,.interaction-prompt svg{width:19px;height:19px;color:currentColor;stroke-width:1.45}
+.control-caption{
+ position:absolute;top:calc(100% + 7px);left:50%;transform:translateX(-50%);display:block;width:max-content;
+ color:#fff;font:400 12px/18px var(--ui-font);letter-spacing:.035em;white-space:nowrap;
+ text-shadow:0 1px 1px #000,0 0 4px #000a;pointer-events:none;
+}
+.controls-menu{top:24px;left:28px}.controls-toggle{width:44px;height:44px}.controls-toggle .control-caption{font-size:12px}
+.world-controls{bottom:40px;left:28px;right:34px;gap:28px;align-items:flex-end;flex-wrap:nowrap}
+.restart-actions{display:flex;width:auto;gap:28px;align-items:center}.space-navigation{display:flex;width:auto;gap:32px;margin-left:auto}
+.scene-actions{bottom:116px;gap:32px}.interaction-prompt{width:50px;height:50px}
+.interaction-prompt kbd{width:auto;height:auto;min-width:0;padding:0;border:0;background:none;border-radius:0;box-shadow:none;color:currentColor;font:400 19px/1 var(--ui-font)}
+.scene-actions .exhibition-pages{padding:0;border:0;background:none;box-shadow:none;backdrop-filter:none;font:12px/18px var(--ui-copy);text-shadow:0 1px 3px #000}
+.exhibition-pages button{width:34px;height:34px;font-size:16px}
+/* No list panel, row fill, blur or sweep. Only the heading has a faint wash. */
+.quest-panel{
+ top:calc(50% - 106px);right:28px;transform:none;width:272px;padding:0 14px;
+ border:0;border-radius:0;background:none;color:#fff;box-shadow:none;
+ -webkit-backdrop-filter:none;backdrop-filter:none;font-family:var(--ui-font);text-shadow:0 1px 3px #000,0 0 7px #0006;
+}
+.quest-heading{position:relative;display:flex;align-items:center;gap:10px;min-height:38px;padding:0 4px 4px;border:0;background:linear-gradient(180deg,transparent 40%,#00000016);box-shadow:none}
+.quest-panel h2{flex:1;margin:0;padding:0;border:0;color:#fff;font:400 14px/26px var(--ui-font);letter-spacing:.12em}
+.quest-summary{position:static;width:auto;height:auto;overflow:visible;clip-path:none;white-space:nowrap;color:#ffffffb3;font:400 12px/18px var(--ui-copy);font-variant-numeric:tabular-nums}
+.quest-heading button{display:grid;place-items:center;width:28px;height:28px;padding:0;border:1px solid #ffffff60;border-radius:50%;background:#00000016;color:#fff;box-shadow:none}
+.quest-heading button:hover{background:#fff;color:#111;border-color:#fff}.quest-panel.is-collapsed .quest-heading{padding-bottom:4px;border:0}
+.quest-fold{display:grid;grid-template-rows:1fr;opacity:1;transition:grid-template-rows .25s ease,opacity .18s ease}
+.quest-fold__content{min-height:0;overflow:hidden}
+.quest-panel.is-collapsed .quest-fold{grid-template-rows:0fr;opacity:0;pointer-events:none}
+.quest-list{list-style:none;margin:0;padding:9px 4px 0}
+.quest-row{position:relative;display:grid;grid-template-columns:21px minmax(0,1fr);gap:10px;align-items:start;min-height:55px;padding:7px 0;border:0;background:none;overflow:visible;isolation:isolate}
+.quest-row:last-child{padding-bottom:4px;border:0}.quest-row::before,.quest-row::after{content:none;background:none;animation:none}
+.quest-copy{min-width:0;padding:0}.quest-row strong{display:block;color:#fff;font:400 13px/20px var(--ui-font);letter-spacing:.025em}
+.quest-row output{display:block;margin-top:2px;min-width:0;text-align:left;color:#ffffffe0;font:400 12px/18px var(--ui-copy);letter-spacing:0}
+.quest-row output span{font-size:inherit;line-height:inherit}.quest-count{font-variant-numeric:tabular-nums;white-space:nowrap;margin-right:3px}
+.quest-mark{position:relative;display:grid;place-items:center;flex-shrink:0;margin-top:1px;width:20px;height:20px;overflow:hidden;border:1px solid #ffffffe0;border-radius:50%;color:#fff;background:#00000024;box-shadow:0 1px 3px #0005}
+.quest-glyph{position:absolute;inset:0;display:grid;place-items:center;color:currentColor;text-shadow:none;transition:opacity .18s,transform .25s}.quest-mark::before{content:none;animation:none}
+.quest-check{position:absolute;inset:0;display:grid;place-items:center;color:#111;opacity:0;transform:scale(.7);transition:opacity .2s,transform .25s}
+.is-complete .quest-mark{background:#fff;border-color:#fff}.is-complete .quest-glyph{opacity:0;transform:scale(.7)}.is-complete .quest-check{opacity:1;transform:scale(1)}
+.is-complete .quest-copy strong,.is-complete .quest-count{color:#fff}.quest-row.is-scanning .quest-mark{animation:quest-scan .35s ease-out both}.quest-row.is-scanning .quest-check{animation:none}
+@keyframes quest-scan{from{transform:scale(.85)}to{transform:scale(1)}}
+.controls-dialog{font-family:var(--ui-copy);color:#fff;background:#111111f5;border-color:#ffffff50;box-shadow:0 12px 40px #0004;backdrop-filter:none;scrollbar-color:#ffffff70 transparent}
+.controls-heading p{color:#ffffff99;font-family:var(--ui-font)}.controls-heading h2{color:#fff;font:400 20px/28px var(--ui-font);letter-spacing:.04em}
+.controls-heading,.controls-tip{border-color:#ffffff24}.controls-tip,.controls-description strong{color:#fff}.controls-description span,.controls-or{color:#ffffffb3}
+.controls-close,.close-button{display:grid;place-items:center;flex-shrink:0;width:36px;height:36px;padding:0;border:1px solid #ffffff70;border-radius:50%;background:transparent;color:#fff;box-shadow:none}
+.controls-close:hover{color:#111;background:#fff;border-color:#fff}.controls-keys kbd{font-family:var(--ui-copy);color:#fff;border-color:#ffffff70;background:#ffffff0a;box-shadow:none}.controls-tip p{font-family:var(--ui-copy)}
+.water-instructions{bottom:118px;background:#111111d9;color:#fff;border-color:#ffffff70;backdrop-filter:none;font-family:var(--ui-copy);padding:14px 18px 24px;gap:22px}
+.water-instructions strong{color:#fff}.water-instructions button{width:44px;height:44px}.water-instructions .control-caption{font-size:12px;top:calc(100% + 4px)}.water-instructions>span{padding-bottom:10px}
+.detail-dialog{color:#111}.detail-sheet,.detail-dialog--card .detail-sheet{background:#fff;color:#111;border-color:#111}
+.detail-dialog--book .detail-sheet{background:linear-gradient(90deg,#fff 0%,#fff 47%,#ededed 49.7%,#c7c7c7 50%,#f1f1f1 50.5%,#fff 54%);border-color:#111;box-shadow:0 3px 0 #eee,0 7px 0 #ccc,0 30px 100px #0006}
+.detail-header,.detail-dialog--book .detail-header{background:#ffffffed;border-bottom-color:#00000018}.detail-header h2{font-family:var(--ui-font);letter-spacing:.04em}
+.close-button{width:43px;height:43px;background:#fff;color:#111;border-color:#00000040}.close-button:hover{color:#fff;background:#111;border-color:#111}
+.project-index{gap:18px;align-items:flex-start}.project-index a{display:flex;flex-direction:column;align-items:center;gap:8px;width:76px;padding:0;border:0;border-radius:0;background:none;color:#111;font:12px/18px var(--ui-copy);text-align:center}
+.project-index__number{display:grid;place-items:center;width:54px;height:54px;border:1px solid #0004;border-radius:50%;font:400 16px var(--ui-font);transition:color .2s,background .2s}
+.project-index a:hover{background:none;border:0}.project-index a:hover .project-index__number{background:#111;color:#fff}
+.project-links a{border:0;border-bottom:1px solid #0005;border-radius:0;background:none;color:#111;padding:5px 0;font-family:var(--ui-copy)}.project-links a:hover{background:none;border-color:#111}
+button:focus-visible,a:focus-visible,canvas:focus-visible{outline-color:#fff;outline-offset:5px}.detail-dialog button:focus-visible,.detail-dialog a:focus-visible{outline-color:#111}
+@media(max-width:760px){
+ .controls-menu{top:18px;left:22px}.controls-toggle{width:40px;height:40px}
+ .quest-panel{top:calc(50% - 100px);right:18px;width:246px;padding:0 14px;transform:none}.quest-heading{min-height:32px}.quest-panel h2{padding:0;font-size:13px}
+ .quest-row{min-height:49px;padding:6px 0;gap:8px}.quest-row:last-child{padding-bottom:4px}.quest-row strong{font-size:12px;line-height:18px}.quest-row output{font-size:12px;line-height:17px;margin-top:1px}
+ .world-controls{bottom:34px;left:22px;right:22px;gap:30px;flex-wrap:wrap}.restart-actions{width:100%;gap:24px}
+ .world-controls button,.world-controls .restart-button,.world-controls .music-button,.space-navigation .space-button{width:42px;height:42px;min-width:0;padding:0}
+ .space-navigation{width:100%;display:flex;justify-content:space-between;gap:0;margin-left:0}.control-caption{font-size:12px;line-height:17px;top:calc(100% + 5px)}
+ .touch-navigation{display:grid;left:14px;bottom:184px;grid-template-columns:repeat(3,36px);gap:6px}.touch-navigation button{width:36px;height:36px;border-radius:50%}
+ .touch-actions{display:flex;flex-direction:row;right:16px;left:auto;bottom:184px;width:auto;gap:12px}.touch-actions button{width:38px;height:38px;min-height:0;padding:0;border-radius:50%}.touch-actions button:last-child{grid-column:auto}
+ .scene-actions{bottom:184px;gap:28px}.interaction-prompt{width:44px;height:44px}
+ .water-instructions{left:18px;right:18px;bottom:260px;width:auto;max-width:none;transform:none;padding:12px 14px 22px;font-size:12px}.water-instructions strong{font-size:12px}.water-instructions button{width:40px;height:40px;font-size:12px;padding:0}
+ .controls-dialog{inset:90px auto auto 18px;width:354px;max-width:calc(100vw - 36px);max-height:calc(100dvh - 108px)}.detail-dialog--book .detail-sheet{background:linear-gradient(90deg,#ddd,#fff 15px,#fff)}
+}
+@media(max-width:760px) and (max-height:560px){
+ .world-controls{bottom:30px;flex-wrap:nowrap;gap:20px;left:18px;right:18px}.restart-actions{width:auto;gap:20px}.space-navigation{width:auto;gap:24px;margin-left:auto}
+ .world-controls button,.world-controls .restart-button,.world-controls .music-button,.space-navigation .space-button{width:38px;height:38px}
+ .quest-panel{top:calc(43% - 90px);right:16px;width:246px;max-height:calc(100dvh - 118px);overflow-y:auto;scrollbar-width:thin;scrollbar-color:#fff8 transparent}.quest-row{min-height:43px;padding:3px 0}.quest-heading{min-height:30px}
+ .touch-navigation{bottom:112px}.touch-actions{bottom:112px;left:154px;right:auto}.scene-actions{bottom:112px;left:57%}.interaction-prompt{width:40px;height:40px}.water-instructions{bottom:172px;max-width:360px}
+}
+@media(max-width:400px) and (max-height:560px){
+ .quest-panel{top:calc(39% - 88px);max-height:calc(100dvh - 238px)}.quest-heading{position:sticky;top:0;z-index:2;background:linear-gradient(180deg,transparent 40%,#00000016)}
+ .world-controls{flex-wrap:wrap;gap:25px}.restart-actions{width:100%}.space-navigation{width:100%;gap:0}
+ .touch-navigation,.touch-actions{bottom:164px}.touch-actions{left:auto;right:16px}.scene-actions{bottom:164px;left:50%}
+}
+@media(prefers-reduced-motion:reduce){.portfolio-world button,.quest-glyph,.quest-check,.quest-fold{transition:none}.quest-row.is-scanning .quest-mark{animation-duration:.01s}}

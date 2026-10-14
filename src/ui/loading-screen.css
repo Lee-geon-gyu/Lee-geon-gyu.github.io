@@ -1,0 +1,54 @@
+.arrival-loading{
+  position:absolute;inset:0;z-index:20;overflow:hidden;isolation:isolate;
+  display:grid;place-items:center;background:#30251e;color:#ffffff;
+}
+.arrival-house,.arrival-shade{position:absolute;inset:0;z-index:-1;pointer-events:none;}
+.arrival-house{overflow:hidden;transform-origin:49% 42%;animation:arrival-approach 18s cubic-bezier(.12,.35,.35,1) both;will-change:transform;}
+.arrival-house img{display:block;width:100%;height:100%;object-fit:cover;filter:blur(1.6px);transform:scale(1.015);}
+.arrival-shade{background:rgba(12,10,8,.30);}
+.arrival-identity{width:clamp(280px,34vw,550px);max-width:78vw;text-align:center;transform:translateY(-4px);}
+.lee-progress{position:relative;width:100%;aspect-ratio:1.72;}
+.lee-outline,.lee-liquid-mask{
+  position:absolute;inset:0;display:block;
+  -webkit-mask:url('/assets/loading/lee-mark.webp') center/contain no-repeat;
+  mask:url('/assets/loading/lee-mark.webp') center/contain no-repeat;
+}
+.lee-outline{background:#ffffff;opacity:.20;}
+.lee-liquid-mask{overflow:hidden;}
+.lee-progress[aria-valuenow="0"] .lee-liquid-mask{opacity:0;}
+.lee-liquid-level{
+  position:absolute;inset:0;
+  transform:translateY(calc(100% - var(--load-progress)*1% + 32px - var(--load-progress)*.18px));
+  transition:transform .65s cubic-bezier(.2,.7,.25,1);will-change:transform;
+}
+.lee-liquid{position:absolute;top:0;left:-7%;right:-7%;height:calc(100% + 48px);background:#ffffff;transform-origin:50% 0;animation:lee-slosh 2.8s ease-in-out infinite;will-change:transform;}
+.lee-wave{
+  position:absolute;left:0;top:-35px;width:200%;height:36px;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 40' preserveAspectRatio='none'%3E%3Cpath fill='%23ffffff' d='M0 10Q25 -8 50 10T100 10T150 10T200 10T250 10T300 10T350 10T400 10T450 10T500 10T550 10T600 10T650 10T700 10T750 10T800 10V40H0Z'/%3E%3C/svg%3E") center/100% 100% no-repeat;
+  animation:lee-wave 2.8s linear infinite;will-change:transform;
+}
+.lee-wave--back{top:-40px;opacity:.28;animation-duration:4.6s;animation-direction:reverse;}
+.arrival-percent{display:flex;align-items:baseline;justify-content:center;gap:2px;margin:7px 0 0;
+  font:300 clamp(22px,1.75vw,28px)/1.2 Urbanist,'Malgun Gothic',sans-serif;letter-spacing:1px;
+  font-variant-numeric:tabular-nums;text-shadow:0 1px 8px #0005;}
+.arrival-percent span:last-child{font-size:inherit;}
+.arrival-error button{position:relative;display:inline-flex;align-items:center;justify-content:center;width:48px;height:48px;border:1px solid #ffffff70;background:#111111b8;color:#fff;border-radius:50%;padding:0;font:12px Georgia,'Batang',serif;}
+.arrival-error button:hover{background:#fff;color:#111;}
+.arrival-error{margin:18px auto 0;max-width:370px;font:12px/1.7 'Malgun Gothic',sans-serif;}
+.arrival-error p{margin:0 0 16px;text-shadow:0 1px 5px #000;}
+.arrival-loading.has-error .arrival-house,.arrival-loading.is-obscured .arrival-house,
+.arrival-loading.has-error .lee-wave,.arrival-loading.is-obscured .lee-wave,
+.arrival-loading.has-error .lee-liquid,.arrival-loading.is-obscured .lee-liquid{animation-play-state:paused;}
+.arrival-loading.is-revealing .lee-liquid-level{transition-duration:.25s;}
+.arrival-loading.is-revealing{pointer-events:none;animation:arrival-reveal .65s ease .35s both;}
+@keyframes arrival-approach{from{transform:scale(1)}to{transform:scale(1.14) translateY(1.2%);}}
+@keyframes lee-slosh{0%,100%{transform:translateY(6px) rotate(-1deg);}50%{transform:translateY(-6px) rotate(1deg);}}
+@keyframes lee-wave{from{transform:translateX(0)}to{transform:translateX(-50%);}}
+@keyframes arrival-reveal{to{opacity:0;visibility:hidden;}}
+@media(max-width:600px){.arrival-identity{width:min(330px,78vw);}.arrival-percent{font-size:20px;margin-top:13px;}}
+@media(max-height:420px){.arrival-identity{width:min(300px,46vw);}.arrival-percent{margin-top:0;font-size:18px;}}
+@media(prefers-reduced-motion:reduce){
+  .arrival-house,.lee-wave,.lee-liquid{animation:none;will-change:auto;}.lee-liquid-level{transition:transform .12s linear;will-change:auto;}
+  .arrival-loading.is-revealing{animation-duration:.15s;animation-delay:.15s;}
+  .arrival-loading.is-revealing .lee-liquid-level{transition-duration:.12s;}
+}

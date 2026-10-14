@@ -1,0 +1,11 @@
+{
+  "id": "terrace-bench",
+  "bounds": [1.08, 3.92, 11.18, 12.01],
+  "seatTop": 0.6475,
+  "seatZ": 11.59,
+  "approachZ": 10.80,
+  "seatRangeX": [1.45, 3.55],
+  "eyeHeight": 0.68,
+  "yaw": 0,
+  "pitch": -0.06
+}

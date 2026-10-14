@@ -39,10 +39,11 @@ leaf_mesh.materials.append(source.data.materials[polygons[0].material_index])
 for p in leaf_mesh.polygons:p.use_smooth=True
 for obj in list(bpy.context.scene.objects):bpy.data.objects.remove(obj,do_unlink=True)
 
-stem_mat=bpy.data.materials.new('Vine_Stem');stem_mat.diffuse_color=(.11,.14,.041,1);stem_mat.use_nodes=True
-stem_mat.node_tree.nodes.get('Principled BSDF').inputs['Base Color'].default_value=(.11,.14,.041,1)
-
 garden=json.loads((root/'src/scene/garden-layout.json').read_text(encoding='utf-8-sig'))
+stem_color=(*garden['stemColor'],1)
+stem_mat=bpy.data.materials.new('Vine_Stem');stem_mat.diffuse_color=stem_color;stem_mat.use_nodes=True
+stem_mat.node_tree.nodes.get('Principled BSDF').inputs['Base Color'].default_value=stem_color
+stem_mat.node_tree.nodes.get('Principled BSDF').inputs['Roughness'].default_value=.82
 def stair_soil_height(x,z):
     sections=garden['stairBedSections']
     for a,b in zip(sections,sections[1:]):
@@ -242,6 +243,38 @@ for i,(polygon,angled) in enumerate(plant_beds):
             origin=start+Vector((0,h*height,0));phase=random.random()*math.tau;width=random.uniform(.07,.20)
             shoot=[origin+Vector((math.cos(phase)*width*t,.07*t,math.sin(phase)*width*t)) for t in [j/8 for j in range(9)]]
             branch(shoot,.0014,1.6,.035)
+
+# Append the new roof planting after the approved garden, preserving its leaf
+# order, deterministic runtime sampling and every existing branch attachment.
+roof=space['upperRoof'];roof_garden=garden['roofCornice'];roof_top=space['upperCeiling']+space['upperRoofThickness']
+west=space['westFacade'];roof_left=west['wallCenterX']+west['wallThickness']/2
+fa,fb=space['balconyFront'];roof_right=fb[0]+roof['eastOverhang']
+def roof_front(x):return fa[1]+(fb[1]-fa[1])*(x-fa[0])/(fb[0]-fa[0])+roof['frontOverhang']
+before_roof=leaf_count;active_cap=roof_top+.20
+def roof_cornice(a,b,normal,seed):
+    global active_variant
+    random.seed(seed);along=(b-a).normalized();length=(b-a).length;up=Vector((0,1,0));active_variant=2
+    runner=[a.lerp(b,t)-normal*.065+up*(.008*math.sin(t*21)) for t in [i/100 for i in range(101)]]
+    branch(runner,.009,roof_garden['leafScale'],roof_garden['spacing'])
+    strands=max(3,round(length*roof_garden['strandsPerMeter']))
+    for k in range(strands):
+        active_variant=(k+seed)%4;anchor=runner[round(k/(strands-1)*100)];phase=random.random()*math.tau
+        crown=[anchor+normal*(.14*t)+up*(.035*math.sin(math.pi*t)-.22*t) for t in [i/18 for i in range(19)]]
+        branch(crown,.0046,roof_garden['leafScale'],roof_garden['spacing'])
+        start=crown[-1];drop=random.uniform(*roof_garden['drop']);drift=random.uniform(-.10,.10)
+        points=[start+along*(.065*math.sin(t*7+phase)+drift*t)+up*(-drop*t)+normal*(.018*math.sin(t*6)) for t in [i/40 for i in range(41)]]
+        points[0]=start;branch(points,.0035,roof_garden['leafScale'],roof_garden['spacing'])
+        for index in [10,24]:
+            origin=points[index];sign=random.choice([-1,1]);reach=random.uniform(.18,.34)
+            shoot=[origin+along*(sign*reach*t)+up*(-.26*t)+normal*(.012*math.sin(t*7)) for t in [i/18 for i in range(19)]]
+            branch(shoot,.0018,roof_garden['leafScale'],.060)
+    return runner[0],runner[-1]
+front_normal=Vector((-(fb[1]-fa[1])/(fb[0]-fa[0]),0,1)).normalized()
+front_roots=roof_cornice(Vector((roof_left+.055,roof_top+.012,roof_front(roof_left+.055))),Vector((roof_right-.055,roof_top+.012,roof_front(roof_right-.055))),front_normal,roof_garden['seed'])
+side_roots=roof_cornice(Vector((roof_right,roof_top+.012,roof_front(roof_right)-.055)),Vector((roof_right,roof_top+.012,space['upperClosure'][3]+.055)),Vector((1,0,0)),roof_garden['seed']+1)
+branch([front_roots[1],side_roots[0]],.006,roof_garden['leafScale'],.045)
+active_cap=None
+print('ROOF_CORNICE_ADDED',leaf_count-before_roof,'front_and_right',flush=True)
 
 mesh=bpy.data.meshes.new('Organic_Ivy_Photographic_Leaves');mesh.from_pydata(all_verts,[],all_faces);mesh.update();uv=mesh.uv_layers.new(name='UVMap')
 for i,value in enumerate(all_uv):uv.data[i].uv=value

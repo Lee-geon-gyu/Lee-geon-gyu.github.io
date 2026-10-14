@@ -29,7 +29,7 @@ export function createSunsetSky(photo, lighting) {
         return mix(mix(hash(i),hash(i+vec2(1.0,0.0)),f.x),
           mix(hash(i+vec2(0.0,1.0)),hash(i+vec2(1.0,1.0)),f.x),f.y);}
       float cloud(vec2 p){float a=.5,v=0.0;mat2 turn=mat2(.8,-.6,.6,.8);
-        for(int i=0;i<5;i++){v+=a*noise(p);p=turn*p*2.03+17.1;a*=.5;}return v;}
+        for(int i=0;i<4;i++){v+=a*noise(p);p=turn*p*2.03+17.1;a*=.5;}return v;}
       void main(){
         vec3 d=normalize(skyPosition-cameraPosition);
         vec2 uv=vec2(atan(d.z,d.x)*.159154943+.5,asin(clamp(d.y,-1.0,1.0))*.318309886+.5);
@@ -38,8 +38,24 @@ export function createSunsetSky(photo, lighting) {
         float low=cloud(plane*1.7+vec2(cloudTime*.008,-cloudTime*.003));
         float high=cloud(plane*3.2+vec2(-cloudTime*.004,cloudTime*.0018)+41.7);
         vec2 warp=vec2(low-.5,high-.5)*.009;
-        vec3 photograph=texture2D(skyMap,vec2(fract(uv.x+wind.x+warp.x),clamp(uv.y+wind.y+warp.y,0.0,1.0))).rgb;
+        // Keep longitude continuous for the sampler; RepeatWrapping performs
+        // the wrap. Correct the atan branch before selecting the mip level,
+        // otherwise one pixel sees a panorama-wide footprint and draws a seam.
+        vec2 skyUv=vec2(uv.x+wind.x+warp.x,clamp(uv.y+wind.y+warp.y,0.0,1.0));
+        vec2 gradX=dFdx(skyUv),gradY=dFdy(skyUv);
+        gradX.x-=floor(gradX.x+.5);gradY.x-=floor(gradY.x+.5);
+        vec3 photograph=texture2DGradEXT(skyMap,skyUv,gradX,gradY).rgb;
+        // The photographed panorama itself has a small edge exposure mismatch.
+        // Blend only its narrow join; the rest of the dome still uses one read.
+        float longitude=fract(skyUv.x),edgeDistance=min(longitude,1.0-longitude);
+        if(edgeDistance<.012){
+          vec3 opposite=texture2DGradEXT(skyMap,vec2(1.0-longitude,skyUv.y),vec2(-gradX.x,gradX.y),vec2(-gradY.x,gradY.y)).rgb;
+          photograph=mix(photograph,opposite,.5*(1.0-smoothstep(0.0,.012,edgeDistance)));
+        }
         float detail=dot(photograph,vec3(.30,.52,.18));
+        // Longitude is undefined exactly at the zenith. Fade that tiny polar
+        // region to the clear sky while retaining the two continuous clouds.
+        detail=mix(detail,.12,smoothstep(.995,.9999,d.y));
         float photographicCloud=smoothstep(.15,.62,detail);
         float mist=smoothstep(.56,.79,low)*.27+smoothstep(.67,.85,high)*.16;
         float cover=clamp(photographicCloud*.82+mist-.045,0.0,.94)*smoothstep(-.12,.08,d.y);

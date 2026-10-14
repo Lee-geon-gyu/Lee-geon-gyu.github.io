@@ -1,0 +1,6 @@
+Atelier Sans is a renamed, locally subsetted derivative of Pretendard.
+Source: https://github.com/orioncactus/pretendard
+Copyright (c) 2021, Kil Hyung-jin (https://github.com/orioncactus/pretendard).
+Distributed under the SIL Open Font License 1.1 in OFL-Pretendard.txt.
+The subset retains the variable weights and characters used by this portfolio.
+Build it with tools/subset_ui_font.py when the portfolio copy changes.

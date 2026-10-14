@@ -427,11 +427,11 @@
       "position": [
         -1.45,
         6.764,
-        -1.73
+        -2.45
       ],
       "width": 6.6,
-      "intensity": 50.4,
-      "power": 90.72,
+      "intensity": 33.6,
+      "power": 60.48,
       "color": [
         1,
         0.91,
@@ -443,11 +443,27 @@
       "position": [
         -1.45,
         6.764,
-        -0.18
+        -0.65
       ],
       "width": 6.6,
-      "intensity": 50.4,
-      "power": 90.72,
+      "intensity": 33.6,
+      "power": 60.48,
+      "color": [
+        1,
+        0.91,
+        0.77
+      ]
+    },
+    {
+      "name": "Library",
+      "position": [
+        -1.45,
+        6.764,
+        1.15
+      ],
+      "width": 6.6,
+      "intensity": 33.6,
+      "power": 60.48,
       "color": [
         1,
         0.91,
@@ -461,7 +477,7 @@
         3.514,
         0.7
       ],
-      "width": 7.0,
+      "width": 7,
       "intensity": 36.244,
       "power": 76.67,
       "color": [
@@ -477,7 +493,7 @@
         3.514,
         1.3
       ],
-      "width": 7.0,
+      "width": 7,
       "intensity": 36.244,
       "power": 76.67,
       "color": [
@@ -495,9 +511,9 @@
         -3.65
       ],
       "width": 3.6,
-      "height": 2.0,
+      "height": 2,
       "intensity": 3.6,
-      "power": 297.0,
+      "power": 297,
       "color": [
         1,
         0.82,
@@ -506,14 +522,14 @@
     },
     {
       "position": [
-        -4.0,
+        -4,
         3.26,
         -0.9
       ],
       "width": 2.15,
       "height": 2.3,
       "intensity": 4.05,
-      "power": 225.0,
+      "power": 225,
       "color": [
         1,
         0.82,
@@ -527,9 +543,9 @@
         -1.1
       ],
       "width": 6.3,
-      "height": 2.0,
+      "height": 2,
       "intensity": 2.4499999999999997,
-      "power": 322.0,
+      "power": 322,
       "color": [
         1,
         0.82,

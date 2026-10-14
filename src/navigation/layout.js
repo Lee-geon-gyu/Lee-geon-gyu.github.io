@@ -1,11 +1,15 @@
 import space from './space-layout.json' with { type: 'json' };
 import garden from '../scene/garden-layout.json' with { type: 'json' };
+import decor from '../scene/wall-decor.json' with {type:'json'};
+import bench from './bench-layout.json' with {type:'json'};
+import {sofa} from './sofa.js';
 import {worldDelta} from './coordinates.js';
 export { space };
 export const START={x:0,z:-.38,yaw:0,pitch:-.11};
 export const OUTDOOR={x:-1.50,z:11.72,yaw:-.37,pitch:.03};
-export const LIBRARY={x:-2.7,z:.50,y:space.upperFloor,yaw:-.30,pitch:-.08};
+export const LIBRARY={x:-2.7+garden.library.deskShift[0],z:.50,y:space.upperFloor,yaw:-.30,pitch:-.08};
 export const GALLERY={...space.gallery.view};
+export const ATELIER={x:.55,z:-4.6,yaw:-Math.PI/2,pitch:.1};
 export const RADIUS=.19;
 export function eastBoundary(z){
  const points=space.eastWall;
@@ -15,6 +19,12 @@ export function eastBoundary(z){
 export const waterBounds=space.pool.map((v,i)=>v+([1,-1,1,-1][i]*space.poolWaterInset));
 export function inPool(x,z,inset=0){const [a,b,c,d]=waterBounds;return x>a+inset&&x<b-inset&&z>c+inset&&z<d-inset;}
 export function facadeFront(x){const [a,b]=space.balconyFront;return a[1]+(b[1]-a[1])*(x-a[0])/(b[0]-a[0]);}
+const west=space.westFacade,westInner=west.wallCenterX+west.wallThickness/2;
+const facadeTrim=space.stairFacadeTrim,trimCorner=space.lowerCornerClosure[0],trimX=trimCorner[0]+facadeTrim.offset[0],trimZ=trimCorner[1]+facadeTrim.offset[1];
+export const facadeColumns={
+ lower:[...[westInner+west.lowerColumnSize/2,-2.65].map(x=>({x,z:facadeFront(x)-west.lowerColumnInset,size:west.lowerColumnSize})),{x:trimX,z:trimZ,size:facadeTrim.width}],
+ upper:[...[westInner+west.upperColumnSize/2,-2.55].map(x=>({x,z:facadeFront(x)-.16,size:west.upperColumnSize})),{x:trimX,z:trimZ,size:west.upperColumnSize}],
+};
 export function exteriorZ(x,z){return z+(facadeFront(x)-1.6)*Math.max(0,Math.min(1,z/2.45));}
 export function flightPoint(f,t,side=0){
  const u=.5+side/f.width,l=f.startEdge[0].map((v,i)=>v+(f.endEdge[0][i]-v)*t),r=f.startEdge[1].map((v,i)=>v+(f.endEdge[1][i]-v)*t);
@@ -50,8 +60,12 @@ export function inPolygon(x,z,polygon){
 const inside=(x,z,[a,b,c,d])=>x>=a-1e-6&&x<=b+1e-6&&z>=c-1e-6&&z<=d+1e-6;
 const hitsSolid=(x,z,solids)=>solids.some(r=>inside(x,z,r));
 const flightBounds=new Map(space.stairs.flights.map(f=>[f,[Math.min(...f.outline.map(p=>p[0]))-.2,Math.max(...f.outline.map(p=>p[0]))+.2,Math.min(...f.outline.map(p=>p[1]))-.2,Math.max(...f.outline.map(p=>p[1]))+.2]]));
-const posts=[-5.11,-2.65,space.balconyFront[1][0]].map(x=>[x-.12,x+.12,facadeFront(x)-.12,facadeFront(x)+.12]);
+const postBorder=space.lowerColumnBase.border,posts=facadeColumns.lower.map(p=>[p.x-p.size/2-postBorder,p.x+p.size/2+postBorder,p.z-p.size/2-postBorder,p.z+p.size/2+postBorder]);
 const entryBookcase=garden.rightAtelier.leftEntryBookcase;
+const library=garden.library,deskShift=library.deskShift[0];
+const bodyRing=Array.from({length:12},(_,i)=>[Math.cos(i*Math.PI/6)*RADIUS,Math.sin(i*Math.PI/6)*RADIUS]);
+const roofChannels=decor.interiorStrips.filter(s=>s.name==='Library').map(s=>s.position[2]);
+const overlapsBody=(x,z,solids)=>hitsSolid(x,z,solids)||bodyRing.some(([dx,dz])=>hitsSolid(x+dx,z+dz,solids));
 export const SOLIDS=[
  [-2.56,-1.7,-.17,.18],[1.7,5.5,-.17,.18],
  [-1.95,1.95,-6.72,-5.79],[-1.17,-.65,-5.82,-5.32],[.65,1.17,-5.82,-5.32],
@@ -59,8 +73,9 @@ export const SOLIDS=[
  [garden.rightAtelier.cabinet[0]-.375,garden.rightAtelier.cabinet[0]+.375,garden.rightAtelier.cabinet[1]-.55,garden.rightAtelier.cabinet[1]+.55],
  [-5.20,-2.78,-2.42,-1.60],[-4.54,-4.06,-1.34,-.86],[-3.64,-3.16,-1.34,-.86],
  [-5.3,-2.56,-3.5,-2.54], // the left artwork wall closes the room behind its prints
- [1.08,3.92,11.18,12.01],
- [-3.02,-2.62,.65,1.05],
+ bench.bounds,
+ ...garden.roomTreePlanters.map(p=>[p.position[0]-p.size/2,p.position[0]+p.size/2,p.position[1]-p.size/2,p.position[1]+p.size/2]),
+ ...garden.loosePots.map(p=>[p.position[0]-p.radius,p.position[0]+p.radius,p.position[1]-p.radius,p.position[1]+p.radius]),
 
  ...garden.rightAtelier.pots.map(p=>[p.position[0]-p.size/2,p.position[0]+p.size/2,p.position[1]-p.size/2,p.position[1]+p.size/2]),
  ...posts,...garden.beds,
@@ -69,9 +84,10 @@ export const SOLIDS=[
 export const UPPER_SOLIDS=[
  [2.16,5.5,-.12,.16], // courtyard return behind the open stair arrival
  space.upperClosure, // the former east-side alcove is now solid masonry
- [-5.30,3.90,-3.30,-2.90],[-4.90,-4.40,-2.90,-.20],
- [-4.08,-1.88,-1.97,-1.12],[-3.50,-2.70,-.86,-.04],[1.24,1.93,-2.71,-2.02],
- ...[-5.1,-2.55,space.balconyFront[1][0]].map(x=>[x-.085,x+.085,facadeFront(x)-.245,facadeFront(x)-.075])
+ [-5.30,3.90,-3.30,-2.90],
+ sofa.bounds,
+ [-4.08+deskShift,-1.88+deskShift,-1.97,-1.12],[-3.50+deskShift,-2.70+deskShift,-.86,-.04],[1.24,1.93,-2.71,-2.02],
+ ...facadeColumns.upper.map(p=>{const half=p.size/2+space.upperColumnBase.border;return [p.x-half,p.x+half,p.z-half,p.z+half];})
 ];
 function groundExists(x,z,allowPool=false,stairClearance=.14){
  if(x<space.courtyard[0]||x>space.courtyard[1]||z<-7||z>space.courtyard[3])return false;
@@ -128,27 +144,39 @@ export function clearSegment(a,b){
 }
 // Furniture routing stays on a single story. The explicit stair graph is the
 // continuous physical link, so overlapping floors cannot teleport the visitor.
+const flatGrids=new Map();
+function smoothRoute(start,path){
+ const result=[];let anchor=start,index=0;
+ while(index<path.length){
+  let far=path.length-1;while(far>index&&!clearSegment(anchor,path[far]))far--;
+  result.push(path[far]);anchor=path[far];index=far+1;
+ }
+ return result;
+}
 function flatRoute(start,destination,y=0){
  const a={...start,y},b={...destination,y};if(clearSegment(a,b))return [b];
  const step=.16,width=70,height=Math.ceil((space.courtyard[3]+7)/step)+1;
- const point=id=>({x:-5.4+(id%width)*step,z:-7+Math.floor(id/width)*step,y});
+ if(!flatGrids.has(y))flatGrids.set(y,{points:Array.from({length:width*height},(_,id)=>({x:-5.4+(id%width)*step,z:-7+Math.floor(id/width)*step,y})),valid:new Map(),edges:new Map()});
+ const {points,valid,edges}=flatGrids.get(y),point=id=>points[id];
+ const distance=(a,b)=>Math.hypot(...worldDelta(a.x-b.x,a.z-b.z));
+ const walkable=id=>{if(!valid.has(id)){const q=point(id);valid.set(id,canStand(q.x,q.z,RADIUS,y));}return valid.get(id);};
+ const clearEdge=(a,b)=>{const key=Math.min(a,b)*points.length+Math.max(a,b);if(!edges.has(key))edges.set(key,clearSegment(point(a),point(b)));return edges.get(key);};
  const closest=p=>{
-  const candidates=Array.from({length:width*height},(_,id)=>{const q=point(id);return {id,d:(q.x-p.x)**2+(q.z-p.z)**2};}).sort((a,b)=>a.d-b.d);
-  for(const {id} of candidates){const q=point(id);if(canStand(q.x,q.z,RADIUS,y)&&clearSegment(p,q))return id;}
+  const candidates=points.map((q,id)=>({id,d:distance(q,p)})).sort((a,b)=>a.d-b.d);
+  for(const {id} of candidates){const q=point(id);if(walkable(id)&&clearSegment(p,q))return id;}
   return -1;
  };
  const from=closest(a),end=closest(b);if(from<0||end<0)return [];
- const open=new Set([from]),cost=new Map([[from,0]]),parent=new Map(),valid=new Map();
- const walkable=id=>{if(!valid.has(id)){const q=point(id);valid.set(id,canStand(q.x,q.z,RADIUS,y));}return valid.get(id);};
+ const open=new Set([from]),cost=new Map([[from,0]]),parent=new Map();
  while(open.size){
   let current=-1,best=Infinity;
-  for(const id of open){const q=point(id),value=cost.get(id)+Math.hypot(q.x-point(end).x,q.z-point(end).z);if(value<best){current=id;best=value;}}
-  if(current===end){const path=[b];let node=end;while(node!==from){path.unshift(point(node));node=parent.get(node);}path.unshift(point(from));const smooth=[];let anchor=a,i=0;while(i<path.length){let far=i;while(far+1<path.length&&clearSegment(anchor,path[far+1]))far++;smooth.push(path[far]);anchor=path[far];i=far+1;}return smooth;}
+  for(const id of open){const value=cost.get(id)+distance(point(id),point(end));if(value<best){current=id;best=value;}}
+  if(current===end){const path=[b];let node=end;while(node!==from){path.unshift(point(node));node=parent.get(node);}path.unshift(point(from));return smoothRoute(a,path);}
   open.delete(current);const gx=current%width,gz=Math.floor(current/width);
   for(const [dx,dz] of [[1,0],[-1,0],[0,1],[0,-1],[1,1],[-1,1],[1,-1],[-1,-1]]){
    const xx=gx+dx,zz=gz+dz;if(xx<0||xx>=width||zz<0||zz>=height)continue;
-   const id=zz*width+xx,q=point(id);if(!walkable(id)||!clearSegment(point(current),q))continue;
-   const g=cost.get(current)+Math.hypot(dx,dz)*step;if(g<(cost.get(id)??Infinity)){cost.set(id,g);parent.set(id,current);open.add(id);}
+   const id=zz*width+xx;if(!walkable(id)||!clearEdge(current,id))continue;
+   const g=cost.get(current)+distance(point(current),point(id));if(g<(cost.get(id)??Infinity)){cost.set(id,g);parent.set(id,current);open.add(id);}
   }
  }
  return [];
@@ -166,7 +194,7 @@ export function routeBetween(start,destination){
   if(best===Infinity)return [];
  }
  for(const p of order.slice(first)){if(!clearSegment(path.at(-1)||a,p))return [];path.push({...p});}
- const tail=flatRoute(path.at(-1),b,b.y);return tail.length?[...path,...tail]:[];
+ const tail=flatRoute(path.at(-1),b,b.y);return tail.length?smoothRoute(a,[...path,...tail]):[];
 }
 
 
@@ -200,19 +228,70 @@ export function stairGardenHeight(x,z){
  }
  return null;
 }
+// Raised soil and the native bench top remain traversable after landing.
+export function raisedSurfaceHeight(x,z){
+ const values=[];
+ for(const [dx,dz] of [[0,0],...bodyRing]){
+  const px=x+dx,pz=z+dz;
+  if(inside(px,pz,bench.bounds))values.push(bench.seatTop);
+  if(inside(px,pz,sofa.bounds))values.push(sofa.seatTop);
+  for(const part of sofa.parts)if(inside(px,pz,part.bounds))values.push(part.top);
+  const stairBed=stairGardenHeight(px,pz);if(stairBed!==null)values.push(stairBed);
+  if(inPolygon(px,pz,garden.eastBed)||garden.beds.some(r=>inside(px,pz,r)))values.push(.28);
+ }
+ return values.length?Math.max(...values):null;
+}
 export function airborneSupport(x,z,feetY){
  const ys=surfaceHeights(x,z,{airborne:true});
  if(inPool(x,z))ys.push(space.poolMotion.bottom);
  if(inPolygon(x,z,space.lowerCornerClosure))ys.push(space.upperFloor);
  const stairBedHeight=stairGardenHeight(x,z);if(stairBedHeight!==null)ys.push(stairBedHeight);
  if(inPolygon(x,z,garden.eastBed)||garden.beds.some(r=>inside(x,z,r)))ys.push(.28);
+ const raised=raisedSurfaceHeight(x,z);if(raised!==null)ys.push(raised);
  const rail=railSupport(x,z);if(rail)ys.push(rail.y);
  const available=ys.filter(y=>y*space.worldScale[1]<=feetY+.035);
  return available.length?Math.max(...available):null;
 }
+// Lowest actual soffit touching the body footprint, in world meters. Roof
+// overhangs are included; the open pool/courtyard and exposed stairs stay open.
+export function ceilingHeight(x,z,feetY){
+ const sy=space.worldScale[1],heights=[];
+ for(const [dx,dz] of [[0,0],...bodyRing]){
+  const px=x+dx,pz=z+dz;
+  const roof=space.upperRoof,roofEnd=space.balconyFront[1][0]+roof.eastOverhang;
+  const roofFront=facadeFront(px)+roof.frontOverhang;
+  if(px>=westInner&&px<=roofEnd&&pz>=roof.back&&pz<=roofFront){
+   const slope=(space.balconyFront[1][1]-space.balconyFront[0][1])/(space.balconyFront[1][0]-space.balconyFront[0][0]);
+   const edge=Math.min(px-westInner,roofEnd-px,pz-roof.back,(roofFront-pz)/Math.hypot(1,slope));
+   let drop=edge<=roof.fasciaWidth+.006?.065:0;
+   if(edge>=roof.frameInset&&edge<=roof.frameInset+roof.frameWidth)drop=Math.max(drop,roof.frameDrop);
+   const rib=roof.ribs;
+   if(edge>=rib.inset){
+    const inChannel=roofChannels.some(z=>Math.abs(pz-z)<=rib.channelHalfGap);
+    if((!inChannel&&rib.x.some(x=>Math.abs(px-x)<=rib.width/2))||rib.z.some(z=>Math.abs(pz-z)<=rib.width/2))drop=Math.max(drop,rib.drop);
+   }
+   heights.push(space.upperCeiling-drop);
+  }
+  if(px>=-5.3&&px<=space.balconyFront[1][0]&&pz>=.16&&pz<=facadeFront(px))heights.push(space.upperFloor-.30);
+  if(inside(px,pz,[-5.54,-2.42,-3.54,.16]))heights.push(space.groundCeiling+Math.max(0,-pz-3.4)*.094-.10);
+  const half=pz< -1.2?2.54:2.18+(.16-pz)/1.36*.36;
+  if(pz>=-7.26&&pz<=.16&&Math.abs(px)<=half)heights.push(space.groundCeiling+Math.max(0,-pz-3.4)*.094-.10);
+ }
+ const above=heights.map(h=>h*sy).filter(h=>h>feetY+.02);
+ return above.length?Math.min(...above):Infinity;
+}
+const groundAirSolids=SOLIDS.filter(r=>!garden.beds.includes(r)&&r!==bench.bounds);
+const upperAirSolids=UPPER_SOLIDS.filter(r=>r!==sofa.bounds);
 function canOccupyAir(position,x,z,feetY,bodyHeight){
  const sy=space.worldScale[1],upper=space.upperFloor*sy;
- if(x<space.courtyard[0]+RADIUS||x>eastBoundary(z)-RADIUS||z>space.courtyard[3]-RADIUS||z<-7+RADIUS)return false;
+ const perimeterPenetration=(cx,cz)=>Math.max(0,...[[0,0],...bodyRing].map(([dx,dz])=>{
+  const px=cx+dx,pz=cz+dz;
+  return Math.max(space.courtyard[0]-px,px-eastBoundary(pz),pz-space.courtyard[3],-7-pz);
+ }));
+ const penetration=perimeterPenetration(x,z);
+ // Existing overlaps can move outward in small steps instead of requiring
+ // one impossible full-radius step to escape a wall.
+ if(penetration>1e-7&&penetration>=perimeterPenetration(position.x,position.z)-1e-7)return false;
  if(x>space.upperClosure[0]-RADIUS&&z>=space.upperClosure[2]-RADIUS&&z<=space.upperClosure[3]+RADIUS&&feetY+bodyHeight>(space.upperFloor-.25)*sy)return false;
  if(z<-.12+RADIUS&&z>-.17-RADIUS&&x>1.7-RADIUS&&feetY<(space.upperFloor-.25)*sy)return false;
  if(z<-3.3+RADIUS&&feetY+bodyHeight>upper&&feetY<space.upperCeiling*sy)return false;
@@ -221,8 +300,43 @@ function canOccupyAir(position,x,z,feetY,bodyHeight){
    if(segmentMetric(x,z,a,b).distance<(RADIUS+.12)*1.12)return false;
   }
  }
- if(feetY<upper-.25&&hitsSolid(x,z,SOLIDS.filter(r=>!garden.beds.includes(r))))return false;
- if(feetY>=upper-.25&&hitsSolid(x,z,UPPER_SOLIDS))return false;
+ // Use the same circular footprint as walking, so a jump cannot land
+ // inside a wall/furniture clearance and leave the visitor unable to move.
+ if(feetY<upper-.25&&overlapsBody(x,z,groundAirSolids))return false;
+ if(feetY>=upper-.25&&overlapsBody(x,z,upperAirSolids))return false;
+ if(feetY>=upper-.25){
+  if(feetY<sofa.seatTop*sy-.035&&overlapsBody(x,z,[sofa.bounds]))return false;
+  for(const part of sofa.parts)if(feetY<part.top*sy-.035&&overlapsBody(x,z,[part.bounds]))return false;
+ }
+ if(feetY<(space.upperFloor-.045)*sy&&[[0,0],...bodyRing].some(([dx,dz])=>inPolygon(x+dx,z+dz,space.lowerCornerClosure)))return false;
+ if(z<facadeFront(x)&&x<(feetY<upper-.25?-5.30:space.upperOutline[0][0])+RADIUS)return false;
+ if(feetY+bodyHeight+.08>ceilingHeight(x,z,feetY)+.002)return false;
+ // These narrow strips have masonry on one side and rails/pots on the other;
+ // there is no body-width exit. Keep them non-enterable, including in jumps.
+ if([[0,0],...bodyRing].some(([dx,dz])=>inPolygon(x+dx,z+dz,garden.stairBed)))return false;
+ if(feetY<upper-.25&&overlapsBody(x,z,[garden.beds[2]]))return false;
+ if(feetY<bench.seatTop*sy-.035&&overlapsBody(x,z,[bench.bounds]))return false;
+ // The actual stair masonry and its .065m projecting cheeks are solid from
+ // ground to tread height. Check the complete body beside the sloping wall.
+ const masonryPenetration=(cx,cz)=>{
+  let total=0;
+  for(const [dx,dz] of [[0,0],...bodyRing]){
+   const px=cx+dx,pz=cz+dz;
+   if(inPolygon(px,pz,space.stairs.landing)&&feetY<(space.stairs.landingHeight-.16)*sy){
+    total+=Math.min(...space.stairs.landing.map((a,i)=>segmentMetric(px,pz,a,space.stairs.landing[(i+1)%space.stairs.landing.length]).distance))+.001;
+   }
+   for(const f of space.stairs.flights){
+    if(!inside(px,pz,flightBounds.get(f)))continue;
+    const q=flightCoordinates(f,px,pz);
+    if(q.t<0||q.t>1||Math.abs(q.side)>f.width/2+.065)continue;
+    const top=f.bottom+(f.top-f.bottom)*q.t,depth=(top-.16)*sy-feetY;
+    if(depth>0)total+=Math.min(depth,f.width/2+.065-Math.abs(q.side),q.t,(1-q.t))+.001;
+   }
+  }
+  return total;
+ };
+ const masonry=masonryPenetration(x,z);
+ if(masonry>1e-7&&masonry>=masonryPenetration(position.x,position.z)-1e-7)return false;
  const bedTop=stairGardenHeight(x,z);if(bedTop!==null&&feetY<bedTop*sy-.035)return false;
  for(const r of railSegments){const q=segmentMetric(x,z,r.a,r.b),base=(r.ha+(r.hb-r.ha)*q.t)*sy,top=base+1.092*sy;
   if(q.distance<RADIUS*1.12+.042&&feetY<top-.035&&feetY+bodyHeight>base+.09*sy){

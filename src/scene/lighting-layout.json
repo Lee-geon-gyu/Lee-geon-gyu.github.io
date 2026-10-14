@@ -3,6 +3,7 @@
   "sky": 0.64,
   "environment": 0.3,
   "bakeEnvironment": 0.41,
+  "studioFixtureGain": 0.82,
   "sun": {
     "intensity": 2.15,
     "color": [

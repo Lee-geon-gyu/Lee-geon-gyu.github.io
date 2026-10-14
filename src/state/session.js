@@ -10,3 +10,10 @@ export function complete(previous, id, projects=PROJECT_IDS) {
 export function counts(viewed, projects=PROJECT_IDS) {
   return { profile: Number(viewed.has('profile')), portfolio: idsOf(projects).filter(id => viewed.has(id)).length, contact: Number(viewed.has('contact')) };
 }
+export function newlyCompletedQuests(previous,next,projects=PROJECT_IDS) {
+  const before=counts(previous,projects),after=counts(next,projects);
+  return ['profile','portfolio','contact'].filter(id=>{
+    const total=id==='portfolio'?projects.length:1;
+    return total>0&&before[id]<total&&after[id]===total;
+  });
+}

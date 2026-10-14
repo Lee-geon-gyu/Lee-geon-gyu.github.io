@@ -2,8 +2,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import crypto from 'node:crypto';
-import {complete,counts,PROJECT_IDS} from '../src/state/session.js';
-import {START,OUTDOOR,LIBRARY,GALLERY,RADIUS,space,flightPoint,stairPoint,stairCoordinates,canStand,clearSegment,routeBetween,moveOnSurface,eastBoundary,inPool,facadeFront,railSupport,waterBounds,stairGardenHeight} from '../src/navigation/layout.js';
+import {complete,counts,newlyCompletedQuests,PROJECT_IDS} from '../src/state/session.js';
+import {START,OUTDOOR,LIBRARY,GALLERY,ATELIER,RADIUS,space,flightPoint,stairPoint,stairCoordinates,canStand,clearSegment,routeBetween,moveOnSurface,eastBoundary,inPool,inPolygon,facadeFront,facadeColumns,railSupport,waterBounds,stairGardenHeight} from '../src/navigation/layout.js';
 import {worldPoint,worldDelta,logicalDelta} from '../src/navigation/coordinates.js';
 import {WalkController} from '../src/navigation/WalkController.js';
 import {exhibitionPages,canInteract,Presentation,visibleTargets} from '../src/scene/interactionModel.js';
@@ -39,28 +39,50 @@ test('Presentation opens once, reverses before opening and resets without a late
 });
 test('Real scene rays, E input and prop/camera animation restore without moving the body',()=>{
   global.window=new EventTarget();
-  for(const kind of ['book','card']){
+  for(const kind of ['tablet','card']){
     const camera=new THREE.PerspectiveCamera(57,1,.06,130);camera.position.set(0,1.53,2);camera.lookAt(0,.9,0);
     const scene=new THREE.Scene(),root=new THREE.Group();root.position.set(0,.9,0);scene.add(root);
     const mesh=new THREE.Mesh(new THREE.BoxGeometry(.6,.08,.7),new THREE.MeshBasicMaterial());mesh.userData.contentId=kind;root.add(mesh);
     const hinge=new THREE.Group();root.add(hinge);
     const wall=new THREE.Mesh(new THREE.BoxGeometry(2,3,.1),new THREE.MeshBasicMaterial());wall.position.set(0,1,1);scene.add(wall);scene.updateMatrixWorld(true);
-    const entry={id:kind,kind,root,hinge,focus:new THREE.Vector3(),floor:0};
+    let power=0;
+    const entry={id:kind,kind,root,focus:new THREE.Vector3(),floor:0,size:{width:.91},setPower:kind==='tablet'?value=>{power=value;}:undefined};
     const controller={position:{x:0,y:0,z:2},verticalOffset:0,swimming:false,paused:false,setPaused(value){this.paused=value;}};
     const abort=new AbortController(),opened=[],near=[];
     const interaction=createContentInteraction({camera,controller,entries:[entry],targets:[mesh,wall],callbacks:{onOpen:id=>opened.push(id),onNearby:id=>near.push(id)},signal:abort.signal,reducedMotion:false});
-    assert.equal(interaction.begin(kind),false);wall.position.x=10;scene.updateMatrixWorld(true);
+    assert.equal(interaction.canActivate(kind),false);assert.equal(interaction.begin(kind),false);wall.position.x=10;scene.updateMatrixWorld(true);
+    assert.equal(interaction.canActivate(kind),true);
     interaction.updateNearby();assert.equal(near.at(-1),kind);
     const position=camera.position.clone(),rotation=camera.quaternion.clone(),prop=root.position.clone(),body={...controller.position};
     const e=new Event('keydown',{cancelable:true});Object.defineProperties(e,{code:{value:'KeyE'},repeat:{value:false}});window.dispatchEvent(e);
-    assert.equal(interaction.phase,'opening');assert.equal(controller.paused,true);interaction.step(.8);
-    assert.notDeepEqual(camera.position.toArray(),position.toArray());interaction.step(1);assert.deepEqual(opened,[kind]);
-    if(kind==='book')assert.equal(hinge.rotation.z,Math.PI);else assert.notDeepEqual(root.position.toArray(),prop.toArray());
+    assert.equal(interaction.phase,'opening');assert.equal(interaction.canActivate(kind),false);assert.equal(controller.paused,true);interaction.step(.8);
+    assert.notDeepEqual(camera.position.toArray(),position.toArray());if(kind==='tablet')assert.ok(power>0&&power<1);interaction.step(1);assert.deepEqual(opened,[kind]);
+    if(kind==='tablet')assert.equal(power,1);assert.notDeepEqual(root.position.toArray(),prop.toArray());
     interaction.close();interaction.step(1);assert.equal(controller.paused,false);
-    assert.deepEqual(controller.position,body);assert.deepEqual(camera.position.toArray(),position.toArray());assert.deepEqual(camera.quaternion.toArray(),rotation.toArray());assert.deepEqual(root.position.toArray(),prop.toArray());assert.equal(hinge.rotation.z,0);
-    interaction.updateNearby();assert.equal(near.at(-1),kind);assert.equal(interaction.begin(kind),true);interaction.step(.2);interaction.reset();interaction.step(10);assert.deepEqual(opened,[kind]);abort.abort();
+    assert.deepEqual(controller.position,body);assert.deepEqual(camera.position.toArray(),position.toArray());assert.deepEqual(camera.quaternion.toArray(),rotation.toArray());assert.deepEqual(root.position.toArray(),prop.toArray());assert.equal(power,0);
+    interaction.updateNearby();assert.equal(near.at(-1),kind);assert.equal(interaction.begin(kind),true);interaction.step(.8);interaction.reset();interaction.step(10);assert.deepEqual(opened,[kind]);assert.equal(power,0);abort.abort();
   }
 });
+test('Hover availability rejects far, hidden, wrong-floor, jumping, swimming and paused props',()=>{
+  global.window=new EventTarget();
+  const camera=new THREE.PerspectiveCamera(57,1,.06,130);camera.position.set(0,1.53,2);camera.lookAt(0,.9,0);
+  const root=new THREE.Group();root.position.y=.9;
+  const mesh=new THREE.Mesh(new THREE.BoxGeometry(.6,.08,.7),new THREE.MeshBasicMaterial());mesh.userData.contentId='profile';root.add(mesh);root.updateMatrixWorld(true);
+  const controller={position:{y:0},verticalOffset:0,swimming:false,seated:false,paused:false,setPaused(value){this.paused=value;}};
+  const abort=new AbortController();
+  const interaction=createContentInteraction({camera,controller,entries:[{id:'profile',kind:'tablet',root,size:{width:.91},focus:new THREE.Vector3(),floor:0}],targets:[mesh],callbacks:{},signal:abort.signal});
+  assert.equal(interaction.canActivate('profile'),true);assert.equal(interaction.canActivate('unknown'),false);
+  camera.position.z=6;assert.equal(interaction.canActivate('profile'),false);camera.position.z=2;
+  for(const [key,value] of [['paused',true],['swimming',true],['seated',true],['verticalOffset',.2]]){
+    const previous=controller[key];controller[key]=value;assert.equal(interaction.canActivate('profile'),false,key);controller[key]=previous;
+  }
+  controller.position.y=3.8;assert.equal(interaction.canActivate('profile'),false);controller.position.y=0;
+  root.visible=false;assert.equal(interaction.canActivate('profile'),false);root.visible=true;
+  assert.equal(interaction.canActivate('profile'),true);assert.equal(interaction.begin('profile'),true);assert.equal(interaction.canActivate('profile'),false);
+  interaction.close();interaction.step(1);assert.equal(interaction.canActivate('profile'),true);
+  abort.abort();mesh.geometry.dispose();mesh.material.dispose();
+});
+
 test('Six original projects retain every link, description, metadata and artwork',()=>{
   assert.deepEqual(content.projects.map(p=>p.title),['SWEATIE','DIVE','EATGO','JW중외제약','CJ올리브영','E1오렌지카드']);
   assert.equal(content.projects.flatMap(p=>p.links).length,11);
@@ -105,12 +127,12 @@ test('The same dry passage is freely walkable in both directions',()=>{
     const path=routeBetween(p,START);assert.ok(path.length);let previous=p;for(const next of path){assert.ok(clearSegment(previous,next));previous=next;}
   }
 });
-test('Guidance walks continuously, manual cancellation preserves position, details pause movement',()=>{
+test('Guidance runs continuously, manual cancellation preserves position, details pause movement',()=>{
   globalThis.window=new EventTarget();const canvas=new EventTarget();canvas.setPointerCapture=()=>{};
   const camera={position:{set(){}},rotation:{set(){}}};let area='atelier',routes=[];
   const controller=new WalkController(canvas,camera,{onClick(){},onArea:value=>area=value,onRoute:value=>routes.push(value)});
   controller.guide();let previous={...controller.position};
-  for(let i=0;i<800;i++){controller.step(.025);assert.ok(Math.hypot(controller.position.x-previous.x,controller.position.z-previous.z)<=.04);previous={...controller.position};}
+  for(let i=0;i<800;i++){controller.step(.025);assert.ok(Math.hypot(...worldDelta(controller.position.x-previous.x,controller.position.z-previous.z))<=space.poolMotion.runSpeed*.025+1e-6);previous={...controller.position};}
   assert.equal(area,'terrace');assert.equal(controller.path.length,0);
   assert.equal(controller.arrival,null);assert.ok(Math.abs(controller.position.pitch-OUTDOOR.pitch)<.003);
   assert.ok(Math.abs(controller.position.yaw-OUTDOOR.yaw)<.003);
@@ -150,7 +172,7 @@ test('The connected stair, flat landing and upper turn link both stories without
   const controller=new WalkController(canvas,camera,{onClick(){},onArea(){},onRoute(){}});
   controller.guide('library');let previous={...controller.position};
   for(let i=0;i<1500;i++){
-    controller.step(.025);assert.ok(Math.abs((controller.position.y??0)-(previous.y??0))<.04,'no vertical jump');previous={...controller.position};
+    controller.step(.025);assert.ok(Math.abs((controller.position.y??0)-(previous.y??0))*space.worldScale[1]<.07,'running stairs have no vertical jump');previous={...controller.position};
   }
   assert.equal(controller.area,'library');assert.ok(Math.abs(cameraY-(space.upperFloor*space.worldScale[1]+1.53))<.001);assert.equal(controller.path.length,0);assert.equal(controller.arrival,null);
   controller.guide();for(let i=0;i<1500;i++)controller.step(.025);
@@ -219,7 +241,7 @@ test('The left-studio guide walks through its open front and settles inside the 
   globalThis.window=new EventTarget();const canvas=new EventTarget();canvas.setPointerCapture=()=>{};
   const controller=new WalkController(canvas,{position:{set(){}},rotation:{set(){}}},{start:OUTDOOR,onClick(){},onArea(){},onRoute(){}});
   controller.guide('gallery');let previous={...controller.position};
-  for(let i=0;i<1100;i++){controller.step(.025);assert.ok(Math.hypot(controller.position.x-previous.x,controller.position.z-previous.z)<.04);previous={...controller.position};}
+  for(let i=0;i<1100;i++){controller.step(.025);assert.ok(Math.hypot(...worldDelta(controller.position.x-previous.x,controller.position.z-previous.z))<=space.poolMotion.runSpeed*.025+1e-6);previous={...controller.position};}
   assert.equal(controller.area,'atelier');assert.equal(controller.path.length,0);assert.equal(controller.arrival,null);
   assert.ok(Math.hypot(controller.position.x-GALLERY.x,controller.position.z-GALLERY.z)<.02);controller.dispose();
 });
@@ -261,6 +283,68 @@ function visitor(start){
  const tick=seconds=>{for(let i=0;i<Math.ceil(seconds/.025);i++)controller.step(.025);};
  return {controller,key,tick,eye:()=>eyeY};
 }
+test('Quest completion fires once per full quest and follows the archive size',()=>{
+ for(const count of [0,6,8,19]){
+  const projects=Array.from({length:count},(_,i)=>({id:`work-${i}`}));let state=new Set();
+  for(const id of ['profile',...projects.map(project=>project.id),'contact']){
+   const next=complete(state,id,projects),completed=newlyCompletedQuests(state,next,projects);
+   assert.deepEqual(completed,id==='profile'||id==='contact'?[id]:id===projects.at(-1).id?['portfolio']:[]);
+   assert.deepEqual(newlyCompletedQuests(next,complete(next,id,projects),projects),[],'reopening never replays completion');state=next;
+  }
+  assert.deepEqual(newlyCompletedQuests(state,new Set(),projects),[],'reset never completes a quest');
+  assert.deepEqual(newlyCompletedQuests(new Set(),complete(new Set(),'portfolio',projects),projects),count?['portfolio']:[]);
+ }
+});
+test('Guide carries running speed through corners and accepts a new target without stopping or teleporting',()=>{
+ const v=visitor(OUTDOOR),c=v.controller;c.guide('library');let travelled=0,frames=0;
+ while(c.path.length&&frames++<500){
+  const previous={...c.position};assert.equal(c.sprinting,true);c.step(.025);
+  const distance=Math.hypot(...worldDelta(c.position.x-previous.x,c.position.z-previous.z));
+  if(c.path.length)assert.ok(distance>.025,'no idle waypoint frame');
+  assert.ok(distance<=space.poolMotion.runSpeed*.025+1e-6);assert.equal(c.swimming,false);travelled+=distance;
+  if(frames===30){const current={...c.position};c.guide('atelier');assert.deepEqual(c.position,current);assert.equal(c.arrival,null);}
+ }
+ assert.ok(travelled>4);assert.ok(frames<500);assert.ok(Math.hypot(...worldDelta(c.position.x-ATELIER.x,c.position.z-ATELIER.z))<1e-6);
+ assert.ok(c.arrival,'arrival orientation still settles naturally');const current={...c.position};c.guide('gallery');assert.deepEqual(c.position,current);assert.equal(c.arrival,null);
+ v.tick(12);assert.ok(Math.hypot(...worldDelta(c.position.x-GALLERY.x,c.position.z-GALLERY.z))<1e-6);assert.equal(c.arrival,null);c.dispose();
+});
+test('A visitor on the left pool bank takes its direct dry passage instead of detouring around the right bank',()=>{
+ const from={x:-4.6,z:8.4},path=routeBetween(from,GALLERY);assert.ok(path.length);
+ let previous=from,length=0;
+ for(const point of path){assert.ok(clearSegment(previous,point));length+=Math.hypot(...worldDelta(point.x-previous.x,point.z-previous.z));previous=point;}
+ const direct=Math.hypot(...worldDelta(GALLERY.x-from.x,GALLERY.z-from.z));assert.ok(length<direct+1,'route stays near the direct distance');
+ assert.ok(path.every(point=>point.x<-3),'no unnecessary crossing to the opposite bank');
+});
+test('The studio passage is free after moving the tree planter beside the west column',()=>{
+ const garden=JSON.parse(fs.readFileSync(new URL('../src/scene/garden-layout.json',import.meta.url),'utf8'));
+ const pot=garden.roomTreePlanters[0],[x,z]=pot.position,column=facadeColumns.lower[0];
+ assert.equal(canStand(-2.82,.85),true,'the former obstructed position can be walked through');
+ assert.equal(canStand(x,z),false,'collision follows the moved planter');
+ assert.ok(x-pot.size/2-(column.x+column.size/2)>.035,'planter clears the column');
+ assert.ok(x-pot.size/2-(column.x+column.size/2)<.055,'planter stays beside its requested column');
+ const revealGap=column.z-column.size/2-space.lowerColumnBase.border-(z+pot.size/2);
+ assert.ok(revealGap>.005&&revealGap<.015,'planter clears the complete rear edge of the visible collar');
+ assert.ok(clearSegment({x:-3.75,z:3.45},GALLERY),'the studio entry remains clear');
+});
+test('The red bench-side pot stays outside the beds and both facade columns touch one wall plane',()=>{
+ const garden=JSON.parse(fs.readFileSync(new URL('../src/scene/garden-layout.json',import.meta.url),'utf8'));
+ const pot=garden.loosePots.find(p=>p.asset==='plantA'),[x,z]=pot.position;
+ assert.ok(x-pot.radius>3.925+.10&&z>11.18&&z<12.01,'pot sits beside the left end of the rendered bench');
+ for(let i=0;i<24;i++){
+  const px=x+Math.cos(i*Math.PI/12)*pot.radius,pz=z+Math.sin(i*Math.PI/12)*pot.radius;
+  assert.equal(inPolygon(px,pz,garden.eastBed),false,'pot does not intersect the angled bed');
+  assert.ok(garden.beds.every(([a,b,c,d])=>px<a||px>b||pz<c||pz>d),'pot does not intersect an end bed');
+ }
+ assert.equal(canStand(x,z),false,'the loose pot has matching physical collision');
+ const west=space.westFacade,face=west.wallCenterX+west.wallThickness/2;
+ for(const column of [facadeColumns.lower[0],facadeColumns.upper[0]])assert.ok(Math.abs(column.x-column.size/2-face)<1e-8);
+ assert.ok(Math.abs(garden.beds[0][2]-facadeColumns.lower[0].z-facadeColumns.lower[0].size/2-space.lowerColumnBase.border-.025)<1e-5,'west bed rim reaches the column collar');
+});
+test('The work destination finishes within interaction range of the exhibited frames',()=>{
+ const v=visitor(OUTDOOR);v.controller.guide('atelier');v.tick(12);const p=v.controller.position;
+ assert.ok(Math.hypot(...worldDelta(p.x-ATELIER.x,p.z-ATELIER.z))<1e-6);assert.equal(v.controller.path.length,0);
+ assert.ok(Math.hypot(...worldDelta(2.2-p.x,-4.5-p.z))<3.1);assert.ok(canStand(p.x,p.z));v.controller.dispose();
+});
 test('Shift runs in world meters and Space makes one grounded jump without auto repeat',()=>{
  const pose={x:1,z:9.6,yaw:0,pitch:0},v=visitor(pose);
  v.key('keydown','KeyW');v.tick(.4);v.key('keyup','KeyW');const walked=Math.hypot(...worldDelta(v.controller.position.x-pose.x,v.controller.position.z-pose.z));

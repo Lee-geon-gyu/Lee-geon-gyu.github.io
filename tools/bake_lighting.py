@@ -5,6 +5,7 @@ from mathutils import Vector
 root=pathlib.Path(__file__).resolve().parents[1]
 LIGHT=json.loads((root/'src/scene/lighting-layout.json').read_text(encoding='utf-8-sig'))
 decor=json.loads((root/'src/scene/wall-decor.json').read_text(encoding='utf-8-sig'))
+SPACE=json.loads((root/'src/navigation/space-layout.json').read_text(encoding='utf-8-sig'))
 GARDEN=json.loads((root/'src/scene/garden-layout.json').read_text(encoding='utf-8-sig'))
 bpy.ops.wm.open_mainfile(filepath=str(root/'tools/generated/connected-atelier.blend'))
 scene=bpy.context.scene
@@ -71,16 +72,19 @@ def place_foliage(file,placements):
         clone=duplicate_hierarchy(template);scale=height/(high.z-low.z);clone.scale=(scale*width_scale,scale*width_scale,scale)
         centered=file.name!='tree-small.glb'
         clone.location=(x-((low.x+high.x)*scale*width_scale/2 if centered else 0),-z-((low.y+high.y)*scale*width_scale/2 if centered else 0),y-low.z*scale);clone.rotation_euler[2]=-rotation
+        if len(optional)>1 and optional[1]:
+            for obj in list(clone.children_recursive):
+                if obj.type=='MESH' and not any('lea' in m.name.lower() for m in obj.data.materials if m):bpy.data.objects.remove(obj,do_unlink=True)
     for obj in original:bpy.data.objects.remove(obj,do_unlink=True)
     bpy.data.objects.remove(template,do_unlink=True)
 
-place_foliage(root/'public/assets/tree-small.glb',[*GARDEN['canopyTrees'],*GARDEN['bedTrees'],*GARDEN['roomTrees'],(-1.55,-6.35,.15,1.16,.2,1.2),(1.58,-2.36,1.9,4.38,.8),*[(p['position'][0],p['position'][1],p['plantHeight'],p['height'],p['rotation'],p['widthScale']) for p in GARDEN['rightAtelier']['pots']]])
+place_foliage(root/'public/assets/tree-small.glb',[*GARDEN['canopyTrees'],*GARDEN['bedTrees'],*GARDEN['roomTrees'],(-1.55,-6.35,.15,1.16,.2,1.2),(*GARDEN['library']['tree']['position'],GARDEN['library']['tree']['height'],SPACE['upperFloor']+GARDEN['library']['tree']['baseOffset'],GARDEN['library']['tree']['rotation'],GARDEN['library']['tree']['widthScale']),*[(p['position'][0],p['position'][1],p['plantHeight'],p['height'],p['rotation'],p['widthScale']) for p in GARDEN['rightAtelier']['pots']]])
 place_foliage(root/'public/assets/tree-small.glb',[(p['position'][0],p['position'][1],p['plantHeight'],p['potHeight']+.016,p['rotation'],p['widthScale']) for p in GARDEN['stairWallPots']])
-place_foliage(root/'public/assets/potted-02.glb',[(4.35,9.8,.8,0,1)])
-place_foliage(root/'public/assets/models/potted_plant_04/potted_plant_04.gltf',[(-4.9,.72,.9,0,1)])
+for asset,file in [('plantA',root/'public/assets/potted-02.glb'),('plantB',root/'public/assets/models/potted_plant_04/potted_plant_04.gltf')]:
+    place_foliage(file,[(p['position'][0],p['position'][1],p['height'],0,p['rotation']) for p in GARDEN['loosePots'] if p['asset']==asset])
 bpy.ops.import_scene.gltf(filepath=str(root/'public/assets/rooted-garden.glb'))
 for i,(x,y,z,rotation) in enumerate(decor['lamps']):
-    data=bpy.data.lights.new('Warm_Sconce_'+str(i),'POINT');data.energy=35;data.color=(1,.56,.25);data.shadow_soft_size=.08
+    data=bpy.data.lights.new('Warm_Sconce_'+str(i),'POINT');data.energy=35*(LIGHT['studioFixtureGain'] if x<-2.3 and y<SPACE['upperFloor'] and z<.16 else 1);data.color=(1,.56,.25);data.shadow_soft_size=.08
     light=bpy.data.objects.new(data.name,data);scene.collection.objects.link(light)
     light.location=(x+math.sin(rotation)*.12,-z-math.cos(rotation)*.12,y)
 for i,(x,y,z,angle) in enumerate(decor['stairLamps']):
@@ -89,7 +93,7 @@ for i,(x,y,z,angle) in enumerate(decor['stairLamps']):
 for i,(x,y,z,angle) in enumerate(decor['stepLights']):
     data=bpy.data.lights.new('Step_Glow_'+str(i),'POINT');data.energy=14;data.color=(1,.72,.40);data.shadow_soft_size=.05
     light=bpy.data.objects.new(data.name,data);scene.collection.objects.link(light);light.location=(x-.07,-z,y)
-x,y,z=decor['galleryLight'];data=bpy.data.lights.new('Gallery_Amber_Fill','POINT');data.energy=150;data.color=(1,.78,.49);data.shadow_soft_size=.35
+x,y,z=decor['galleryLight'];data=bpy.data.lights.new('Gallery_Amber_Fill','POINT');data.energy=150*LIGHT['studioFixtureGain'];data.color=(1,.78,.49);data.shadow_soft_size=.35
 light=bpy.data.objects.new(data.name,data);scene.collection.objects.link(light);light.location=(x,-z,y)
 ceiling=decor['ceilingLight'];x,y,z=ceiling['position']
 data=bpy.data.lights.new('Library_Central_Pendant','POINT');data.energy=110;data.color=(1,.80,.53);data.shadow_soft_size=.16
@@ -99,7 +103,7 @@ for i,fitting in enumerate(decor['ceilingSpots']):
     light=bpy.data.objects.new(data.name,data);scene.collection.objects.link(light);light.location=(x,-z,y-.018)
 for i,fixture in enumerate([*decor['interiorStrips'],*decor['interiorFill']]):
     x,y,z=fixture['position'];data=bpy.data.lights.new('Interior_Fixture_'+str(i),'AREA')
-    data.energy=fixture['power'];data.color=fixture['color'];data.shape='RECTANGLE'
+    data.energy=fixture['power']*(LIGHT['studioFixtureGain'] if x<-2.3 and y<SPACE['upperFloor'] else 1);data.color=fixture['color'];data.shape='RECTANGLE'
     data.size=fixture['width'];data.size_y=fixture.get('height',.035)
     obj=bpy.data.objects.new(data.name,data);scene.collection.objects.link(obj);obj.location=(x,-z,y-.012)
     # Default -Z emission points down in Blender's Z-up coordinate system.

@@ -3,11 +3,13 @@
 Run with Blender --background --factory-startup --python tools/build_runtime_models.py.
 Original meshes remain available to the native geometry and lighting pipeline.
 """
-import bpy, bmesh, math, json
+import bpy, bmesh, math, json, sys
 import numpy as np
 from pathlib import Path
 
 ROOT=Path(__file__).resolve().parents[1]
+SPACE=json.loads((ROOT/'src/navigation/space-layout.json').read_text(encoding='utf-8-sig'))
+GARDEN=json.loads((ROOT/'src/scene/garden-layout.json').read_text(encoding='utf-8-sig'))
 OUT=ROOT/'public/assets/runtime'
 OUT.mkdir(parents=True,exist_ok=True)
 TEX=ROOT/'tools/generated/runtime-textures'
@@ -92,9 +94,19 @@ def spatial_chunks(obj):
     """Let the browser cull wall planting outside the camera instead of drawing
     one courtyard-sized mesh. Keep face silhouettes, UVs and material indices."""
     mesh=obj.data;groups={}
+    roof=SPACE['upperRoof'];fa,fb=SPACE['balconyFront'];roof_end=fb[0]+roof['eastOverhang']
+    west=SPACE['westFacade'];roof_left=west['wallCenterX']+west['wallThickness']/2
+    roof_low=SPACE['upperCeiling']+SPACE['upperRoofThickness']-.22-GARDEN['roofCornice']['drop'][1]-.18
     for polygon in mesh.polygons:
         center=polygon.center
         key=(math.floor(center.x/2.5),math.floor(center.y/2.5),math.floor(center.z/3))
+        x,z,y=center.x,-center.y,center.z
+        front=fa[1]+(fb[1]-fa[1])*(x-fa[0])/(fb[0]-fa[0])+roof['frontOverhang']
+        roof_front=roof_left-.10<=x<=roof_end+.26 and abs(z-front)<=.26
+        roof_side=abs(x-roof_end)<=.26 and SPACE['upperClosure'][3]-.30<=z<=front+.26
+        # A small connected cornice needs at most the existing four leaf draws
+        # and one stem draw, instead of a new set in every 2.5m garden cell.
+        if y>=roof_low and (roof_front or roof_side):key=('roof-cornice',0,0)
         groups.setdefault(key,[]).append(polygon)
     for key,polygons in groups.items():
         remap={};vertices=[];faces=[];uvs=[]
@@ -122,8 +134,12 @@ def export(name):
         export_image_format='AUTO',export_image_quality=82,export_cameras=False,export_lights=False)
     print('RUNTIME_EXPORTED',name,(OUT/name).stat().st_size,flush=True)
 
-clear();bpy.ops.import_scene.gltf(filepath=str(ROOT/'public/assets/connected-atelier.glb'))
-prepare_materials(True);export('atelier.glb')
+if '--garden-only' not in sys.argv:
+    clear();bpy.ops.import_scene.gltf(filepath=str(ROOT/'public/assets/connected-atelier.glb'))
+    prepare_materials(True);export('atelier.glb')
+
+# Architecture-only edits must not regenerate the separately approved foliage.
+if '--architecture-only' in sys.argv:sys.exit(0)
 
 clear();bpy.ops.import_scene.gltf(filepath=str(ROOT/'public/assets/rooted-garden.glb'))
 for obj in list(bpy.context.scene.objects):
@@ -133,6 +149,7 @@ for obj in list(bpy.context.scene.objects):
 for obj in list(bpy.context.scene.objects):
     if obj.type=='MESH':spatial_chunks(obj)
 prepare_materials();export('garden.glb')
+if '--garden-only' in sys.argv or '--scene-only' in sys.argv:sys.exit(0)
 
 clear();bpy.ops.import_scene.gltf(filepath=str(ROOT/'public/assets/tree-small.glb'))
 for obj in list(bpy.context.scene.objects):
